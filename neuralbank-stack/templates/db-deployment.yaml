@@ -44,6 +44,10 @@ spec:
               value: "--auth-host=md5 --auth-local=trust"
             - name: POSTGRESQL_PGCTLTIMEOUT
               value: "60"
+            - name: POSTGRESQL_PASSWORD
+              value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
+            - name: POSTGRESQL_USER
+              value: "postgres"
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgsql/data
