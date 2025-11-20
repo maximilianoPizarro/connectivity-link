@@ -7,6 +7,9 @@ spec:
   generators:
     - list:
         elements:
+          - name: operators
+            namespace: openshift-gitops
+            path: operators        
           - name: rhbk
             namespace: rhbk-operator
             path: rhbk
