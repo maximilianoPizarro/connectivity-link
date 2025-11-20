@@ -26,7 +26,7 @@ spec:
           - name: servicemeshoperator3
             namespace: openshift-operators
             path: servicemeshoperator3
-            sync_wave: "2"
+            sync_wave: "3"
           - name: rhcl-operator
             namespace: openshift-operators
             path: rhcl-operator
