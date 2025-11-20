@@ -5,8 +5,7 @@ metadata:
   labels:
     app: neuralbank-db
     app.openshift.io/runtime: postgresql
-  annotations:
-      argocd.argoproj.io/sync-wave: "3"  
+  annotations: {}
 spec:
   replicas: 1
   selector:

@@ -3,9 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: neuralbank-gitops-role
-  namespace: neuralbank-stack  
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
+  namespace: neuralbank-stack
 rules:
   - apiGroups:
       - ""
@@ -90,9 +88,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: neuralbank-gitops-rolebinding
-  namespace: neuralbank-stack  
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
+  namespace: neuralbank-stack
 subjects:
   - kind: ServiceAccount
     name: openshift-gitops-argocd-application-controller
