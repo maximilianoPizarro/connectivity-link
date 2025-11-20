@@ -1,10 +1,8 @@
 apiVersion: operators.coreos.com/v1alpha2
 kind: OperatorGroup
 metadata:
-  name: rhbk-operator
-  namespace: rhbk-operator
+  name: rhcl-operator
+  namespace: openshift-operators
   annotations:
     argocd.argoproj.io/sync-wave: "2"
-spec:
-  targetNamespaces:
-    - rhbk-operator
+spec: {}
