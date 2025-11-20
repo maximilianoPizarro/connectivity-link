@@ -21,11 +21,6 @@ rhdh:
   namespace: rhdh-operator
   channel: fast
   startingCSV: rhdh-operator.v1.8.0
-  enabled: true
 rhbk:
   namespace: rhbk-operator
   channel: stable-v26.4
-  enabled: true
-
-patchoperator:
-  enabled: true
