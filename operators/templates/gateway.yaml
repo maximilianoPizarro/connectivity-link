@@ -1,0 +1,29 @@
+# ------------------------------------------------------------
+# 1. Gateway (Implementación con Istio)
+# ------------------------------------------------------------
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: neuralbank-gateway
+  namespace: istio-system
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+
+      # tls:
+      #   mode: Terminate
+      #   certificateRefs:
+      #     - kind: Secret
+      #       name: neuralbank-tls-secret

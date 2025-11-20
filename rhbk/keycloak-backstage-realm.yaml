@@ -1,11 +1,11 @@
 # ------------------------------------------------------------
-# 1. Definición del Keycloak Realm (neuralbank)
+# KeycloakRealmImport: Importa todo el Realm (configuración y usuarios)
 # ------------------------------------------------------------
 apiVersion: k8s.keycloak.org/v2alpha1
-kind: KeycloakRealm
+kind: KeycloakRealmImport
 metadata:
-  name: neuralbank-realm
-  namespace: rhbk-operator 
+  name: neuralbank-full-import
+  namespace: rhbk-operator
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
@@ -15,7 +15,6 @@ spec:
     enabled: true
     displayName: NeuralBank International
     
-    # Configuración de Clientes (Clientes OIDC para Frontend/Backend)
     clients:
     - clientId: neuralbank-frontend
       name: Frontend Web App
@@ -26,107 +25,198 @@ spec:
     - clientId: neuralbank-backend
       name: Backend API Service
       publicClient: false
-      bearerOnly: true # Solo acepta tokens de acceso
+      bearerOnly: true
       
-    # Grupos base (para simplificar la gestión de roles)
+    # 2. Grupos y Roles
     groups:
     - name: US-Clients
     - name: LATAM-Clients
     - name: EU-Clients
     
-    # Roles que se asignarán a los usuarios
     realmRoles:
     - name: personal-client
     - name: corporate-client
 
----
-# ------------------------------------------------------------
-# 2. Keycloak Users (Importación de la Diversidad Internacional)
-# ------------------------------------------------------------
-# Nota: La importación se basa en el email como username y una contraseña temporal.
-apiVersion: k8s.keycloak.org/v2alpha1
-kind: KeycloakUser
-metadata:
-  name: imported-clients
-  namespace: rhbk-operator
-spec:
-  realmSelector:
-    matchLabels:
-      app: neuralbank-realm # Coincide con el Realm creado arriba
+    # 3. Usuarios (Importación de la Diversidad Internacional)
+    users:
+    # --- Clientes USA ---
+    - username: robert.anderson@email.com
+      email: robert.anderson@email.com
+      firstName: Robert
+      lastName: Anderson
+      enabled: true
+      groups: ["US-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: jennifer.martinez@email.com
+      email: jennifer.martinez@email.com
+      firstName: Jennifer
+      lastName: Martinez
+      enabled: true
+      groups: ["US-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: david.lee@email.com
+      email: david.lee@email.com
+      firstName: David
+      lastName: Lee
+      enabled: true
+      groups: ["US-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: michelle.garcia@email.com
+      email: michelle.garcia@email.com
+      firstName: Michelle
+      lastName: Garcia
+      enabled: true
+      groups: ["US-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: contact@techcorp.com
+      email: contact@techcorp.com
+      firstName: TechCorp
+      lastName: Solutions Inc
+      enabled: true
+      groups: ["US-Clients"]
+      realmRoles: ["corporate-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
 
-  users:
-  # --- USA Clientes ---
-  - username: robert.anderson@email.com
-    email: robert.anderson@email.com
-    firstName: Robert
-    lastName: Anderson
-    enabled: true
-    groups: ["US-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  - username: jennifer.martinez@email.com
-    email: jennifer.martinez@email.com
-    firstName: Jennifer
-    lastName: Martinez
-    enabled: true
-    groups: ["US-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  # ... (Otros usuarios de USA omitidos por brevedad)
+    # --- Clientes México/LATAM ---
+    - username: mario.gomez@email.com
+      email: mario.gomez@email.com
+      firstName: Mario
+      lastName: Gómez Morales
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: laura.martinez@email.com
+      email: laura.martinez@email.com
+      firstName: Laura
+      lastName: Martínez Pérez
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: carlos.sanchez.mex@email.com
+      email: carlos.sanchez.mex@email.com
+      firstName: Carlos
+      lastName: Sánchez Muñoz
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: paulo.silva@email.com
+      email: paulo.silva@email.com
+      firstName: Paulo
+      lastName: Silva Santos
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: ricardo.ferreira@email.com
+      email: ricardo.ferreira@email.com
+      firstName: Ricardo
+      lastName: Ferreira Lima
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: diego.martinez.ar@email.com
+      email: diego.martinez.ar@email.com
+      firstName: Diego
+      lastName: Martínez Suárez
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: lucia.fernandez@email.com
+      email: lucia.fernandez@email.com
+      firstName: Lucía
+      lastName: Fernández Gómez
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: juan.perez@email.com
+      email: juan.perez@email.com
+      firstName: Juan
+      lastName: Pérez González
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: maria.silva@email.com
+      email: maria.silva@email.com
+      firstName: María
+      lastName: Silva Rojas
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: info@comercializadora.mx
+      email: info@comercializadora.mx
+      firstName: Comercializadora
+      lastName: Global SA de CV
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["corporate-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: contacto@constructora.ar
+      email: contacto@constructora.ar
+      firstName: Constructora
+      lastName: del Sur SRL
+      enabled: true
+      groups: ["LATAM-Clients"]
+      realmRoles: ["corporate-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
 
-  # --- México Clientes ---
-  - username: mario.gomez@email.com
-    email: mario.gomez@email.com
-    firstName: Mario
-    lastName: Gómez Morales
-    enabled: true
-    groups: ["LATAM-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  - username: laura.martinez@email.com
-    email: laura.martinez@email.com
-    firstName: Laura
-    lastName: Martínez Pérez
-    enabled: true
-    groups: ["LATAM-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  # ... (Otros usuarios de México omitidos por brevedad)
-
-  # --- España Clientes ---
-  - username: antonio.garcia@email.com
-    email: antonio.garcia@email.com
-    firstName: Antonio
-    lastName: García López
-    enabled: true
-    groups: ["EU-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  - username: carmen.martin@email.com
-    email: carmen.martin@email.com
-    firstName: Carmen
-    lastName: Martín Sánchez
-    enabled: true
-    groups: ["EU-Clients"]
-    realmRoles: ["personal-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  # ... (Otros usuarios de Europa omitidos por brevedad)
-  
-  # --- Clientes Empresariales (Ejemplo) ---
-  - username: contact@techcorp.com
-    email: contact@techcorp.com
-    firstName: TechCorp
-    lastName: Solutions Inc
-    enabled: true
-    groups: ["US-Clients"]
-    realmRoles: ["corporate-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  - username: info@comercializadora.mx
-    email: info@comercializadora.mx
-    firstName: Comercializadora
-    lastName: Global SA de CV
-    enabled: true
-    groups: ["LATAM-Clients"]
-    realmRoles: ["corporate-client"]
-    initialPassword: { value: "Welcome123", temporary: true }
-  # Incluye el resto de usuarios de manera similar.
+    # --- Clientes Europa/Reino Unido ---
+    - username: antonio.garcia@email.com
+      email: antonio.garcia@email.com
+      firstName: Antonio
+      lastName: García López
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: carmen.martin@email.com
+      email: carmen.martin@email.com
+      firstName: Carmen
+      lastName: Martín Sánchez
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: javier.rodriguez@email.com
+      email: javier.rodriguez@email.com
+      firstName: Javier
+      lastName: Rodríguez Torres
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: william.johnson@email.com
+      email: william.johnson@email.com
+      firstName: William
+      lastName: Johnson
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: sophie.thompson@email.com
+      email: sophie.thompson@email.com
+      firstName: Sophie
+      lastName: Thompson
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["personal-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
+    - username: info@inversionesmadrid.es
+      email: info@inversionesmadrid.es
+      firstName: Inversiones
+      lastName: Madrid SA
+      enabled: true
+      groups: ["EU-Clients"]
+      realmRoles: ["corporate-client"]
+      initialPassword: { value: "Welcome123", temporary: true }
