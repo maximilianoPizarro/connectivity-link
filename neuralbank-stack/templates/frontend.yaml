@@ -6,7 +6,8 @@ metadata:
       app: neuralbank-frontend
       app.openshift.io/runtime: nodejs
   annotations:
-    app.openshift.io/connects-to: "neuralbank-backend"    
+    app.openshift.io/connects-to: "neuralbank-backend"
+    argocd.argoproj.io/sync-wave: "3"          
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:

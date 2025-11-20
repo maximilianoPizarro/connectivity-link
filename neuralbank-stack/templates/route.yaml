@@ -5,6 +5,8 @@ metadata:
   labels:
     app: neuralbank-proxy
     release: {{ .Release.Name }}
+  annotations:
+      argocd.argoproj.io/sync-wave: "3"    
 spec:
   to:
     kind: Service

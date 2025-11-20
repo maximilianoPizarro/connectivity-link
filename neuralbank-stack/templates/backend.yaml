@@ -6,7 +6,8 @@ metadata:
       app: neuralbank-backend
       app.openshift.io/runtime: quarkus
   annotations:
-      app.openshift.io/connects-to: "neuralbank-db"        
+      app.openshift.io/connects-to: "neuralbank-db"
+      argocd.argoproj.io/sync-wave: "3"
 spec:
   replicas: {{ .Values.backend.replicaCount }}
   selector:
