@@ -5,7 +5,9 @@ apiVersion: k8s.keycloak.org/v2alpha1
 kind: KeycloakRealm
 metadata:
   name: neuralbank-realm
-  namespace: rhbk-operator # Namespace donde se ejecuta el operador Keycloak
+  namespace: rhbk-operator 
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   realm:
     id: neuralbank
