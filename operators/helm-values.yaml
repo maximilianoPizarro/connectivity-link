@@ -24,8 +24,7 @@ rhdh:
   enabled: true
 rhbk:
   namespace: rhbk-operator
-  channel: stable-v26.2
-  startingCSV: rhbk-operator.v26.2.7-opr.1
+  channel: stable-v26.4
   enabled: true
 gitlab:
   namespace: gitlab-system
