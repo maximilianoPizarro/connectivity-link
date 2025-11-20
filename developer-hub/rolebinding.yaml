@@ -3,7 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: developer-hub-gitops-role
-  namespace: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 rules:
   - apiGroups:
       - ""
@@ -112,7 +113,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: developer-hub-gitops-rolebinding
-  namespace: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 subjects:
   - kind: ServiceAccount
     name: openshift-gitops-argocd-application-controller
