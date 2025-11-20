@@ -5,9 +5,10 @@ metadata:
   name: rhcl-operator
   namespace: openshift-operators
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   channel: stable
+  installPlanApproval: Automatic
   name: rhcl-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
