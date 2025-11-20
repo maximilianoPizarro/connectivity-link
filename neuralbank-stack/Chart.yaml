@@ -2,8 +2,3 @@ apiVersion: v2
 name: neuralbank-stack
 description: A Helm chart to deploy the NeuralBank stack: PostgreSQL (configured via globals), backend, frontend and an NGINX proxy/gateway.
 type: application
-dependencies:
-  - name: neuralbank-stack
-    version: 0.1.0
-    repository: file://./neuralbank-stack
-    condition: neuralbank-stack.enabled
