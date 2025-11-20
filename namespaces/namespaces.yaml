@@ -31,6 +31,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: neuralbank
+  name: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "1"
