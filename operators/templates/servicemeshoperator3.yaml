@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: stable
+  installPlanApproval: Automatic
   name: servicemeshoperator3
   source: redhat-operators
   sourceNamespace: openshift-marketplace
