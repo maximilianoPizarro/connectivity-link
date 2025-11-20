@@ -31,9 +31,9 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"                                                    
-          - name: neuralbank
-            namespace: neuralbank
-            path: neuralbank
+          - name: neuralbank-stack
+            namespace: neuralbank-stack
+            path: neuralbank-stack
             sync_wave: "5" 
   template:
     metadata:
