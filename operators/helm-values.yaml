@@ -26,25 +26,6 @@ rhbk:
   namespace: rhbk-operator
   channel: stable-v26.4
   enabled: true
-gitlab:
-  namespace: gitlab-system
-  channel: stable
-  startingCSV: gitlab-operator-kubernetes.v2.2.1
-  source: community-operators
-  instance:
-    enabled: false
-  enabled: false
 
-acs:
-  enabled: false
-sealedsecrets:
-  enabled: false
-gitops:
-  enabled: false
-knative:
-  enabled: false
-kafka:
-  enabled: false
-  dedicatedNode: false
 patchoperator:
   enabled: true
