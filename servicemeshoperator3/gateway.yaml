@@ -5,9 +5,8 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: neuralbank-gateway
-  namespace: istio-system
   annotations:
-    argocd.argoproj.io/sync-wave: "5"  
+    argocd.argoproj.io/sync-wave: "4"  
 spec:
   gatewayClassName: istio
   listeners:
@@ -34,9 +33,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argocd-gateway-manager
-  namespace: istio-system
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 rules:
 - apiGroups:
   - gateway.networking.k8s.io
@@ -56,7 +54,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argocd-gateway-manager-binding
-  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 roleRef:

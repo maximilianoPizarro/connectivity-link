@@ -23,10 +23,6 @@ spec:
             namespace: developer-hub
             path: developer-hub
             sync_wave: "2"
-          - name: developer-hub
-            namespace: developer-hub
-            path: developer-hub
-            sync_wave: "2"   
           - name: servicemeshoperator3
             namespace: openshift-operators
             path: servicemeshoperator3
@@ -38,7 +34,7 @@ spec:
           - name: neuralbank
             namespace: neuralbank
             path: neuralbank
-            sync_wave: "3" 
+            sync_wave: "5" 
   template:
     metadata:
       name: '{{name}}'

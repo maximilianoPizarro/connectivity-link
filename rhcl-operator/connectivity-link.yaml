@@ -2,7 +2,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argocd-app-httproute-manager
-  namespace: neuralbank
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 rules:
@@ -23,7 +22,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argocd-app-httproute-manager-binding
-  namespace: neuralbank
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 roleRef:
