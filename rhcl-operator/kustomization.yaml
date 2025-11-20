@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - route-connnectivity-link.yaml
 
-namespace: neuralbank
+namespace: neuralbank-stack
