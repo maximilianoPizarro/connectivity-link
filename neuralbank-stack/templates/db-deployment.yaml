@@ -35,12 +35,16 @@ spec:
           ports:
             - containerPort: 5432
           env:
+            - name: POSTGRESQL_ADMIN_PASSWORD
+              value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
             - name: POSTGRESQL_USER
               value: "{{ .Values.global.postgresql.auth.username }}"
             - name: POSTGRESQL_PASSWORD
               value: "{{ .Values.global.postgresql.auth.password }}"
             - name: POSTGRESQL_DATABASE
               value: "{{ .Values.global.postgresql.auth.database }}"
+            - name: POSTGRESQL_INITDB_ARGS
+              value: "--auth-host=md5"
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgsql/data
