@@ -17,4 +17,7 @@ subscriptions:
     namespace: openshift-operators
     channel: stable
     source: redhat-operators
-
+  - name: kuadrant-operator
+    namespace: openshift-operators
+    channel: stable
+    source: redhat-operators

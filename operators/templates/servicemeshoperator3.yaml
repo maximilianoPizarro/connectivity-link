@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: servicemeshoperator3
+  namespace: openshift-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec: {}
