@@ -3,7 +3,7 @@ version: 4.20
 subscriptions:
   - name: patch-operator
     namespace: patch-operator
-    channel: alpha
+    channel: stable
     source: community-operators
   - name: devspaces
     namespace: openshift-operators
