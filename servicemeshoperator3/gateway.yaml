@@ -55,7 +55,7 @@ kind: RoleBinding
 metadata:
   name: argocd-gateway-manager-binding
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
