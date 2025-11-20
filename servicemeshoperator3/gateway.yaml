@@ -33,6 +33,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argocd-gateway-manager
+  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 rules:
@@ -54,6 +55,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argocd-gateway-manager-binding
+  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 roleRef:
