@@ -1,0 +1,272 @@
+{{- if eq .Values.gitlab.enabled true }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: gitlab-operator-kubernetes
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  channel: {{ .Values.gitlab.channel }}
+{{- if $.Values.gitlab.startingCSV }}
+  startingCSV: {{ .Values.gitlab.startingCSV }}
+{{- end }}
+  installPlanApproval: Automatic
+  name: gitlab-operator-kubernetes
+  source: {{ .Values.gitlab.source | default "certified-operators" }}
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: gitlab-operator-kubernetes
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  targetNamespaces:
+    - gitlab-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-gitlab-writer
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+  - apiGroups:
+      - "apps.gitlab.com"
+    resources:
+      - "gitlabs"
+      - "gitlabs/status"
+    verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "watch"
+      - "update"
+      - "patch"
+      - "delete"
+  - apiGroups: [""] # "" represents the core API group, which ServiceAccounts belong to
+    resources: ["serviceaccounts"]
+    verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "watch"
+      - "update"
+      - "patch"
+      - "delete"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-gitlab-binding
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  kind: Role
+  name: argocd-gitlab-writer
+  apiGroup: rbac.authorization.k8s.io
+---
+# New ClusterRole for IngressClass
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-ingressclass-creator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingressclasses"]
+    verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+---
+# New ClusterRoleBinding for IngressClass
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-ingressclass-binding-cluster
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  kind: ClusterRole
+  name: argocd-ingressclass-creator # This must match the ClusterRole name above
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  name: gitlab-nginx
+spec:
+  controller: openshift.io/ingress-to-route
+  parameters:
+    apiGroup: operator.openshift.io
+    kind: IngressController
+    name: default
+    scope: Cluster
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: 'system:openshift:scc:gitlab-nginx-final-scc'
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+  - verbs:
+      - use
+    apiGroups:
+      - security.openshift.io
+    resources:
+      - securitycontextconstraints
+    resourceNames:
+      - gitlab-nginx-final-scc
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-nginx-final-scc-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-nginx-ingress
+    namespace: gitlab-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'system:openshift:scc:gitlab-nginx-final-scc'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gitlab-nginx-ingress-leader-elector
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-nginx-ingress-leader-elector-binding
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2" 
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-nginx-ingress 
+    namespace: gitlab-system
+roleRef:
+  kind: Role
+  name: gitlab-nginx-ingress-leader-elector
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-nginx-ingress-tcp
+  namespace: gitlab-system
+data:
+#  "22": "gitlab-system/gitlab-gitlab-shell:22"
+---
+{{- if eq .Values.gitlab.instance.enabled true }}
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+  name: gitlab
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  chart:
+    values:
+      certmanager:
+        install: false
+        installCRDs: false
+      global:
+        hosts:
+          domain: apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+          https: true
+          gitlabVersion: "18.2.1"
+          gitlab: # Explicitly define the main GitLab web UI hostname
+            name: gitlab.apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+          registry: # Explicitly define the Container Registry hostname
+            name: registry.apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+          minio: # Explicitly define the MinIO hostname
+            name: minio.apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+          kas: # Explicitly define the KAS hostname if you use it
+            name: kas.apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+          externalUrl: https://gitlab.apps.rosa.sh69i-wcur2-99q.p7eh.p3.openshiftapps.com
+        ingress:
+          configureCertmanager: false
+          tls:
+            secretName: null
+        edition: ce
+        postgresql:
+          primary:
+            extendedConfiguration: max_connections = 200
+      nginx-ingress:
+        enabled: false
+        tcpExternalConfig: true
+        controller:
+          service: 
+            type: LoadBalancer           
+          containerSecurityContext:
+            capabilities:
+              add:
+                - NET_BIND_SERVICE 
+              drop:
+                - ALL 
+            runAsUser: 101       
+            runAsGroup: 82       
+            runAsNonRoot: true
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false 
+            seccompProfile:
+              type: "RuntimeDefault"            
+      gitlab-runner:
+        enabled: true
+      gitlab-shell:
+        enabled: false
+        # These are just examples of common values you *could* set.
+        # Check the official GitLab Helm chart documentation for a full list.
+        #minReplicas: 1 # Ensure at least one replica is desired
+        #maxReplicas: 2
+        # For OpenShift, sometimes the imagePullPolicy might need to be set
+        # if you have an internal registry or specific caching needs.
+        # image:
+        #   pullPolicy: IfNotPresent
+        # You might also define resource requests/limits if not already set by default
+        # resources:
+        #   requests:
+        #     cpu: 100m
+        #     memory: 256Mi
+        #   limits:
+        #     cpu: 500m
+        #     memory: 512Mi
+      # --- END: gitlab-shell specific values ---
+    version: '9.2.1'
+{{- end }}
+{{- end }}

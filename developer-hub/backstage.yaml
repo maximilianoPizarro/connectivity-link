@@ -1,0 +1,75 @@
+apiVersion: rhdh.redhat.com/v1alpha3
+kind: Backstage
+metadata:
+  name: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  application:
+    appConfig:
+      configMaps:
+        - name: app-config-rhdh
+      mountPath: /opt/app-root/src # This mounts the Backstage config for Backstage itself
+    dynamicPluginsConfigMapName: dynamic-plugins-rhdh
+    extraEnvs:
+      secrets:
+        - name: secrets-rhdh
+    extraFiles:
+      configMaps:
+        - name: rhdh-rbac-policy
+      mountPath: /opt/app-root/src
+    replicas: 1
+    route:
+      enabled: true
+  database:
+    enableLocalDb: true
+  deployment:
+    patch:
+      spec:
+        template:
+          spec:
+            containers:
+              - env:
+                  - name: PROJECT
+                    value: rhdh
+                  - name: RCS_CONFIG_FILE # <-- Keep this, it's for OLS
+                    value: /app-root/config/rcsconfig.yaml
+                  - name: RHDH_CONFIG_FILE
+                    value: /app-root/config/app-config-rhdh.yaml                   
+                  - name: TRANSFORMERS_NO_SAFE_TENSORS
+                    value: true                   
+                  #- name: RHDH_CONFIG_FILE
+                  #  value: /app-root/config/app-config-rhdh.yaml
+                  - name: OLLAMA_HOST
+                    value: "http://librechat-ollama.librechat.svc.cluster.local:11434/v1" # Point to your Ollama service
+                  - name: OLLAMA_ORIGINS
+                    value: "*"
+                  - name: OLLAMA_KEEP_ALIVE
+                    value: 12h
+                envFrom:
+                  - secretRef:
+                      name: secrets-rhdh
+                image: 'quay.io/redhat-ai-dev/road-core-service:rcs-06302025-rhdh-1.7'
+                name: road-core-sidecar
+                ports:
+                  - containerPort: 8080
+                    name: rcs-backend
+                    protocol: TCP
+                volumeMounts:
+                  - mountPath: /app-root/config/rcsconfig.yaml
+                    name: rcsconfig
+                    subPath: rcsconfig.yaml
+                  - mountPath: /app-root/config/app-config-rhdh.yaml
+                    name: app-config-rhdh
+                    subPath: app-config-rhdh.yaml
+                resources:
+                  requests:
+                    cpu: "500m"
+                    memory: "3Gi"
+                  limits:
+                    cpu: "1000m"
+                    memory: "6Gi" 
+            volumes:
+              - configMap:
+                  name: rcsconfig
+                name: rcsconfig

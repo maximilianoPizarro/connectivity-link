@@ -1,0 +1,34 @@
+{{- if eq .Values.patchoperator.enabled true }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-patch-operator-writer
+  namespace: patch-operator           
+rules:
+  - apiGroups:
+      - "redhatcop.redhat.io" 
+    resources:
+      - "patches"             
+    verbs:
+      - "create"              
+      - "get"                
+      - "list"
+      - "watch"
+      - "update"
+      - "patch"
+      - "delete"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-patch-operator-binding 
+  namespace: patch-operator           
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller 
+    namespace: openshift-gitops                        
+roleRef:
+  kind: Role
+  name: argocd-patch-operator-writer 
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

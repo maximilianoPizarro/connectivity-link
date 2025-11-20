@@ -1,0 +1,130 @@
+# ------------------------------------------------------------
+# 1. Definición del Keycloak Realm (neuralbank)
+# ------------------------------------------------------------
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakRealm
+metadata:
+  name: neuralbank-realm
+  namespace: rhbk-operator # Namespace donde se ejecuta el operador Keycloak
+spec:
+  realm:
+    id: neuralbank
+    realm: neuralbank
+    enabled: true
+    displayName: NeuralBank International
+    
+    # Configuración de Clientes (Clientes OIDC para Frontend/Backend)
+    clients:
+    - clientId: neuralbank-frontend
+      name: Frontend Web App
+      publicClient: true
+      standardFlowEnabled: true
+      redirectUris: ["http://neauralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/*"]
+      webOrigins: ["*"]
+    - clientId: neuralbank-backend
+      name: Backend API Service
+      publicClient: false
+      bearerOnly: true # Solo acepta tokens de acceso
+      
+    # Grupos base (para simplificar la gestión de roles)
+    groups:
+    - name: US-Clients
+    - name: LATAM-Clients
+    - name: EU-Clients
+    
+    # Roles que se asignarán a los usuarios
+    realmRoles:
+    - name: personal-client
+    - name: corporate-client
+
+---
+# ------------------------------------------------------------
+# 2. Keycloak Users (Importación de la Diversidad Internacional)
+# ------------------------------------------------------------
+# Nota: La importación se basa en el email como username y una contraseña temporal.
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakUser
+metadata:
+  name: imported-clients
+  namespace: rhbk-operator
+spec:
+  realmSelector:
+    matchLabels:
+      app: neuralbank-realm # Coincide con el Realm creado arriba
+
+  users:
+  # --- USA Clientes ---
+  - username: robert.anderson@email.com
+    email: robert.anderson@email.com
+    firstName: Robert
+    lastName: Anderson
+    enabled: true
+    groups: ["US-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  - username: jennifer.martinez@email.com
+    email: jennifer.martinez@email.com
+    firstName: Jennifer
+    lastName: Martinez
+    enabled: true
+    groups: ["US-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  # ... (Otros usuarios de USA omitidos por brevedad)
+
+  # --- México Clientes ---
+  - username: mario.gomez@email.com
+    email: mario.gomez@email.com
+    firstName: Mario
+    lastName: Gómez Morales
+    enabled: true
+    groups: ["LATAM-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  - username: laura.martinez@email.com
+    email: laura.martinez@email.com
+    firstName: Laura
+    lastName: Martínez Pérez
+    enabled: true
+    groups: ["LATAM-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  # ... (Otros usuarios de México omitidos por brevedad)
+
+  # --- España Clientes ---
+  - username: antonio.garcia@email.com
+    email: antonio.garcia@email.com
+    firstName: Antonio
+    lastName: García López
+    enabled: true
+    groups: ["EU-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  - username: carmen.martin@email.com
+    email: carmen.martin@email.com
+    firstName: Carmen
+    lastName: Martín Sánchez
+    enabled: true
+    groups: ["EU-Clients"]
+    realmRoles: ["personal-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  # ... (Otros usuarios de Europa omitidos por brevedad)
+  
+  # --- Clientes Empresariales (Ejemplo) ---
+  - username: contact@techcorp.com
+    email: contact@techcorp.com
+    firstName: TechCorp
+    lastName: Solutions Inc
+    enabled: true
+    groups: ["US-Clients"]
+    realmRoles: ["corporate-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  - username: info@comercializadora.mx
+    email: info@comercializadora.mx
+    firstName: Comercializadora
+    lastName: Global SA de CV
+    enabled: true
+    groups: ["LATAM-Clients"]
+    realmRoles: ["corporate-client"]
+    initialPassword: { value: "Welcome123", temporary: true }
+  # Incluye el resto de usuarios de manera similar.

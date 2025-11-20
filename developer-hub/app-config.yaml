@@ -1,0 +1,92 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: app-config-rhdh
+  labels:
+    rhdh.redhat.com/ext-config-sync: 'true'
+  annotations:
+    rhdh.redhat.com/backstage-name: developer-hub
+data:
+  app-config-rhdh.yaml: |
+    app:
+      title: AI Dev Developer Hub
+      baseUrl: "${RHDH_BASE_URL}"
+    integrations:
+      github:
+        - host: github.com
+          token: ${GITHUB_INTEGRATION}
+    auth:
+      environment: production
+      session:
+        secret: "${BACKEND_SECRET}"
+      providers:
+        oidc:
+          production:
+            metadataUrl: "${KEYCLOAK_METADATA_URL}"
+            clientId: "${KEYCLOAK_CLIENT_ID}"
+            clientSecret: "${KEYCLOAK_CLIENT_SECRET}"
+            callbackUrl: "${RHDH_CALLBACK_URL}"
+            prompt: auto
+            signIn:
+              resolvers:
+                - resolver: preferredUsernameMatchingUserEntityName
+    backend:
+      auth:
+        externalAccess:
+          - type: static
+            options:
+              token: ${BACKEND_SECRET}
+              subject: admin-curl-access
+        keys:
+          - secret: "${BACKEND_SECRET}"
+      baseUrl: "${RHDH_BASE_URL}"
+      cors:
+        origin: "${RHDH_BASE_URL}"
+      csp:
+        upgrade-insecure-requests: false
+        img-src:
+          - "'self'"
+          - "data:"
+          - https://img.freepik.com
+          - https://cdn.dribbble.com     
+    signInPage: oidc
+    catalog:
+      providers:
+        keycloakOrg:
+          default:
+            baseUrl: "${KEYCLOAK_BASE_URL}"
+            loginRealm: "${KEYCLOAK_REALM}"
+            realm: "${KEYCLOAK_REALM}"
+            clientId: "${KEYCLOAK_CLIENT_ID}"
+            clientSecret: "${KEYCLOAK_CLIENT_SECRET}"
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+            signIn:
+              resolvers:
+                - resolver: emailMatchingUserEntityProfileEmail
+      rules:
+          - allow: [Component, Group, User, Resource, Location, Template, API]
+      locations:
+        - type: url
+          target: https://github.com/redhat-ai-dev/ai-lab-template/blob/main/all.yaml
+          rules:
+            - allow: [Component, API, Group, System]
+    lightspeed:
+      servers:
+        #- id: ollama
+        #  url: "http://librechat-ollama.librechat.svc.cluster.local:11434/v1" # Change this to your Ollama URL if it's different
+        #  token: "EMPTY"      
+        - id: "${LLM_SERVER_ID}"
+          url: "${LLM_SERVER_URL}"
+          token: "${LLM_SERVER_TOKEN}"
+    permission:
+      enabled: true
+      rbac:
+        policies-csv-file: ./rbac-policy.csv
+        policyFileReload: true
+        admin:
+          users:
+            - name: user:default/maximilianopizarro
+

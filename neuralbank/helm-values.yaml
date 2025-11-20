@@ -1,0 +1,29 @@
+mattermost:
+  # --- Configuración Global ---
+  global:
+    postgresql:
+      auth:
+        postgresPassword: "supersecretpassword"
+        username: "neuralbank"
+        password: "neuralbank123!"
+        database: "neuralbank"
+
+  # --- Backend ---
+  backend:
+    image:
+      repository: quay.io/maximilianopizarro/neuralbank-backend
+      tag: "latest"
+      pullPolicy: Always
+    service:
+      port: 8080
+    replicaCount: 1
+
+  # --- Frontend ---
+  frontend:
+    image:
+      repository: quay.io/maximilianopizarro/neuralbank-frontend 
+      tag: "latest"
+      pullPolicy: Always
+    service:
+      port: 8080
+    replicaCount: 1

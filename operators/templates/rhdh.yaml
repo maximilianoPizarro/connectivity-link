@@ -1,0 +1,36 @@
+{{- if eq .Values.rhdh.enabled true }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhdh-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  labels:
+    operators.coreos.com/rhdh.rhdh-operator: ""
+---
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: rhdh-operator
+  namespace: rhdh-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec: {}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rhdh-operator
+  namespace: rhdh-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  channel: {{ .Values.rhdh.channel }}
+{{- if $.Values.rhdh.startingCSV }}
+  startingCSV: {{ .Values.rhdh.startingCSV }}
+{{- end }}
+  installPlanApproval: Automatic
+  name: rhdh
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+{{- end }}

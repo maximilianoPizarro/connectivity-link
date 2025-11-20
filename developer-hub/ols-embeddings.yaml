@@ -1,0 +1,69 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ols-embeddings
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: gp3-csi
+  volumeMode: Filesystem
+---
+# ols-embedding-model-populator-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ols-embedding-model-populator
+  namespace: developer-hub # Make sure this is your RHDH namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure # Retries if the download fails
+      containers:
+        - name: model-downloader
+          # Using an image that has git pre-installed or easily installable
+          image: alpine/git:latest # alpine is very small and has apk for installing git
+          command: ["sh", "-c"]
+          args:
+            - |
+              # Ensure git is available (already in alpine/git, but good practice)
+              apk add --no-cache git || true 
+              
+              MODEL_URL="https://huggingface.co/sentence-transformers/all-mpnet-base-v2"
+              DEST_PATH="/mnt/embeddings/all-mpnet-base-v2"
+              
+              echo "Checking if model already exists at $DEST_PATH/pytorch_model.bin"
+              if [ -f "$DEST_PATH/pytorch_model.bin" ]; then
+                echo "Model already exists. Skipping download."
+              else
+                echo "Model not found. Downloading $MODEL_URL..."
+                # Clone the model repository directly into the mounted volume
+                git clone "$MODEL_URL" "$DEST_PATH"
+                if [ $? -ne 0 ]; then
+                  echo "Error: git clone failed. Exiting."
+                  exit 1
+                fi
+                echo "Download complete."
+              fi
+              
+              echo "Listing contents of $DEST_PATH:"
+              ls -la "$DEST_PATH"
+              echo "Job finished successfully."
+          volumeMounts:
+            - name: embeddings-data
+              mountPath: /mnt/embeddings # Mount the PVC here
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+      volumes:
+        - name: embeddings-data
+          persistentVolumeClaim:
+            claimName: ols-embeddings

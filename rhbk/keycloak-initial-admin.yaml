@@ -1,0 +1,8 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: keycloak-initial-admin
+data:
+  password: ZDlmYWE5ZDY0M2VkNDcwNGI0MTNmOGQwYjBhN2U3ZDM=
+  username: YWRtaW4=
+type: kubernetes.io/basic-auth

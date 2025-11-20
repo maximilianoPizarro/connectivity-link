@@ -1,0 +1,79 @@
+# ------------------------------------------------------------
+# 1. Gateway (Implementación con Istio)
+# ------------------------------------------------------------
+# Este recurso define el punto de entrada (el Edge Router) que Istio gestionará.
+# Kuadrant se encarga de usar Istio si está presente.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: neuralbank-gateway
+  namespace: istio-system # Generalmente se define en el namespace del Control Plane de Istio
+spec:
+  gatewayClassName: istio # Indica que Istio debe implementar este Gateway
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      # Necesitas configurar un Secret con el certificado TLS real aquí.
+      # tls:
+      #   mode: Terminate
+      #   certificateRefs:
+      #     - kind: Secret
+      #       name: neuralbank-tls-secret
+
+---
+# ------------------------------------------------------------
+# 2. HTTPRoute (Enrutamiento para Frontend y Backend)
+# ------------------------------------------------------------
+# Esta ruta utiliza el Gateway definido arriba y enruta el tráfico
+# a los servicios internos.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: neuralbank-front-back-route
+  namespace: neuralbank-project # Namespace donde residen tus servicios
+spec:
+  parentRefs:
+    - name: neuralbank-gateway
+      namespace: istio-system # Referencia al Gateway en el namespace de Istio
+  
+  hostnames:
+    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com" # Cambia esto por tu dominio real
+
+  rules:
+    # ------------------------------------------------------------
+    # A. Rutas de API y Swagger (BACKEND)
+    # ------------------------------------------------------------
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+        - path:
+            type: PathPrefix
+            value: /swagger-ui
+        - path:
+            type: PathPrefix
+            value: /q
+      backendRefs:
+        - name: neuralbank-backend-svc
+          port: 8080
+
+    # ------------------------------------------------------------
+    # B. Ruta por Defecto (FRONTEND)
+    # ------------------------------------------------------------
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: neuralbank-frontend-svc
+          port: 8080

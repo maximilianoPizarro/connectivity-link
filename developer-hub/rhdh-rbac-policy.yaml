@@ -1,0 +1,57 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rhdh-rbac-policy
+  labels:
+    rhdh.redhat.com/ext-config-sync: 'true'
+  annotations:
+    rhdh.redhat.com/backstage-name: developer-hub
+data:
+  rbac-policy.csv: |
+    # Define a comprehensive 'admin' role
+    p, role:default/platformengineer, lightspeed.chat, read, allow
+    p, role:default/platformengineer, lightspeed.chat, create, allow
+    p, role:default/platformengineer, lightspeed.chat, update, allow
+    p, role:default/platformengineer, lightspeed.chat, delete, allow
+
+    p, role:default/platformengineer, catalog-entity, read, allow
+    p, role:default/platformengineer, catalog-entity, create, allow
+    p, role:default/platformengineer, catalog-entity, update, allow
+    p, role:default/platformengineer, catalog-entity, delete, allow
+
+    p, role:default/platformengineer, catalog.location, read, allow
+    p, role:default/platformengineer, catalog.location, create, allow
+    p, role:default/platformengineer, catalog.location, delete, allow
+
+    p, role:default/platformengineer, catalog.entity.create, create, allow
+    p, role:default/platformengineer, scaffolder-template, read, allow
+    p, role:default/platformengineer, scaffolder.task, read, allow
+    p, role:default/platformengineer, scaffolder.task, create, allow
+    p, role:default/platformengineer, scaffolder.task, delete, allow
+    p, role:default/platformengineer, scaffolder.action.execute, use, allow
+
+    p, role:default/platformengineer, permission.policy, read, allow
+
+    # Assign maximilianopizarro to the new 'platformengineer' role
+    g, user:default/maximilianopizarro, role:default/platformengineer
+
+    # If you still want the 'rhdhpai-users' role for other users, keep its definition:
+    p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow
+    p, role:default/rhdhpai-users, lightspeed.chat.create, create, allow
+    p, role:default/rhdhpai-users, lightspeed.chat.delete, delete, allow    
+    p, role:default/rhdhpai-users, catalog-entity, read, allow
+    p, role:default/rhdhpai-users, catalog-entity, update, allow
+    p, role:default/rhdhpai-users, catalog-entity, delete, allow
+    p, role:default/rhdhpai-users, catalog.location.read, read, allow
+    p, role:default/rhdhpai-users, catalog.location.create, create, allow
+    p, role:default/rhdhpai-users, catalog.location.delete, delete, allow
+    p, role:default/rhdhpai-users, catalog.entity.create, create, allow
+    p, role:default/rhdhpai-users, scaffolder-template, read, allow
+    p, role:default/rhdhpai-users, scaffolder.task.read, read, allow
+    p, role:default/rhdhpai-users, scaffolder.task.create, create, allow
+
+    # If you still need 'template-executers' for other users, keep its definition:
+    p, role:default/template-executers, scaffolder.action.execute, use, allow
+
+    g, user:default/maximilianopizarro, role:default/rhdhpai-users
+    g, user:default/maximilianopizarro, role:default/template-executers

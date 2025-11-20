@@ -1,0 +1,32 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: rhbk
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgres-db
+    usernameSecret:
+      name: keycloak-db-secret
+      key: username
+    passwordSecret:
+      name: keycloak-db-secret
+      key: password
+  http: {}
+  #http:
+  #  tlsSecret: rhbk-tls-secret
+  hostname:
+    hostname: rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com
+  proxy:
+    headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
+  additionalOptions:
+    - name: http-enabled
+      value: "true"
+    - name: proxy
+      value: "edge"
+  bootstrapAdmin: 
+    user:
+      secret: keycloak-initial-admin

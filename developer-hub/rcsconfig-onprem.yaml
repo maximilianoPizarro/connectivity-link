@@ -1,0 +1,38 @@
+# rcsconfig.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rcsconfig
+  namespace: developer-hub
+  labels:
+    rhdh.redhat.com/ext-config-sync: 'true'
+  annotations:
+    rhdh.redhat.com/backstage-name: developer-hub
+data:
+  rcsconfig.yaml: |
+    llm_providers:
+      - name: road-core-sidecar
+        type: openai
+        url: http://road-core-sidecar:8080
+        models:
+          - name: granite3-dense:8b
+    ols_config:
+      reference_content:
+        product_docs_index_path: "./vector_db/rhdh_product_docs/1.6"
+        product_docs_index_id: rhdh-product-docs-1_6
+      embeddings_model_path: "/opt/ols-embeddings/all-mpnet-base-v2"
+      conversation_cache:
+        type: memory
+        memory:
+          max_entries: 1000
+      authentication_config:
+        module: "noop"
+      default_provider: road-core-sidecar
+      default_model: granite3-dense:8b
+      query_validation_method: disabled
+    dev_config:
+      embed_model_path: "/opt/ols-embeddings/all-mpnet-base-v2" 
+      enable_dev_ui: false
+      disable_auth: false
+      disable_tls: true
+      enable_system_prompt_override: true

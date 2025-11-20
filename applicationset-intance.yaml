@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ia-development-instance
+  namespace: openshift-gitops
+spec:
+  generators:
+    - list:
+        elements:
+          - name: rhbk
+            namespace: rhbk-operator
+            path: rhbk
+          - name: developer-hub
+            namespace: developer-hub
+            path: developer-hub
+          - name: neuralbank
+            namespace: neuralbank
+            path: neuralbank            
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{path}}'
+        kustomize:
+          namePrefix: '' 
+          nameSuffix: '' 
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
