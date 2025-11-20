@@ -3,6 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: rhbk-gitops-role
+  namespace: rhbk-operator  
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
 rules:
@@ -114,6 +115,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: rhbk-gitops-rolebinding
+  namespace: rhbk-operator  
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
 subjects:
