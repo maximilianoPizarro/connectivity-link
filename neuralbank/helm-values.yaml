@@ -1,4 +1,4 @@
-neuralbank:
+neuralbank-stack:
   # --- Configuración Global ---
   global:
     postgresql:

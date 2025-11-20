@@ -6,7 +6,7 @@ kind: Gateway
 metadata:
   name: neuralbank-gateway
   annotations:
-    argocd.argoproj.io/sync-wave: "5"  
+    argocd.argoproj.io/sync-wave: "4"  
 spec:
   gatewayClassName: istio
   listeners:
