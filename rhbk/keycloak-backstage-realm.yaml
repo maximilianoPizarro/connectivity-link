@@ -9,6 +9,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
+  keycloakCRName: rhbk
   realm:
     id: neuralbank
     realm: neuralbank
