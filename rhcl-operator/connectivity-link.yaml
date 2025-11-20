@@ -1,47 +1,36 @@
----
-# ------------------------------------------------------------
-# 2. HTTPRoute (Enrutamiento para Frontend y Backend)
-# ------------------------------------------------------------
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
-  name: neuralbank-front-back-route
+  name: argocd-app-httproute-manager
   namespace: neuralbank
   annotations:
-    argocd.argoproj.io/sync-wave: "4"   
-spec:
-  parentRefs:
-    - name: neuralbank-gateway
-      namespace: istio-system
-  
-  hostnames:
-    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
-
-  rules:
-    # ------------------------------------------------------------
-    # A. Rutas de API y Swagger (BACKEND)
-    # ------------------------------------------------------------
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /api
-        - path:
-            type: PathPrefix
-            value: /swagger-ui
-        - path:
-            type: PathPrefix
-            value: /q
-      backendRefs:
-        - name: neuralbank-backend-svc
-          port: 8080
-
-    # ------------------------------------------------------------
-    # B. Ruta por Defecto (FRONTEND)
-    # ------------------------------------------------------------
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: neuralbank-frontend-svc
-          port: 8080
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - httproutes
+  verbs:
+  - create
+  - get
+  - update
+  - patch
+  - delete
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-app-httproute-manager-binding
+  namespace: neuralbank-project
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-app-httproute-manager
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
