@@ -2,8 +2,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: mattermost-gitops-role
-  namespace: mattermost
+  name: neuralbank-gitops-role
+  namespace: neuralbank
 rules:
   - apiGroups:
       - ""
@@ -87,13 +87,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: mattermost-gitops-rolebinding
-  namespace: mattermost
+  name: neuralbank-gitops-rolebinding
+  namespace: neuralbank
 subjects:
   - kind: ServiceAccount
     name: openshift-gitops-argocd-application-controller
     namespace: openshift-gitops
 roleRef:
   kind: Role
-  name: mattermost-gitops-role
+  name: neuralbank-gitops-role
   apiGroup: rbac.authorization.k8s.io
