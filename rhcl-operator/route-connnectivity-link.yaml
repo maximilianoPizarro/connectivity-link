@@ -48,7 +48,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: neuralbank-app-writer
-  namespace: neuralbank-stack 
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 rules:
@@ -71,6 +71,18 @@ rules:
       - apps
     resources:
       - deployments
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - httproutes
     verbs:
       - create
       - delete
