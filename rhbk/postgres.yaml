@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: postgresql-db
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   serviceName: postgresql-db-service
   selector:

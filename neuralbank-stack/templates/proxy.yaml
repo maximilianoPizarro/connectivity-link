@@ -60,6 +60,7 @@ metadata:
     app.openshift.io/runtime: nginx
   annotations:
     app.openshift.io/connects-to: "{{ .Release.Name }}-backend,{{ .Release.Name }}-frontend"
+    argocd.argoproj.io/sync-wave: "3"        
 spec:
   replicas: 1
   selector:
@@ -94,6 +95,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-proxy-svc
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"    
 spec:
   type: {{ .Values.proxy.service.type }}
   selector:
