@@ -18,7 +18,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: stable-v26.4
-  startingCSV: rhbk-operator.26.4.4-opr.1
   installPlanApproval: Automatic
   name: rhbk-operator
   source: redhat-operators
