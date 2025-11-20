@@ -6,6 +6,8 @@ kind: Gateway
 metadata:
   name: neuralbank-gateway
   namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"  
 spec:
   gatewayClassName: istio
   listeners:
@@ -27,3 +29,41 @@ spec:
       #   certificateRefs:
       #     - kind: Secret
       #       name: neuralbank-tls-secret
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-gateway-manager
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gateways
+  - httproutes
+  verbs:
+  - create
+  - get
+  - update
+  - patch
+  - delete
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-gateway-manager-binding
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-gateway-manager
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
