@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels:
+      app: neuralbank-backend
+      app.openshift.io/runtime: quarkus
+  annotations:
+      app.openshift.io/connects-to: "neuralbank-db"        
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: neuralbank-backend
+  template:
+    metadata:
+      labels:
+        app: neuralbank-backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: QUARKUS_DATASOURCE_JDBC_URL
+              value: "jdbc:postgresql://neuralbank-db:5432/{{ .Values.global.postgresql.auth.database }}"
+            - name: QUARKUS_DATASOURCE_USERNAME
+              value: "{{ .Values.global.postgresql.auth.username }}"
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              value: "{{ .Values.global.postgresql.auth.password }}"
+            - name: QUARKUS_HTTP_CORS_ORIGINS
+              value: "*"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neuralbank-backend-svc
+spec:
+  selector:
+    app: neuralbank-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-neuralbank
+  labels:
+    app: neuralbank-proxy
+    release: {{ .Release.Name }}
+spec:
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-proxy-svc
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

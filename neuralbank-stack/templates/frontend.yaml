@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+      app: neuralbank-frontend
+      app.openshift.io/runtime: nodejs
+  annotations:
+    app.openshift.io/connects-to: "neuralbank-backend"    
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: neuralbank-frontend
+  template:
+    metadata:
+      labels:
+        app: neuralbank-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neuralbank-frontend-svc
+spec:
+  selector:
+    app: neuralbank-frontend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

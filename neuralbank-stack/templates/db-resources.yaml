@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: neuralbank-db
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: neuralbank-db
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: neuralbank-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

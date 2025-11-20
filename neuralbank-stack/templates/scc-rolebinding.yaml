@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: neuralbank-proxy-sa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-proxy
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-anyuid-binding
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: neuralbank-proxy-sa
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:anyuid
