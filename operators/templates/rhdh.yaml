@@ -24,8 +24,8 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
-  channel: {{ .Values.rhdh.channel }}
-  startingCSV: {{ .Values.rhdh.startingCSV }}
+  channel: {{ .Values.rhdh.channel | default "stable" }}
+  startingCSV: {{ .Values.rhdh.startingCSV | default "" }}
   installPlanApproval: Automatic
   name: rhdh
   source: redhat-operators
