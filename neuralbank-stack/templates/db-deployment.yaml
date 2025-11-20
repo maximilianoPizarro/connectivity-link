@@ -16,7 +16,7 @@ spec:
       labels:
         app: neuralbank-db
     spec:
-      serviceAccountName: default
+      serviceAccountName: neuralbank-proxy-sa
       securityContext:
         fsGroup: 26
         runAsUser: 26
@@ -34,17 +34,16 @@ spec:
                 - ALL
           ports:
             - containerPort: 5432
+              name: postgresql
           env:
             - name: POSTGRESQL_ADMIN_PASSWORD
               value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
-            - name: POSTGRESQL_USER
-              value: "{{ .Values.global.postgresql.auth.username }}"
-            - name: POSTGRESQL_PASSWORD
-              value: "{{ .Values.global.postgresql.auth.password }}"
             - name: POSTGRESQL_DATABASE
               value: "{{ .Values.global.postgresql.auth.database }}"
             - name: POSTGRESQL_INITDB_ARGS
-              value: "--auth-host=md5"
+              value: "--auth-host=md5 --auth-local=trust"
+            - name: POSTGRESQL_PGCTLTIMEOUT
+              value: "60"
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgsql/data
