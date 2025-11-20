@@ -16,11 +16,5 @@ subscriptions:
   - name: servicemeshoperator3
     namespace: openshift-operators
     channel: stable
-    source: redhat-operators    
-rhdh:
-  namespace: rhdh-operator
-  channel: fast
-  startingCSV: rhdh-operator.v1.8.0
-rhbk:
-  namespace: rhbk-operator
-  channel: stable-v26.4
+    source: redhat-operators
+

@@ -6,10 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
-  channel: {{ .Values.rhbk.channel }}
-{{- if $.Values.rhbk.startingCSV }}
-  startingCSV: {{ .Values.rhbk.startingCSV }}
-{{- end }}
+  channel: stable-v26.4
   installPlanApproval: Automatic
   name: rhbk-operator
   source: redhat-operators
