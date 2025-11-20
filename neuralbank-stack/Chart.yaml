@@ -1,20 +1,11 @@
 apiVersion: v2
 name: neuralbank-stack
-description: Financial Risk Evaluation AI Application Demo
+description: A Helm chart to deploy the NeuralBank stack: PostgreSQL (configured via globals), backend, frontend and an NGINX proxy/gateway.
 type: application
+
 version: 0.1.0
-appVersion: "1.0.0"
-home: https://maximilianopizarro.github.io/neuralbank-stack/
-icon: https://maximilianopizarro.github.io/neuralbank-stack/neuralbank.svg
-keywords:
-  - neuralbank
-  - banking
-  - microservices
-  - helm
-maintainers:
-  - name: Carlos Estay
-    email: cestay@redhat.com
-  - name: Maximiliano Pizarro
-    email: mapizarr@redhat.com
-sources:
-  - https://github.com/maximilianoPizarro/neuralbank-stack
+appVersion: 0.1.0
+dependencies:
+- name: neuralbank-stack
+  version: "0.1.0"
+  repository: "https://maximilianopizarro.github.io/neuralbank-stack"
