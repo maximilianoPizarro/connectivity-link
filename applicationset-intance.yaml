@@ -7,21 +7,31 @@ spec:
   generators:
     - list:
         elements:
+          - name: namespaces
+            namespace: openshift-gitops
+            path: namespaces
+            sync_wave: "1"        
           - name: operators
             namespace: openshift-gitops
-            path: operators        
+            path: operators
+            sync_wave: "2"            
           - name: rhbk
             namespace: rhbk-operator
             path: rhbk
+            sync_wave: "2"            
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
+            sync_wave: "2"            
           - name: neuralbank
             namespace: neuralbank
-            path: neuralbank            
+            path: neuralbank
+            sync_wave: "3" 
   template:
     metadata:
       name: '{{name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{sync_wave}}'      
     spec:
       project: default
       source:

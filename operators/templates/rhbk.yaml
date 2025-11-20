@@ -12,13 +12,6 @@ spec:
   source: redhat-operators
   sourceNamespace: openshift-marketplace
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: rhbk-operator
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
----
 apiVersion: operators.coreos.com/v1alpha2
 kind: OperatorGroup
 metadata:
