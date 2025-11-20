@@ -8,7 +8,7 @@ metadata:
   name: neuralbank-front-back-route
   namespace: neuralbank
   annotations:
-    argocd.argoproj.io/sync-wave: "3"   
+    argocd.argoproj.io/sync-wave: "4"   
 spec:
   parentRefs:
     - name: neuralbank-gateway

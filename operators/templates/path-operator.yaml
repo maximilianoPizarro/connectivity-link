@@ -2,7 +2,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argocd-patch-operator-writer
-  namespace: patch-operator           
+  namespace: patch-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"             
 rules:
   - apiGroups:
       - "redhatcop.redhat.io" 
@@ -21,7 +23,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argocd-patch-operator-binding 
-  namespace: patch-operator           
+  namespace: patch-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"             
 subjects:
   - kind: ServiceAccount
     name: openshift-gitops-argocd-application-controller 

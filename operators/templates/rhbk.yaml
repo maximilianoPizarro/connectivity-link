@@ -4,7 +4,7 @@ metadata:
   name: rhbk-operator
   namespace: rhbk-operator
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   targetNamespaces:
     - rhbk-operator
@@ -17,9 +17,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
-  channel: stable-v26.4
-  startingCSV: rhbk-operator.26.4.4-opr.1
-  installPlanApproval: Automatic
+  channel: stable-v26.2
   name: rhbk-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
