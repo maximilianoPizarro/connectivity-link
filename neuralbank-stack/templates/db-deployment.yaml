@@ -47,7 +47,7 @@ spec:
             - name: POSTGRESQL_PASSWORD
               value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
             - name: POSTGRESQL_USER
-              value: "postgres"
+              value: "neuralbank"
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgsql/data
