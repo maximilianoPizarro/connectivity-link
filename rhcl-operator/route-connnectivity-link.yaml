@@ -13,13 +13,14 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "*.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
+    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
 
   rules:
     - filters:
-       - type: URLRewrite
-         urlRewrite:
+       - type: RequestRedirect
+         requestRedirect:
            scheme: https
+           statusCode: 301
     # ------------------------------------------------------------
     # A. Rutas de API y Swagger (BACKEND)
     # ------------------------------------------------------------
