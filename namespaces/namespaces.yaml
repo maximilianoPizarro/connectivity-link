@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kudrant-operator
+  name: kuadrant-operator
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 ---
