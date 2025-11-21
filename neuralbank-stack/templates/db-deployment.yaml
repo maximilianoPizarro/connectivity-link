@@ -24,6 +24,7 @@ spec:
           image: postgres:15-alpine
           imagePullPolicy: IfNotPresent
           securityContext:
+            runAsUser: 1000 
             allowPrivilegeEscalation: false
             capabilities:
               drop:
