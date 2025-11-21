@@ -3,7 +3,7 @@ kind: ServiceMeshControlPlane
 metadata:
   name: basic-install
   annotations:
-    argocd.argoproj.io/sync-wave: "4" 
+    argocd.argoproj.io/sync-wave: "3" 
 spec:
   version: v2.5
   tracing:
