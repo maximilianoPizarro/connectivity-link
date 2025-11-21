@@ -21,6 +21,24 @@ spec:
         fsGroup: 26
         runAsUser: 26
         runAsGroup: 26
+      initContainers:
+        - name: create-database
+          image: registry.redhat.io/rhel8/postgresql-13:latest
+          imagePullPolicy: Always
+          env:
+            - name: PGPASSWORD
+              value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB_NAME
+              value: "{{ .Values.global.postgresql.auth.database }}"
+          command: ["sh", "-c"]
+          args:
+            - |
+              until pg_isready -h localhost -U ${POSTGRES_USER}; do
+                sleep 2
+              done
+              psql -h localhost -U ${POSTGRES_USER} -d postgres -c "CREATE DATABASE ${POSTGRES_DB_NAME};"
       containers:
         - name: postgresql
           image: registry.redhat.io/rhel8/postgresql-13:latest
@@ -53,4 +71,5 @@ spec:
               mountPath: /var/lib/pgsql/data
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: neuralbank-db-pvc
