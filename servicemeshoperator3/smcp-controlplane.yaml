@@ -1,0 +1,27 @@
+apiVersion: maistra.io/v2
+kind: ServiceMeshControlPlane
+metadata:
+  name: basic-install
+  namespace: istio-system 
+  annotations:
+    argocd.argoproj.io/sync-wave: "4" 
+spec:
+  version: v2.5
+  tracing:
+    type: None
+  profiles:
+    - default 
+  gateways:
+    openshiftIngress: true 
+    ingress:
+      enabled: true
+      service:
+        type: LoadBalancer
+
+  addons:
+    grafana:
+      enabled: false
+    kiali:
+      enabled: false
+    prometheus:
+      enabled: false
