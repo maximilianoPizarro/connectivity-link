@@ -44,5 +44,4 @@ spec:
               mountPath: /var/lib/postgresql/data
       volumes:
         - name: data
-          persistentVolumeClaim:
-            claimName: neuralbank-db-pvc
+          emptyDir: {}
