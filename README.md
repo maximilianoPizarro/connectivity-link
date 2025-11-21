@@ -11,7 +11,7 @@
 </p>
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.com/connectivity-link/rhcl-overview.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-overview.png" width="900"/>
 </div>
 
 TL;DR
@@ -19,6 +19,7 @@ TL;DR
 - Minimal step: install the OpenShift GitOps operator.
 - Then: `oc apply -f applicationset-intance.yaml` to instantiate the demo applications.
 - Outcome: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository.
+
 
 Quick overview
 - Connectivity Link: a set of configurations and examples demonstrating connectivity between components (services, gateways, and authentication) within an OpenShift cluster in a GitOps context.
@@ -61,14 +62,13 @@ oc apply -f applicationset-intance.yaml
 
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.com/connectivity-link/rhcl.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-gitops.png" width="900"/>
 </div>
 
 
 Installation and permissions (details)
 - The OpenShift GitOps operator requires admin access to install on the cluster.
 - The ApplicationSet (`applicationset-intance.yaml`) may create resources across namespaces and, depending on the applications' declarations, might need ClusterRole/ClusterRoleBinding — hence cluster-admin is recommended during initial setup.
-
 
 
 Top-level layout (what each path represents):
@@ -107,6 +107,7 @@ Notes
 - Everything in this repo is intended to be applied via a GitOps controller (ArgoCD), so changes to these files represent the desired cluster state.
 
 
+
 <div align="center">
-  <img src="https://maximilianopizarro.github.com/connectivity-link/openshift-gitops.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl.png" width="900"/>
 </div>
