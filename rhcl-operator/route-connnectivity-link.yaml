@@ -34,6 +34,13 @@ spec:
         - path:
             type: PathPrefix
             value: /q
+      filters:
+        # CLAVE: Adjunta la política de autenticación definida en keycloak-authpolicy.yaml
+        - type: ExtensionRef
+          extensionRef:
+            group: apis.kuadrant.io
+            kind: AuthPolicy
+            name: neuralbank-backend-auth
       backendRefs:
         - name: neuralbank-backend-svc
           port: 8080

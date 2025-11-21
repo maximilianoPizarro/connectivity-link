@@ -1,0 +1,21 @@
+apiVersion: apis.kuadrant.io/v1beta2
+kind: AuthPolicy
+metadata:
+  name: neuralbank-backend-auth
+  namespace: neuralbank-stack
+  annotations:
+    "argocd.argoproj.io/sync-wave": "7"
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-front-back-route
+  authentication:
+    keycloak-oidc:
+      labels:
+        - protect-with-keycloak 
+      issuer:
+        url: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
+      audiences:
+        - neuralbank-frontend
+        - neuralbank-backend
