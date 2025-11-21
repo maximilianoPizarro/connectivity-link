@@ -25,7 +25,7 @@ spec:
             - containerPort: 8080
           env:
             - name: QUARKUS_DATASOURCE_JDBC_URL
-              value: "jdbc:postgresql://neuralbank-db:5432/{{ .Values.global.postgresql.auth.database }}"
+              value: "jdbc:postgresql://neuralbank-db:5432/postgres"
             - name: QUARKUS_DATASOURCE_USERNAME
               value: "postgres"
             - name: QUARKUS_DATASOURCE_PASSWORD
