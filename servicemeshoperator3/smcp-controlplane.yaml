@@ -1,22 +1,12 @@
-apiVersion: install.istio.io/v1alpha1
 kind: Istio
+apiVersion: sailoperator.io/v1
 metadata:
-  name: basic-install
+  name: default
   annotations:
-    argocd.argoproj.io/sync-wave: "3" 
+    argocd.argoproj.io/sync-wave: "3"
 spec:
-  profile: default
-  components:
-    ingressGateways:
-      - name: istio-ingressgateway
-        enabled: true
-        k8s:
-          service:
-            type: LoadBalancer
-    pilot:
-      enabled: true
-  
-  values:
-    gateways:
-      istio-ingressgateway:
-        externalTrafficPolicy: Local
+  namespace: istio-system
+  updateStrategy:
+    inactiveRevisionDeletionGracePeriodSeconds: 30
+    type: InPlace
+  version: v1.27.3
