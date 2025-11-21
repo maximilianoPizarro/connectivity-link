@@ -97,6 +97,18 @@ rules:
       - update
       - watch
   - apiGroups:
+      - kuadrant.io
+    resources:
+      - authpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
       - extensions.kuadrant.io
     resources:
       - oidcpolicies 
