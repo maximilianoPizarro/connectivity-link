@@ -10,3 +10,40 @@ spec:
     inactiveRevisionDeletionGracePeriodSeconds: 30
     type: InPlace
   version: v1.27.3
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-sail-operator-manager
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+- apiGroups:
+  - sailoperator.io
+  resources:
+  - istios
+  - istios/finalizers
+  - istios/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-sail-operator-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-sail-operator-manager 
