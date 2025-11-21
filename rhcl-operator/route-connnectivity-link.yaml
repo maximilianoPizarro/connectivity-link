@@ -16,11 +16,11 @@ spec:
     - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
 
   rules:
-    - filters:
-       - type: RequestRedirect
-         requestRedirect:
-           scheme: https
-           statusCode: 301
+    #- filters:
+    #   - type: RequestRedirect
+    #     requestRedirect:
+    #       scheme: https
+    #       statusCode: 301
     # ------------------------------------------------------------
     # A. Rutas de API y Swagger (BACKEND)
     # ------------------------------------------------------------
