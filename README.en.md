@@ -1,40 +1,8 @@
-# Connectivity Link — Demo & GitOps overview
-
-<link rel="icon" href="https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/main/favicon-152.ico" type="image/x-icon" >
-<p align="left">
-<img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
-<img src="https://img.shields.io/badge/openshift-%23121011.svg?style=for-the-badge&logo=redhat&logoColor=dark" alt="OpenSHift">
-<img src="https://img.shields.io/badge/argocd-0077B5?style=for-the-badge&logo=argo" alt="kubernetes">
-<img src="https://img.shields.io/badge/helm-0db7ed?style=for-the-badge&logo=helm&logoColor=white" alt="Helm">
-<a href="https://github.com/maximilianoPizarro/ia-developement-gitops"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=linkedin&logoColor=black" alt="github" /></a>
-<a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="linkedin" /></a>
-</p>
+# Connectivity Link — demo & GitOps overview
 
 <div align="center">
   <img src="https://maximilianopizarro.github.com/connectivity-link/rhcl-overview.png" width="900"/>
 </div>
-
-TL;DR
-- Requirements: OpenShift 4.20 + cluster-admin.
-- Minimal step: install the OpenShift GitOps operator.
-- Then: `oc apply -f applicationset-intance.yaml` to instantiate the demo applications.
-- Outcome: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository.
-
-Quick overview
-- Connectivity Link: a set of configurations and examples demonstrating connectivity between components (services, gateways, and authentication) within an OpenShift cluster in a GitOps context.
-- OpenShift GitOps (ArgoCD): used as the GitOps controller to reconcile the declared state in this repository with the cluster.
-
-Important requirements
-- OpenShift version: **4.20** (this demo and manifests are validated against this version).
-- Permissions: **cluster-admin** privileges are required to install the OpenShift GitOps operator and to allow the ApplicationSet/instance to create/manage cluster-scoped objects when needed.
-
-Getting started (single minimal manual step)
-1. Install the OpenShift GitOps Operator (via OperatorHub in the OpenShift console or via OLM). This is the only manual step required before applying the manifests in this demo.
-   - In the OpenShift console: Operators → OperatorHub → search for "OpenShift GitOps" → Install.
-   - CLI alternative: use `oc` to install the operator with OLM if you have an appropriate catalog/package available.
-2. Create the ApplicationSet / ArgoCD instance using the top-level manifest `applicationset-intance.yaml` in this repository:
-
-
 
 This repository contains a demo of Connectivity Link using a GitOps workflow. It shows how applications and infrastructure are declared as Kubernetes/Helm manifests and managed with ArgoCD (OpenShift GitOps). Authentication for the demo is provided by Keycloak.
 
@@ -56,20 +24,39 @@ Getting started (single minimal manual step)
 oc apply -f applicationset-intance.yaml
 ```
 
-   - `applicationset-intance.yaml` creates/instantiates the applications defined in this repo and points them to this repository for ArgoCD to reconcile.
-   - After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed.
+- `applicationset-intance.yaml` creates/instantiates the applications defined in this repo and points them to this repository for ArgoCD to reconcile.
+- After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed.
 
+Image pattern in documentation
+For centering large images in documentation and keeping visual consistency we use this HTML pattern inside Markdown:
 
+```html
 <div align="center">
-  <img src="https://maximilianopizarro.github.com/connectivity-link/rhcl.png" width="900"/>
+  <img src="https://<your-host>/path/to/repo/docs/image.png" width="900"/>
 </div>
+```
 
+Example in this repo (already included above):
+
+```html
+<div align="center">
+  <img src="https://maximilianopizarro.github.com/connectivity-link/rhcl-overview.png" width="900"/>
+</div>
+```
+
+Notes about image hosting
+- If you use GitHub Pages or `raw.githubusercontent.com`, adjust the URL to where you serve static assets.
+- Keep `width="900"` for most screenshots; adjust as required.
 
 Installation and permissions (details)
 - The OpenShift GitOps operator requires admin access to install on the cluster.
 - The ApplicationSet (`applicationset-intance.yaml`) may create resources across namespaces and, depending on the applications' declarations, might need ClusterRole/ClusterRoleBinding — hence cluster-admin is recommended during initial setup.
 
-
+TL;DR
+- Requirements: OpenShift 4.20 + cluster-admin.
+- Minimal step: install the OpenShift GitOps operator.
+- Then: `oc apply -f applicationset-intance.yaml` to instantiate the demo applications.
+- Outcome: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository.
 
 Top-level layout (what each path represents):
 
@@ -105,8 +92,3 @@ Top-level layout (what each path represents):
 Notes
 - The demo config uses a Keycloak operator CR ([`rhbk/keycloak.yaml`](rhbk/keycloak.yaml)) to bootstrap an instance and wire it to a Postgres DB.
 - Everything in this repo is intended to be applied via a GitOps controller (ArgoCD), so changes to these files represent the desired cluster state.
-
-
-<div align="center">
-  <img src="https://maximilianopizarro.github.com/connectivity-link/openshift-gitops.png" width="900"/>
-</div>
