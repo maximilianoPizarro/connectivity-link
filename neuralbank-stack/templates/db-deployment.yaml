@@ -16,6 +16,7 @@ spec:
       labels:
         app: neuralbank-db
     spec:
+      serviceAccountName: neuralbank-proxy-sa
       securityContext:
         runAsNonRoot: true
         fsGroup: 1000
