@@ -18,14 +18,16 @@ spec:
     spec:
       serviceAccountName: neuralbank-proxy-sa
       securityContext:
-        runAsNonRoot: true
-        fsGroup: 1000
+        fsGroup: 26
+        runAsUser: 26
+        runAsGroup: 26
       containers:
         - name: postgresql
-          image: postgres:15-alpine
-          imagePullPolicy: IfNotPresent
+          image: registry.redhat.io/rhel8/postgresql-15:latest
+          imagePullPolicy: Always
           securityContext:
-            runAsUser: 1000 
+            runAsUser: 26
+            runAsGroup: 26
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -34,15 +36,22 @@ spec:
             - containerPort: 5432
               name: postgresql
           env:
-            - name: POSTGRES_DB
-              value: "{{ .Values.global.postgresql.auth.database }}"
-            - name: POSTGRES_USER
-              value: "neuralbank"
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_ADMIN_PASSWORD
               value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
+            - name: POSTGRESQL_DATABASE
+              value: "{{ .Values.global.postgresql.auth.database }}"
+            - name: POSTGRESQL_INITDB_ARGS
+              value: "--auth-host=md5 --auth-local=trust"
+            - name: POSTGRESQL_PGCTLTIMEOUT
+              value: "60"
+            - name: POSTGRESQL_PASSWORD
+              value: "{{ .Values.global.postgresql.auth.postgresPassword }}"
+            - name: POSTGRESQL_USER
+              value: "postgres"
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/pgsql/data
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: neuralbank-db-pvc
