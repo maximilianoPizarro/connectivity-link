@@ -1,21 +1,53 @@
+apiVersion: extensions.kuadrant.io/v1alpha1
+kind: OIDCPolicy
+metadata:
+  name: neuralbank-oidc
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  provider:
+    issuerURL: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
+    clientID: neuralbank-backend
+
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-front-back-route
+---
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
-  name: neuralbank-backend-auth
-  namespace: neuralbank-stack
+  name: neuralbank-api-protection
   annotations:
-    "argocd.argoproj.io/sync-wave": "7"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-front-back-route
-  authentication:
-    keycloak-oidc:
-      labels:
-        - protect-with-keycloak 
-      issuer:
-        url: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
-      audiences:
-        - neuralbank-frontend
-        - neuralbank-backend
+
+  overrides:
+    strategy: merge
+    rules:
+      authorization:
+        protect-api:
+          metrics: false
+          priority: 0
+          opa:
+            rego: |
+              allow {
+                cookie := input.request.headers.cookie
+                cookie != ""
+                contains(cookie, "jwt=")
+              }
+          when:
+            - selector: request.path
+              operator: matches
+              value: ^/api
+            - selector: request.path
+              operator: matches
+              value: ^/swagger-ui
+            - selector: request.path
+              operator: matches
+              value: ^/q
+
