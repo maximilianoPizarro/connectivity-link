@@ -1,26 +1,22 @@
-apiVersion: operator.servicemesh.openshift.io/v1
-kind: ServiceMeshControlPlane
+apiVersion: install.istio.io/v1alpha1
+kind: Istio
 metadata:
   name: basic-install
   annotations:
     argocd.argoproj.io/sync-wave: "3" 
 spec:
-  version: v2.5
-  tracing:
-    type: None
-  profiles:
-    - default 
-  gateways:
-    openshiftIngress: true 
-    ingress:
+  profile: default
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: LoadBalancer
+    pilot:
       enabled: true
-      service:
-        type: LoadBalancer
-
-  addons:
-    grafana:
-      enabled: false
-    kiali:
-      enabled: false
-    prometheus:
-      enabled: false
+  
+  values:
+    gateways:
+      istio-ingressgateway:
+        externalTrafficPolicy: Local
