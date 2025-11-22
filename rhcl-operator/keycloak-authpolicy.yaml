@@ -35,11 +35,35 @@ spec:
           priority: 0
           opa:
             rego: |
-              allow {
-                cookie := input.request.headers.cookie
-                cookie != ""
-                contains(cookie, "jwt=")
+              package authentication
+
+              hostname := input.request.host
+              
+              callback_url := concat("", ["https://", hostname, "/auth/callback"])
+              
+              authz_url := concat("", [
+                  "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/oauth/authorize?",
+                  "client_id=neuralbank-frontend",
+                  "&redirect_uri=", url.query_encode(callback_url),
+                  "&response_type=code&scope=openid"
+              ])
+
+              allow = false {
+                  cookie := input.request.headers.cookie
+                  cookie == ""
               }
+              allow = false {
+                  cookie := input.request.headers.cookie
+                  not contains(cookie, "jwt=")
+              }
+
+              allow = true {
+                  cookie := input.request.headers.cookie
+                  contains(cookie, "jwt=")
+              }
+              
+              response.status_code := 302 { not allow }
+              response.headers := {"Location": authz_url} { not allow }
           when:
             - selector: request.path
               operator: matches
