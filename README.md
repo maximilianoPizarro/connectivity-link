@@ -20,6 +20,10 @@ TL;DR
 - Then: `oc apply -f applicationset-intance.yaml` to instantiate the demo applications.
 - Outcome: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository.
 
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topology.png" width="900"/>
+</div>
+
 This repository contains a demo of Connectivity Link using a GitOps workflow. It shows how applications and infrastructure are declared as Kubernetes/Helm manifests and managed with ArgoCD (OpenShift GitOps). Authentication for the demo is provided by Keycloak.
 
 Quick overview
