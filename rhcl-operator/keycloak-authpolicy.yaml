@@ -44,7 +44,7 @@ spec:
               authz_url := concat("", [
                   "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/oauth/authorize?",
                   "client_id=neuralbank-frontend",
-                  "&redirect_uri=", url.query_encode(callback_url),
+                  "&redirect_uri=", callback_url,
                   "&response_type=code&scope=openid"
               ])
 
