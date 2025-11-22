@@ -47,6 +47,10 @@ oc apply -f applicationset-intance.yaml
   <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-gitops.png" width="900"/>
 </div>
 
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operators.png" width="900"/>
+</div>
+
 Installation and permissions (details)
 - The OpenShift GitOps operator requires admin access to install on the cluster.
 - The ApplicationSet (`applicationset-intance.yaml`) may create resources across namespaces and, depending on the applications' declarations, might need ClusterRole/ClusterRoleBinding — hence cluster-admin is recommended during initial setup.
@@ -88,4 +92,8 @@ Notes
 
 <div align="center">
   <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl.png" width="900"/>
+</div>
+
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topology.png" width="900"/>
 </div>
