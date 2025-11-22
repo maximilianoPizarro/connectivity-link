@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - route-connnectivity-link.yaml
   - keycloak-authpolicy.yaml
+  - kuadrant.yaml
 
 namespace: neuralbank-stack
