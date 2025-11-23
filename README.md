@@ -48,7 +48,7 @@ oc apply -f applicationset-intance.yaml
 </div>
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operators.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operator.png" width="900"/>
 </div>
 
 Installation and permissions (details)
@@ -90,10 +90,14 @@ Notes
 - The demo config uses a Keycloak operator CR ([`rhbk/keycloak.yaml`](rhbk/keycloak.yaml)) to bootstrap an instance and wire it to a Postgres DB.
 - Everything in this repo is intended to be applied via a GitOps controller (ArgoCD), so changes to these files represent the desired cluster state.
 
+The Application Solution without Auth 🙌:
+
 <div align="center">
   <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl.png" width="900"/>
 </div>
 
+The Application Solution with Auth 🔐 by powered Red Hat Build of Keycloak & Authorino:
+
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topology.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topogy.png" width="900"/>
 </div>
