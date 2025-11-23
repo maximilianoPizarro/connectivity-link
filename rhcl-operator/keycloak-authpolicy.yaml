@@ -42,9 +42,9 @@ spec:
               callback_url := concat("", ["https://", hostname, "/auth/callback"])
               
               authz_url := concat("", [
-                  "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/oauth/authorize?",
+                  "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?",
                   "client_id=neuralbank-frontend",
-                  "&redirect_uri=", callback_url,
+                  "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback",
                   "&response_type=code&scope=openid"
               ])
 
