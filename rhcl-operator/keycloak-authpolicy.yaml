@@ -25,22 +25,6 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-front-back-route
-
-  overrides:
-    strategy: merge
-    rules:
-apiVersion: kuadrant.io/v1
-kind: AuthPolicy
-metadata:
-  name: neuralbank-api-protection-dos
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
-spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    name: neuralbank-front-back-route
-
   overrides:
     strategy: merge
     rules:
