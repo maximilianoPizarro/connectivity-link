@@ -29,41 +29,41 @@ spec:
   overrides:
     strategy: merge
     rules:
-      authorization:
-        protect-api:
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: neuralbank-api-protection-dos
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-front-back-route
+
+  overrides:
+    strategy: merge
+    rules:
+      authentication:
+        oidc:
+          credentials:
+            cookie:
+              name: jwt
+          jwt:
+            issuerUrl: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank'
           metrics: false
           priority: 0
-          opa:
-            rego: |
-              package authentication
+      response:
+        success: {}
+        unauthenticated:
+          code: 302
+          headers:
+            location:
+              value: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&response_type=code&scope=openid'
+            set-cookie:
+              expression: |-
 
-              hostname := input.request.host
-              
-              callback_url := concat("", ["https://", hostname, "/auth/callback"])
-              
-              authz_url := concat("", [
-                  "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?",
-                  "client_id=neuralbank-frontend",
-                  "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback",
-                  "&response_type=code&scope=openid"
-              ])
-
-              allow = false {
-                  cookie := input.request.headers.cookie
-                  cookie == ""
-              }
-              allow = false {
-                  cookie := input.request.headers.cookie
-                  not contains(cookie, "jwt=")
-              }
-
-              allow = true {
-                  cookie := input.request.headers.cookie
-                  contains(cookie, "jwt=")
-              }
-              
-              response.status_code := 302 { not allow }
-              response.headers := {"Location": authz_url} { not allow }
+                "target=" + request.path + "; domain=; HttpOnly;  SameSite=Lax; Path=/; Max-Age=3600"
           when:
             - selector: request.path
               operator: matches
