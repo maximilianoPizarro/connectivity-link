@@ -8,6 +8,8 @@ spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
     clientID: neuralbank-frontend
+    authorizationEndpoint : "/protocol/openid-connect/auth"
+    redirectURI : "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
 
   targetRef:
     group: gateway.networking.k8s.io
