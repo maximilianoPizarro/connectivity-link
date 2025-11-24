@@ -3,7 +3,7 @@ kind: HTTPRoute
 metadata:
   name: neuralbank-callback-route
   annotations:
-    argocd.argoproj.io/sync-wave: "5"   
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   parentRefs:
     - name: neuralbank-gateway

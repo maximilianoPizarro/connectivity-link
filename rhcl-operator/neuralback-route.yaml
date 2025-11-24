@@ -16,19 +16,6 @@ spec:
     - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
 
   rules:
-    #- filters:
-    #   - type: RequestRedirect
-    #     requestRedirect:
-    #       scheme: https
-    #       statusCode: 301
-    #- matches:
-    #    - path:
-    #        type: PathPrefix
-    #        value: /auth/callback
-    #  backendRefs:
-    #    - name: neuralbank-frontend-svc
-    #      port: 8080
-
     # ------------------------------------------------------------
     # A. Rutas de API y Swagger (BACKEND)
     # ------------------------------------------------------------
