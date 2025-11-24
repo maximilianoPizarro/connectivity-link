@@ -16,5 +16,5 @@ spec:
             type: PathPrefix
             value: /auth/callback
       backendRefs:
-        - name: neuralbank-frontend-svc
-          port: 8080
+        - name: neuralbank-stack-proxy-svc
+          port: 80
