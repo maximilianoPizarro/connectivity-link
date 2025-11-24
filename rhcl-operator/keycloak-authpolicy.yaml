@@ -1,22 +1,17 @@
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
-  name: neuralbank-api-protection
+  name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    name: neuralbank-front-back-route
   overrides:
-    strategy: merge
     rules:
       authentication:
         oidc:
           credentials:
-            cookie:
-              name: jwt
+            authorizationHeader:
+              prefix: Bearer
           jwt:
             issuerUrl: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank'
           metrics: false
@@ -27,23 +22,71 @@ spec:
           code: 302
           headers:
             location:
-            value: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&response_type=code&scope=openid"
+              value: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid'
             set-cookie:
               expression: |-
-                "target=" + request.path + "; HttpOnly; SameSite=Lax; Path=/; Max-Age=3600"
-          when:
-            any:
-              - selector: request.path
-                operator: matches
-                value: ^/api
-              - selector: request.path
-                operator: matches
-                value: ^/swagger-ui
-              - selector: request.path
-                operator: matches
-                value: ^/q
 
-        exclude:
-          - selector: request.path
-            operator: matches
-            value: ^/auth/callback
+                "target=" + request.path + "; domain=; HttpOnly;  SameSite=Lax; Path=/; Max-Age=3600"
+    strategy: merge
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-front-back-route
+---
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: neuralbank-oidc-callback
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  overrides:
+    rules:
+      authorization:
+        deny:
+          metrics: false
+          opa:
+            allValues: false
+            rego: allow = false
+          priority: 2
+        location:
+          metrics: false
+          opa:
+            allValues: true
+            rego: |-
+              cookies := { name: value | raw_cookies := input.request.headers.cookie; cookie_parts := split(raw_cookies, ";"); part := cookie_parts[_]; kv := split(trim(part, " "), "="); count(kv) == 2; name := trim(kv[0], " "); value := trim(kv[1], " ")}
+              location := concat("", ["http:", cookies.target]) { input.auth.metadata.token.id_token; cookies.target }
+              location := "http:" { input.auth.metadata.token.id_token; not cookies.target }
+              location := "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid" { not input.auth.metadata.token.id_token }
+              allow = true
+          priority: 1
+      metadata:
+        token:
+          http:
+            body:
+              expression: |
+
+                "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
+            contentType: application/x-www-form-urlencoded
+            credentials: {}
+            method: POST
+            url: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+          metrics: false
+          priority: 0
+          when:
+            - predicate: 'request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1]).size() > 0'
+      response:
+        success: {}
+        unauthorized:
+          code: 302
+          headers:
+            Authorization:
+              expression: '"Bearer " + auth.metadata.token.id_token'
+            location:
+              expression: auth.authorization.location.location
+    strategy: merge
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-oidc-callback
+

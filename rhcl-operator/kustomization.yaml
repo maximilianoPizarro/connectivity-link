@@ -2,7 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - neuralbank-route.yaml
-  - oidc-policy.yaml
+  - keycloak-authpolicy.yaml
+  - neuralbank-oidc-callback.yaml
   - kuadrant.yaml
 
 namespace: neuralbank-stack
