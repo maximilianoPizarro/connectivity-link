@@ -83,6 +83,9 @@ spec:
               expression: '"Bearer " + auth.metadata.token.id_token'
             location:
               expression: auth.authorization.location.location
+            set-cookie:
+              expression: |
+                "jwt=" + auth.metadata.token.id_token + "; Domain=neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600"
     strategy: merge
   targetRef:
     group: gateway.networking.k8s.io
