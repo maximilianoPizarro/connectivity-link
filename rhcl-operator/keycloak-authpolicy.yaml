@@ -1,7 +1,7 @@
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
-  name: neuralbank-oidc-protected
+  name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -32,7 +32,7 @@ spec:
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
-  name: neuralbank-oidc-callback-manual
+  name: neuralbank-oidc-callback
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -81,7 +81,7 @@ spec:
               expression: auth.authorization.location.location
             set-cookie:
               expression: |
-                "jwt=" + auth.metadata.token.id_token + "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=3600"
+                "jwt=" + auth.metadata.token.id_token + "; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600"
     strategy: merge
   targetRef:
     group: gateway.networking.k8s.io
