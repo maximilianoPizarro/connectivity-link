@@ -43,10 +43,10 @@ spec:
           code: 302
           headers:
             location:
-              value: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com&response_type=code&scope=openid"
+            value: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&response_type=code&scope=openid"
             set-cookie:
               expression: |-
-                "target=" + request.path + "; HttpOnly;  SameSite=Lax; Path=/; Max-Age=3600"
+                "target=" + request.path + "; HttpOnly; SameSite=Lax; Path=/; Max-Age=3600"
           when:
             any:
               - selector: request.path
