@@ -55,8 +55,8 @@ spec:
             allValues: true
             rego: |-
               cookies := { name: value | raw_cookies := input.request.headers.cookie; cookie_parts := split(raw_cookies, ";"); part := cookie_parts[_]; kv := split(trim(part, " "), "="); count(kv) == 2; name := trim(kv[0], " "); value := trim(kv[1], " ")}
-              location := concat("", ["https:", cookies.target]) { input.auth.metadata.token.id_token; cookies.target }
-              location := "https://" { input.auth.metadata.token.id_token; not cookies.target } # Redirección default a HTTPS
+              location := concat("", ["https://", input.request.host, cookies.target]) { input.auth.metadata.token.id_token; cookies.target }
+              location := concat("", ["https://", input.request.host, "/"]) { input.auth.metadata.token.id_token; not cookies.target }
               location := "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid" { not input.auth.metadata.token.id_token }
               allow = true
           priority: 1
@@ -65,7 +65,6 @@ spec:
           http:
             body:
               expression: |
-
                 "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
             contentType: application/x-www-form-urlencoded
             credentials: {}
@@ -89,4 +88,3 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-oidc-callback
-
