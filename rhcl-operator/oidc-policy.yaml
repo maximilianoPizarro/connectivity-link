@@ -11,11 +11,11 @@ spec:
     authorizationEndpoint : "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     redirectURI : "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
-
+    
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: neuralbank-oidc-callback
+    name: neuralbank-front-back-route
 
   auth:
     tokenSource:
