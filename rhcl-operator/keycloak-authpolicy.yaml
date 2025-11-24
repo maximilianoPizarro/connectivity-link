@@ -63,4 +63,4 @@ spec:
         exclude:
           - selector: request.path
             operator: matches
-            value: ^/auth/callback$
+            value: ^/auth/callback
