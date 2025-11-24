@@ -90,5 +90,5 @@ spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: neuralbank-front-back-route
+    name: neuralbank-oidc-callback
 ---
