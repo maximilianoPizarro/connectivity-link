@@ -26,7 +26,7 @@ spec:
             type: PathPrefix
             value: /auth/callback
       backendRefs:
-        - name: neuralbank-authorino
+        - name: neuralbank-frontend-svc
           port: 8080
 
     # ------------------------------------------------------------
