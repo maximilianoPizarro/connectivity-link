@@ -1,6 +1,4 @@
-# ------------------------------------------------------------
-# 2. HTTPRoute (Enrutamiento para Frontend y Backend)
-# ------------------------------------------------------------
+
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -17,9 +15,10 @@ spec:
 
   rules:
     # ------------------------------------------------------------
-    # A. Rutas de API y Swagger (BACKEND)
+    # REGLA SEGURA: API y Swagger (Protegida por AuthPolicy)
     # ------------------------------------------------------------
-    - matches:
+    - name: api-secured # <-- NUEVO NOMBRE: Target para la AuthPolicy
+      matches:
         - path:
             type: PathPrefix
             value: /api
@@ -34,9 +33,10 @@ spec:
           port: 8080
 
     # ------------------------------------------------------------
-    # B. Ruta por Defecto (FRONTEND)
+    # REGLA DESPROTEGIDA: Ruta Raíz (No tiene AuthPolicy asociada)
     # ------------------------------------------------------------
-    - matches:
+    - name: root-unsecured # <-- NUEVO NOMBRE: Permite el acceso sin autenticación
+      matches:
         - path:
             type: PathPrefix
             value: /        
