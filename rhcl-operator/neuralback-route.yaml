@@ -21,13 +21,13 @@ spec:
     #     requestRedirect:
     #       scheme: https
     #       statusCode: 301
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /auth/callback
-      backendRefs:
-        - name: neuralbank-frontend-svc
-          port: 8080
+    #- matches:
+    #    - path:
+    #        type: PathPrefix
+    #        value: /auth/callback
+    #  backendRefs:
+    #    - name: neuralbank-frontend-svc
+    #      port: 8080
 
     # ------------------------------------------------------------
     # A. Rutas de API y Swagger (BACKEND)
