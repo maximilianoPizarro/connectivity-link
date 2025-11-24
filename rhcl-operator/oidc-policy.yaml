@@ -16,10 +16,11 @@ spec:
     kind: HTTPRoute
     name: neuralbank-front-back-route
 
-  tokenSource:
-    authorizationHeader:
-      prefix: Bearer
-      name: Authorization
+  auth:
+    tokenSource:
+      authorizationHeader:
+        prefix: Bearer
+        name: Authorization
 
-    cookie:
-      name: jwt
+      cookie:
+        name: jwt
