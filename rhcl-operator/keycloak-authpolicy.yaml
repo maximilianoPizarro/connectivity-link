@@ -47,17 +47,18 @@ spec:
             set-cookie:
               expression: |-
 
-                "target=" + request.path + "; domain=; HttpOnly;  SameSite=Lax; Path=/; Max-Age=3600"
+                "target=" + request.path + "; HttpOnly;  SameSite=Lax; Path=/; Max-Age=3600"
           when:
-            - selector: request.path
-              operator: matches
-              value: ^/api
-            - selector: request.path
-              operator: matches
-              value: ^/swagger-ui
-            - selector: request.path
-              operator: matches
-              value: ^/q
+            any:
+              - selector: request.path
+                operator: matches
+                value: ^/api
+              - selector: request.path
+                operator: matches
+                value: ^/swagger-ui
+              - selector: request.path
+                operator: matches
+                value: ^/q
 
         exclude:
           - selector: request.path
