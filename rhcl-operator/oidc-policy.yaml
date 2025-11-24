@@ -11,7 +11,7 @@ spec:
     authorizationEndpoint : "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     redirectURI : "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
-    jwksURL: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/certs"
+    jwksURI: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/certs"
    
   targetRef:
     group: gateway.networking.k8s.io
