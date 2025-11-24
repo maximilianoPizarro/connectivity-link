@@ -4,4 +4,7 @@ metadata:
   name: neuralbank-authorino
   annotations:
     argocd.argoproj.io/sync-wave: '5'  
-spec: {}
+spec:
+  mtls:
+    enable: true
+    authorino: true
