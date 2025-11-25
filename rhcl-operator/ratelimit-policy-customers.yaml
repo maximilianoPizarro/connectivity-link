@@ -1,0 +1,41 @@
+# RateLimitPolicy to limit requests to /api/customers endpoint
+# This policy limits "Javier Rodríguez Torres" to 10 requests per minute on /api/customers
+# 
+# To apply the limit to ALL users (each user gets 10 requests per minute):
+#   Remove the second condition (auth.identity.username equals "Javier Rodríguez Torres")
+#
+# To change the limit window (e.g., per second instead of per minute):
+#   Change window: 1m to window: 1s
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: neuralbank-customers-ratelimit
+  namespace: neuralbank-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-api-route
+    namespace: neuralbank-stack
+  limits:
+    customers-api-per-user:
+      # Conditions: Apply this limit only when:
+      # 1. The request path matches /api/customers
+      # 2. The authenticated user is "Javier Rodríguez Torres"
+      conditions:
+        - selector: request.path
+          operator: matches
+          value: "/api/customers"
+        - selector: auth.identity.username
+          operator: equals
+          value: "Javier Rodríguez Torres"
+      # Rate limit: 10 requests per minute
+      rates:
+        - limit: 10
+          window: 1m
+      # Counter: Track rate limit per username (allows different limits per user)
+      counters:
+        - expression: auth.identity.username
+
