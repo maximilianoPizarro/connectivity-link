@@ -20,7 +20,7 @@ backend:
 # --- Frontend ---
 frontend:
   image:
-    repository: quay.io/maximilianopizarro/neuralbank-frontend 
+    repository: quay.io/maximilianopizarro/neuralbank-front 
     tag: "latest"
     pullPolicy: Always
   service:
