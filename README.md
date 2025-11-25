@@ -42,6 +42,10 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **Application Stack**: NeuralBank demo application (frontend, backend, database)
 - **Developer Hub**: Red Hat Developer Hub (Backstage) integration
 
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
+</div>
+
 ### Key Components
 
 - **Connectivity Link**: A set of configurations and examples demonstrating connectivity between components (services, gateways, and authentication) within an OpenShift cluster in a GitOps context
@@ -62,9 +66,10 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 
 **⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
 
-### Automatic Domain Update
+### Automatic Domain Update (In Development)
 
 We provide a bash script to automatically replace all cluster domain references:
+
 
 ```bash
 chmod +x update-cluster-domain.sh
