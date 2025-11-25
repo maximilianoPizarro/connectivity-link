@@ -27,8 +27,7 @@ spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: neuralbank-front-back-route
-    ruleName: api-secured
+    name: neuralbank-api-route
 ---
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
