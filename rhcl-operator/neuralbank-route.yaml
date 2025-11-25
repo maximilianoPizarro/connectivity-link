@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: neuralbank-front-back-route
+  name: neuralbank-api-route
   annotations:
     argocd.argoproj.io/sync-wave: "5"   
 spec:
@@ -13,11 +13,7 @@ spec:
     - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
 
   rules:
-    # ------------------------------------------------------------
-    # REGLA SEGURA: API y Swagger (Protegida por AuthPolicy)
-    # ------------------------------------------------------------
-    - name: api-secured # <-- NUEVO NOMBRE: Target para la AuthPolicy
-      matches:
+    - matches:
         - path:
             type: PathPrefix
             value: /api
@@ -30,12 +26,23 @@ spec:
       backendRefs:
         - name: neuralbank-backend-svc
           port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: neuralbank-root-route
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"   
+spec:
+  parentRefs:
+    - name: neuralbank-gateway
+      namespace: istio-system
+  
+  hostnames:
+    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
 
-    # ------------------------------------------------------------
-    # REGLA DESPROTEGIDA: Ruta Raíz (No tiene AuthPolicy asociada)
-    # ------------------------------------------------------------
-    - name: root-unsecured # <-- NUEVO NOMBRE: Permite el acceso sin autenticación
-      matches:
+  rules:
+    - matches:
         - path:
             type: PathPrefix
             value: /        
