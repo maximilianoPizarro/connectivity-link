@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: neuralbank-oidc-secret
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"  
+type: Opaque
+data:
+  client-secret: UUR3eTZDMU10NHllcTlEN3l6WHhUSjMwcDlTdmFJbVo=
+---
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
@@ -63,7 +73,11 @@ spec:
               expression: |
                 "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
             contentType: application/x-www-form-urlencoded
-            credentials: {}
+            credentials:
+              clientSecret:
+                secretKeyRef:
+                  name: neuralbank-oidc-secret
+                  key: client-secret
             method: POST
             url: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
           metrics: false
