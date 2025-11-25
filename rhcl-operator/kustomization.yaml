@@ -4,6 +4,7 @@ resources:
   #- neuralbank-route.yaml
   #- keycloak-authpolicy.yaml
   #- neuralbank-oidc-callback.yaml
+  - rolebinding.yaml
   - oidc-policy.yaml
   - kuadrant.yaml
 
