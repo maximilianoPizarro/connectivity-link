@@ -10,7 +10,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
+    - "neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com"
 
   rules:
     - matches:
@@ -36,7 +36,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
+    - "neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com"
 
   rules:
     - matches:
@@ -67,7 +67,7 @@ spec:
 #      namespace: istio-system
 #  
 #  hostnames:
-#    - "neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
+#    - "neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com"
 #
 #  rules:
 #    - matches:
