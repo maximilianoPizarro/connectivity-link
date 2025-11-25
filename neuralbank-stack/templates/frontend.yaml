@@ -27,10 +27,10 @@ spec:
             mountPath: /var/www/html/config.js
             subPath: config.js
             readOnly: true
-        volumes:
-        - name: config
-          configMap:
-            name: neuralbank-config            
+      volumes:
+      - name: config
+        configMap:
+          name: neuralbank-config            
 ---
 apiVersion: v1
 kind: Service
