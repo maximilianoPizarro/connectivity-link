@@ -8,7 +8,7 @@ spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
     clientID: neuralbank-frontend
-    clientSecret: "UUR3eTZDMU10NHllcTlEN3l6WHhUSjMwcDlTdmFJbVo="
+    clientSecret: QDwy6C1Mt4yeq9D6yzXxTJ30p9SvaImZ
     authorizationEndpoint : "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     redirectURI : "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
