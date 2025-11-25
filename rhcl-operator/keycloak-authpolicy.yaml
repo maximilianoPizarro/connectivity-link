@@ -73,14 +73,7 @@ spec:
               expression: |
                 "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
             contentType: application/x-www-form-urlencoded
-            credentials:
-              basicAuth:
-                clientSecret:
-                  secretKeyRef:
-                    name: neuralbank-oidc-secret
-                    key: client-secret
-                clientID:
-                  value: neuralbank-frontend
+            credentials: {}
             method: POST
             url: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
           metrics: false
