@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neuralbank-config
+data:
+  config.js: |
+    // Runtime configuration - Mounted from ConfigMap
+    // Path: /var/www/html/config.js
+    window.__ENV__ = {
+      VITE_KEYCLOAK_ISSUER_URL: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank',
+      VITE_KEYCLOAK_CLIENT_ID: 'neuralbank',
+      VITE_KEYCLOAK_CLIENT_SECRET: 'nkxmlxN1wICSYrZ1QoIeUtVvjjCKfeXh',
+      VITE_KEYCLOAK_AUTHORIZATION_ENDPOINT: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth',
+      VITE_KEYCLOAK_REDIRECT_URI: 'https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback',
+      VITE_KEYCLOAK_TOKEN_ENDPOINT: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token',
+      VITE_API_BASE_URL: '/api',
+    };
+

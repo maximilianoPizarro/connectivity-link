@@ -22,6 +22,15 @@ spec:
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           ports:
             - containerPort: 8080
+          volumeMounts:
+          - name: config
+            mountPath: /var/www/html/config.js
+            subPath: config.js
+            readOnly: true
+        volumes:
+        - name: config
+          configMap:
+            name: neuralbank-config            
 ---
 apiVersion: v1
 kind: Service
