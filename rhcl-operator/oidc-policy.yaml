@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: neuralbank-oidc-client-secret
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+type: Opaque
+data:
+  clientSecret: bmt4bWx4TjF3SUNTWXJaMVFvSWVVdFZ2ampDS2ZlWGg=
+---
 apiVersion: extensions.kuadrant.io/v1alpha1
 kind: OIDCPolicy
 metadata:
@@ -8,7 +18,9 @@ spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank"
     clientID: neuralbank
-    clientSecret: "nkxmlxN1wICSYrZ1QoIeUtVvjjCKfeXh"
+    clientSecretRef:
+      name: neuralbank-oidc-client-secret
+      key: clientSecret
     authorizationEndpoint : "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     redirectURI : "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
