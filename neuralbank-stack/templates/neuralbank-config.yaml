@@ -14,5 +14,6 @@ data:
       VITE_KEYCLOAK_REDIRECT_URI: 'https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback',
       VITE_KEYCLOAK_TOKEN_ENDPOINT: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token',
       VITE_API_BASE_URL: '/api',
+      VITE_KEYCLOAK_POST_LOGOUT_REDIRECT_URI: 'https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com',
     };
 
