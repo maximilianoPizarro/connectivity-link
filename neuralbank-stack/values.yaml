@@ -40,7 +40,7 @@ proxy:
 keycloak:
   issuerUrl: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'
-  clientSecret: 'WO41uQcPOY3QN7H89tVudqbxaMEN6BM2'
+  clientSecret: 'K1bczttGOVgrjZQ7LkRGcDLLcqab9zGB'
   authorizationEndpoint: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
   redirectUri: 'https://neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com/auth/callback'
   tokenEndpoint: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
