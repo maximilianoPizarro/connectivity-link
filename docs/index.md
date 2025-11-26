@@ -43,7 +43,7 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **Developer Hub**: Red Hat Developer Hub (Backstage) integration
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
+  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operator.png" width="900"/>
 </div>
 
 ### Key Components
@@ -95,6 +95,11 @@ If you prefer to update manually, search and replace `apps.cluster-lv5jx.lv5jx.s
 - `servicemeshoperator3/` - Gateway route hostnames
 - `rhbk/` - Keycloak hostname and redirect URIs
 
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
+</div>
+
+
 ### Finding Your Cluster Domain
 
 To find your OpenShift cluster's base domain:
@@ -133,9 +138,6 @@ oc apply -f applicationset-instance.yaml
   <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-gitops.png" width="900"/>
 </div>
 
-<div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operator.png" width="900"/>
-</div>
 
 ## 📁 Repository Structure
 
