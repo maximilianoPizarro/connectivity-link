@@ -7,8 +7,8 @@ metadata:
 spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank"
-    clientID: neuralbank
-    clientSecret: "nkxmlxN1wICSYrZ1QoIeUtVvjjCKfeXh"
+    clientID: neuralbank-frontend
+    clientSecret: "uGeHuJTCQBljpj5gDwhLHruENL3JWH79"
     authorizationEndpoint : "https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     redirectURI : "https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
