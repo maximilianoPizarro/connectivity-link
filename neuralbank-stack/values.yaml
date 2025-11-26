@@ -39,7 +39,7 @@ proxy:
 # --- Keycloak Configuration ---
 keycloak:
   issuerUrl: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank'
-  clientId: 'neuralbank-frontend'
+  clientId: 'neuralbank'
   clientSecret: 'Uv6QyV6fa08eIhDNWTRtRdaHQjmXepAF'
   authorizationEndpoint: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
   redirectUri: 'https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/auth/callback'
