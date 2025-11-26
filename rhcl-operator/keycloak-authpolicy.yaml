@@ -23,7 +23,7 @@ spec:
             authorizationHeader:
               prefix: Bearer
           jwt:
-            issuerUrl: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank'
+            issuerUrl: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank'
           metrics: false
           priority: 0
       response:
@@ -32,7 +32,7 @@ spec:
           code: 302
           headers:
             location:
-              value: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid'
+              value: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid'
     strategy: merge
   targetRef:
     group: gateway.networking.k8s.io
@@ -61,9 +61,9 @@ spec:
             allValues: true
             rego: |-
               cookies := { name: value | raw_cookies := input.request.headers.cookie; cookie_parts := split(raw_cookies, ";"); part := cookie_parts[_]; kv := split(trim(part, " "), "="); count(kv) == 2; name := trim(kv[0], " "); value := trim(kv[1], " ")}
-              app_host := "neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com"
+              app_host := "neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com"
               location := concat("", ["https://", app_host, "/"]) { input.auth.metadata.token.id_token }
-              location := "https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid" { not input.auth.metadata.token.id_token }
+              location := "https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/auth?client_id=neuralbank-frontend&redirect_uri=https%3A%2F%2Fneuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com%2Fauth%2Fcallback&response_type=code&scope=openid" { not input.auth.metadata.token.id_token }
               allow = true
           priority: 1
       metadata:
@@ -71,11 +71,11 @@ spec:
           http:
             body:
               expression: |
-                "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
+                "code=" + request.query.split("&").map(entry, entry.split("=")).filter(pair, pair[0] == "code").map(pair, pair[1])[0] + "&redirect_uri=https://neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com/auth/callback&client_id=neuralbank-frontend&grant_type=authorization_code"
             contentType: application/x-www-form-urlencoded
             credentials: {}
             method: POST
-            url: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+            url: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
           metrics: false
           priority: 0
           when:

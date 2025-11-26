@@ -9,7 +9,7 @@ spec:
     - name: neuralbank-gateway
       namespace: istio-system
   hostnames:
-    - "neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com"
+    - "neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com"
   rules:
     - matches:
         - path:

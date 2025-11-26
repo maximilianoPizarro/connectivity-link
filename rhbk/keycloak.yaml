@@ -19,7 +19,7 @@ spec:
   #http:
   #  tlsSecret: rhbk-tls-secret
   hostname:
-    hostname: rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com
+    hostname: rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com
   proxy:
     headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
   additionalOptions:

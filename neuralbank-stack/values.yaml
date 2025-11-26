@@ -38,13 +38,13 @@ proxy:
 
 # --- Keycloak Configuration ---
 keycloak:
-  issuerUrl: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank'
+  issuerUrl: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank'
   clientSecret: 'Uv6QyV6fa08eIhDNWTRtRdaHQjmXepAF'
-  authorizationEndpoint: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
-  redirectUri: 'https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/auth/callback'
-  tokenEndpoint: 'https://rhbk.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
-  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
+  redirectUri: 'https://neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com/auth/callback'
+  tokenEndpoint: 'https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com'
 
 # --- API Configuration ---
 api:
