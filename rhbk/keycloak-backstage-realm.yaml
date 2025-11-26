@@ -39,9 +39,9 @@ spec:
       publicClient: false
       standardFlowEnabled: true
       redirectUris: 
-      - "https://librechat-librechat-librechat.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com/*"
-      - "https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com/*"
-      - "https://librechat-librechat-librechat.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com/oauth/openid/callback"
+      - "https://librechat-librechat-librechat.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/*"
+      - "https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/*"
+      - "https://librechat-librechat-librechat.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/oauth/openid/callback"
       webOrigins: ["*"]
       bearerOnly: false
       secret: "**********"
@@ -55,12 +55,12 @@ spec:
       fullScopeAllowed: true
     - clientId: neuralbank
       name: Neural Bank IA
-      baseUrl: "http://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com"
+      baseUrl: "http://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com"
       enabled: true
       clientAuthenticatorType: client-secret
       secret: "**********"
       redirectUris:
-      - "https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2484.opentlc.com/auth/callback"
+      - "https://neuralbank.apps.cluster-wmdrk.wmdrk.sandbox2096.opentlc.com/auth/callback"
       - "https://localhost:8080/*"
       webOrigins: ["*"]
       bearerOnly: false
