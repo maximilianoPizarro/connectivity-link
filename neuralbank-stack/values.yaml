@@ -21,7 +21,7 @@ backend:
 frontend:
   image:
     repository: quay.io/maximilianopizarro/neuralbank-front 
-    tag: "latest"
+    tag: "pkce"
     pullPolicy: Always
   service:
     port: 80
