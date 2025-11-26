@@ -4,7 +4,7 @@
 apiVersion: k8s.keycloak.org/v2alpha1
 kind: KeycloakRealmImport
 metadata:
-  name: neuralbank-full-import-from-json
+  name: neuralbank-full-import
   namespace: rhbk-operator
   annotations:
     argocd.argoproj.io/sync-wave: "3"
@@ -14,137 +14,32 @@ spec:
     id: neuralbank
     realm: neuralbank
     enabled: true
-    displayName: NeuralBank IA
-    displayNameHtml: Connectivity Link
-    notBefore: 0
-    accessTokenLifespan: 300
-    ssoSessionIdleTimeout: 1800
-    ssoSessionMaxLifespan: 36000
-    offlineSessionIdleTimeout: 2592000
-    offlineSessionMaxLifespanEnabled: false
-    offlineSessionMaxLifespan: 5184000
-    accessCodeLifespan: 60
-    sslRequired: none
-    registrationAllowed: false
-    rememberMe: false
-    verifyEmail: false
-    loginWithEmailAllowed: true
-    duplicateEmailsAllowed: false
-    resetPasswordAllowed: false
-    bruteForceProtected: false
+    displayName: NeuralBank International
     
     clients:
     - clientId: neuralbank-frontend
       name: Frontend Web App
-      publicClient: false
+      publicClient: true
       standardFlowEnabled: true
-      redirectUris: 
-      - "https://librechat-librechat-librechat.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/*"
-      - "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/*"
-      - "https://librechat-librechat-librechat.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/oauth/openid/callback"
+      redirectUris: ["https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/*"]
       webOrigins: ["*"]
-      bearerOnly: false
-      secret: "**********"
-      directAccessGrantsEnabled: true
-      fullScopeAllowed: true
     - clientId: neuralbank-backend
       name: Backend API Service
       publicClient: false
       bearerOnly: true
-      secret: "**********"
-      fullScopeAllowed: true
-    - clientId: neuralbank
-      name: Neural Bank IA
-      baseUrl: "http://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      secret: "**********"
-      redirectUris:
-      - "https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback"
-      - "https://localhost:8080/*"
-      webOrigins: ["*"]
-      bearerOnly: false
-      standardFlowEnabled: true
-      directAccessGrantsEnabled: true
-      publicClient: false
-      frontchannelLogout: true
-      fullScopeAllowed: true
-    - clientId: realm-management
-      name: "${client_realm-management}"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      bearerOnly: true
-      publicClient: false
-      fullScopeAllowed: false
-    - clientId: account
-      name: "${client_account}"
-      baseUrl: "/realms/neuralbank/account/"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      redirectUris: ["/realms/neuralbank/account/*"]
-      bearerOnly: false
-      standardFlowEnabled: true
-      publicClient: true
-      fullScopeAllowed: false
-    - clientId: account-console
-      name: "${client_account-console}"
-      baseUrl: "/realms/neuralbank/account/"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      redirectUris: ["/realms/neuralbank/account/*"]
-      bearerOnly: false
-      standardFlowEnabled: true
-      publicClient: true
-      fullScopeAllowed: false
-    - clientId: admin-cli
-      name: "${client_admin-cli}"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      bearerOnly: false
-      standardFlowEnabled: false
-      directAccessGrantsEnabled: true
-      publicClient: true
-      fullScopeAllowed: true
-    - clientId: broker
-      name: "${client_broker}"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      bearerOnly: true
-      publicClient: false
-      fullScopeAllowed: false
-    - clientId: security-admin-console
-      name: "${client_security-admin-console}"
-      baseUrl: "/admin/neuralbank/console/"
-      enabled: true
-      clientAuthenticatorType: client-secret
-      redirectUris: ["/admin/neuralbank/console/*"]
-      webOrigins: ["+"]
-      bearerOnly: false
-      standardFlowEnabled: true
-      publicClient: true
-      fullScopeAllowed: true
       
+    # 2. Grupos y Roles
     groups:
     - name: US-Clients
     - name: LATAM-Clients
     - name: EU-Clients
     
+    # FIX: Se agregan las definiciones de realmRoles faltantes
     realmRoles:
     - name: personal-client
     - name: corporate-client
-    - name: offline_access
-    - name: uma_authorization
-    - name: default-roles-neuralbank
-      composite: true
-      composites:
-        realm:
-        - offline_access
-        - uma_authorization
-        client:
-          account:
-          - manage-account
-          - view-profile
 
+    # 3. Usuarios (Importación de la Diversidad Internacional)
     users:
     # --- Clientes USA ---
     - username: robert.anderson@email.com
@@ -327,34 +222,3 @@ spec:
       groups: ["EU-Clients"]
       realmRoles: ["corporate-client"]
       initialPassword: { value: "Welcome123", temporary: true }
-
-    # Secciones adicionales del JSON para una configuración más completa (opcional, pero se mantiene la estructura)
-    authenticationFlows:
-    - id: 5e770a4d-1398-45df-a7c0-4da8ce42eba1
-      alias: browser
-      description: Browser based authentication
-      providerId: basic-flow
-      topLevel: true
-      builtIn: true
-      authenticationExecutions:
-      - authenticator: auth-cookie
-        authenticatorFlow: false
-        requirement: ALTERNATIVE
-        priority: 10
-      - authenticator: auth-spnego
-        authenticatorFlow: false
-        requirement: DISABLED
-        priority: 20
-      - authenticator: identity-provider-redirector
-        authenticatorFlow: false
-        requirement: ALTERNATIVE
-        priority: 25
-      - authenticatorFlow: true
-        requirement: ALTERNATIVE
-        priority: 26
-        flowAlias: Organization
-      - authenticatorFlow: true
-        requirement: ALTERNATIVE
-        priority: 30
-        flowAlias: forms
-    

@@ -42,10 +42,6 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **Application Stack**: NeuralBank demo application (frontend, backend, database)
 - **Developer Hub**: Red Hat Developer Hub (Backstage) integration
 
-<div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
-</div>
-
 ### Key Components
 
 - **Connectivity Link**: A set of configurations and examples demonstrating connectivity between components (services, gateways, and authentication) within an OpenShift cluster in a GitOps context
@@ -95,6 +91,12 @@ If you prefer to update manually, search and replace `apps.cluster-lv5jx.lv5jx.s
 - `servicemeshoperator3/` - Gateway route hostnames
 - `rhbk/` - Keycloak hostname and redirect URIs
 
+
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
+</div>
+
+
 ### Finding Your Cluster Domain
 
 To find your OpenShift cluster's base domain:
@@ -108,6 +110,10 @@ Or check your cluster's console URL - it typically follows the pattern: `console
 ## 🚀 Getting Started
 
 ### Step 1: Install OpenShift GitOps Operator
+
+<div align="center">
+  <img src="https://maximilianopizarro.github.io/connectivity-link/gitops.png" width="900"/>
+</div>
 
 Install the OpenShift GitOps Operator (via OperatorHub in the OpenShift console or via OLM). This is the only manual step required before applying the manifests in this demo.
 
@@ -136,6 +142,82 @@ oc apply -f applicationset-instance.yaml
 <div align="center">
   <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operator.png" width="900"/>
 </div>
+
+### Step 4: Configure Keycloak Client Settings (Manual)
+
+After Keycloak is deployed and the realm is imported, you need to manually configure the client settings in the Red Hat Build of Keycloak console. This step is required for proper OIDC authentication flow.
+
+**Access Keycloak Console:**
+1. Navigate to the Keycloak route in OpenShift (typically `rhbk.apps.<your-cluster-domain>`)
+2. Log in with the admin credentials (configured in `rhbk/keycloak-initial-admin.yaml`)
+3. Select the `neuralbank` realm
+
+**Configure Client Settings:**
+
+For the `neuralbank` client (or `neuralbank-frontend` if using that client):
+
+1. **Navigate to Clients** → Select your client (e.g., `neuralbank`)
+2. **Enable Client Authentication:**
+   - Set **Client authentication** to **ON** (this makes it a confidential client)
+   - Ensure `publicClient` is set to `false` in the configuration
+3. **Enable Direct Access Grants:**
+   - Enable **Direct access grants** (allows Resource Owner Password Credentials grant type)
+4. **Configure PKCE:**
+   - Set **Proof Key for Code Exchange Code Challenge Method** to **S256**
+   - This enables PKCE (RFC 7636) for enhanced security in authorization code flows
+
+**Generate Client Secret:**
+
+After enabling client authentication, you need to generate and retrieve the client secret:
+
+1. Go to the **Credentials** tab of your client
+2. Copy the **Client secret** value
+3. Update the `clientSecret` field in [`rhcl-operator/oidc-policy.yaml`](rhcl-operator/oidc-policy.yaml) with this value
+4. Commit and push the change to your repository for ArgoCD to sync
+
+**Note:** The client secret is required for the OIDC Policy to authenticate with Keycloak. Without it, the OIDC authentication flow will fail.
+
+### Step 5: Create OpenShift Route for Gateway (Manual)
+
+The Gateway API Gateway resource (`neuralbank-gateway`) needs an OpenShift Route to expose it externally. This step must be done manually from the OpenShift console or CLI.
+
+**Option 1: Using OpenShift Console**
+
+1. Navigate to **Networking** → **Routes** in the `istio-system` namespace
+2. Click **Create Route**
+3. Configure the route:
+   - **Name**: `neuralbank-external-route` (or your preferred name)
+   - **Hostname**: `neuralbank.apps.<your-cluster-domain>` (or use a wildcard `*.apps.<your-cluster-domain>`)
+   - **Service**: Select `neuralbank-gateway-istio` service
+   - **Target Port**: Select `http` (port 8080)
+   - **TLS Termination**: **Edge**
+   - **Insecure Traffic**: **Redirect**
+
+**Option 2: Using CLI**
+
+You can also create the route using `oc`:
+
+```bash
+oc create route edge neuralbank-external-route \
+  --service=neuralbank-gateway-istio \
+  --hostname=neuralbank.apps.<your-cluster-domain> \
+  --port=http \
+  --namespace=istio-system
+```
+
+**For Wildcard Route:**
+
+If you want to use a wildcard route to access both frontend and backend through the same hostname:
+
+```bash
+oc create route edge neuralbank-external-route \
+  --service=neuralbank-gateway-istio \
+  --hostname="*.apps.<your-cluster-domain>" \
+  --port=http \
+  --namespace=istio-system
+```
+
+**Note:** The wildcard route allows you to access the application using any subdomain under `apps.<your-cluster-domain>`, which is useful for development and testing. The Gateway and HTTPRoute resources will handle the actual routing based on the `hostnames` specified in the HTTPRoute manifests.
 
 ## 📁 Repository Structure
 
@@ -223,6 +305,105 @@ Red Hat Connectivity Link operator configurations for API gateway, OIDC authenti
 - API protection with Authorino (via Kuadrant)
 - Gateway API HTTPRoute definitions for traffic routing
 - Token-based authorization with cookie and header support
+
+#### HTTPRoute Resources
+
+The HTTPRoute resources define how traffic is routed from the Gateway to backend services. These routes use the Kubernetes Gateway API standard and are managed by the Istio Gateway implementation.
+
+**Structure:**
+- **`parentRefs`**: References the Gateway resource (`neuralbank-gateway` in `istio-system` namespace) that will handle the traffic
+- **`hostnames`**: Specifies the hostname(s) that this route will match (must match the OpenShift Route hostname)
+- **`rules`**: Defines path-based routing rules:
+  - **`matches`**: Path patterns to match (e.g., `/api`, `/q`, `/`)
+  - **`backendRefs`**: Kubernetes Service to route matched traffic to
+
+**Example HTTPRoute (`neuralbank-api-route`):**
+```yaml
+spec:
+  parentRefs:
+    - name: neuralbank-gateway
+      namespace: istio-system
+  hostnames:
+    - "neuralbank.apps.<your-cluster-domain>"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: neuralbank-backend-svc
+          port: 8080
+```
+
+This route matches requests to `/api/*` and `/q/*` and forwards them to the `neuralbank-backend-svc` service on port 8080.
+
+#### OIDC Policy Configuration
+
+The OIDCPolicy resource configures OIDC authentication for protected routes. It integrates with Authorino (via Kuadrant) to enforce authentication at the gateway level.
+
+**Key Configuration Fields:**
+
+1. **`provider.issuerURL`**: The Keycloak realm issuer URL
+   - Format: `https://<keycloak-host>/realms/<realm-name>`
+   - Example: `https://rhbk.apps.<your-cluster-domain>/realms/neuralbank`
+
+2. **`provider.clientID`**: The Keycloak client ID (must match the client configured in Keycloak)
+   - Example: `neuralbank`
+
+3. **`provider.clientSecret`**: **⚠️ IMPORTANT** — The client secret generated from Keycloak console
+   - This must be obtained from Keycloak after enabling client authentication
+   - Steps to get the secret:
+     1. Log into Keycloak console
+     2. Navigate to your realm → Clients → Select your client
+     3. Go to the **Credentials** tab
+     4. Copy the **Client secret** value
+     5. Update the `clientSecret` field in `oidc-policy.yaml`
+   - **Security Note**: Consider using a Kubernetes Secret to store the client secret instead of hardcoding it in the YAML file
+
+4. **`provider.authorizationEndpoint`**: Keycloak authorization endpoint
+   - Format: `https://<keycloak-host>/realms/<realm-name>/protocol/openid-connect/auth`
+
+5. **`provider.redirectURI`**: OAuth callback URL (must match a redirect URI configured in Keycloak client)
+   - Example: `https://neuralbank.apps.<your-cluster-domain>/auth/callback`
+
+6. **`provider.tokenEndpoint`**: Keycloak token endpoint
+   - Format: `https://<keycloak-host>/realms/<realm-name>/protocol/openid-connect/token`
+
+7. **`targetRef`**: References the HTTPRoute resource that should be protected by this OIDC policy
+   - Example: `neuralbank-api-route` (protects the `/api` and `/q` endpoints)
+
+8. **`auth.tokenSource`**: Defines where to look for the authentication token
+   - **`authorizationHeader`**: Token in `Authorization: Bearer <token>` header
+   - **`cookie`**: Token stored in a cookie (e.g., `jwt` cookie)
+
+**Example OIDC Policy:**
+```yaml
+spec:
+  provider:
+    issuerURL: "https://rhbk.apps.<your-cluster-domain>/realms/neuralbank"
+    clientID: neuralbank
+    clientSecret: "<your-client-secret-from-keycloak>"  # ⚠️ Update this!
+    authorizationEndpoint: "https://rhbk.apps.<your-cluster-domain>/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI: "https://neuralbank.apps.<your-cluster-domain>/auth/callback"
+    tokenEndpoint: "https://rhbk.apps.<your-cluster-domain>/realms/neuralbank/protocol/openid-connect/token"
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: neuralbank-api-route
+  auth:
+    tokenSource:
+      authorizationHeader:
+        prefix: Bearer
+        name: Authorization
+      cookie:
+        name: jwt
+```
+
+**Important Notes:**
+- The `clientSecret` must be updated after generating it from the Keycloak console (see [Step 4](#step-4-configure-keycloak-client-settings-manual))
+- The `redirectURI` must exactly match one of the redirect URIs configured in the Keycloak client
+- The `hostnames` in HTTPRoute resources must match the hostname used in the OpenShift Route
+- All URLs (issuer, endpoints) must use HTTPS and match your cluster's domain configuration
 
 ### Service Mesh Operator 3 (`servicemeshoperator3/`)
 
