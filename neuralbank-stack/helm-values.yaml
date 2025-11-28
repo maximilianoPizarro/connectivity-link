@@ -24,7 +24,7 @@ frontend:
     tag: "pkce"
     pullPolicy: Always
   service:
-    port: 80
+    port: 8080
   replicaCount: 1
 
 # --- Proxy (Gateway Nginx) ---
@@ -34,7 +34,7 @@ proxy:
     tag: "latest"
   service:
     type: LoadBalancer
-    port: 80
+    port: 8080
 
 # --- Keycloak Configuration ---
 keycloak:

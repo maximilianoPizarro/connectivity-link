@@ -71,7 +71,7 @@ spec:
       serviceAccountName: neuralbank-proxy-sa
       containers:
         - name: nginx
-          image: "{{ .Values.proxy.image.repository }}:{{ .Values.proxy.image.tag }}"
+          image: "{{ .Values.proxy.image.repository | default "nginxinc/nginx-unprivileged" }}:{{ .Values.proxy.image.tag | default "latest" }}"
           ports:
             - name: http-web  
               containerPort: 8080
@@ -93,7 +93,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-proxy-svc
 spec:
-  type: {{ .Values.proxy.service.type }}
+  type: {{ .Values.proxy.service.type | default "LoadBalancer" }}
   selector:
     app: neuralbank-proxy
   ports:
