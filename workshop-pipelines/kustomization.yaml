@@ -4,6 +4,8 @@ resources:
   - template/helmchartrepository.yaml
   - template/role.yaml
   - template/scc-rolebinding.yaml
+  - template/postgresql-patch-sa.yaml
+  - template/postgresql-patch-job.yaml
   - rolebinding.yaml
 
 # JSON patch to remove securityContext from PostgreSQL StatefulSet

@@ -1,0 +1,47 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: patch-postgresql-securitycontext
+  namespace: workshop-pipelines
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: postgresql-patch-sa
+      restartPolicy: OnFailure
+      containers:
+        - name: patch-statefulset
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Waiting for StatefulSet to be created..."
+              until oc get statefulset workshop-pipelines-postgresql -n workshop-pipelines 2>/dev/null; do
+                echo "StatefulSet not found, waiting..."
+                sleep 2
+              done
+              
+              echo "StatefulSet found, applying patch to remove securityContext..."
+              
+              # Patch pod-level securityContext
+              oc patch statefulset workshop-pipelines-postgresql -n workshop-pipelines --type='json' -p='[
+                {"op": "remove", "path": "/spec/template/spec/securityContext"}
+              ]' || echo "Pod securityContext already removed or not present"
+              
+              # Patch container-level securityContext
+              oc patch statefulset workshop-pipelines-postgresql -n workshop-pipelines --type='json' -p='[
+                {"op": "remove", "path": "/spec/template/spec/containers/0/securityContext"}
+              ]' || echo "Container securityContext already removed or not present"
+              
+              echo "Patch completed successfully!"
+              oc get statefulset workshop-pipelines-postgresql -n workshop-pipelines -o jsonpath='{.spec.template.spec.securityContext}' && echo " (pod securityContext)" || echo "Pod securityContext removed"
+              oc get statefulset workshop-pipelines-postgresql -n workshop-pipelines -o jsonpath='{.spec.template.spec.containers[0].securityContext}' && echo " (container securityContext)" || echo "Container securityContext removed"
+
