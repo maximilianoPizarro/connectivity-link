@@ -15,11 +15,12 @@ spec:
           - name: operators
             namespace: openshift-gitops
             path: operators
+            sourceType: Helm
             sync_wave: "2"
 
           - name: rhbk
             namespace: rhbk-operator
-            path: rhbk
+            path: rhbks
             sync_wave: "2"
 
           - name: developer-hub
@@ -63,7 +64,7 @@ spec:
         path: '{{path}}'
         helm:
           valueFiles:
-            - values.yaml
+            - helm-values.yaml
       syncPolicy:
         automated:
           selfHeal: true
