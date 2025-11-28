@@ -40,3 +40,12 @@ postgresql:
     name: workshop-pipelines-postgresql
     # Automount API credentials
     automountServiceAccountToken: false
+  # Image configuration
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: 16.4.0-debian-12-r13  # Using a valid tag version
+    pullPolicy: IfNotPresent
+  # Security Context configuration - empty to let SCC handle it
+  containerSecurityContext: {}
+  podSecurityContext: {}
