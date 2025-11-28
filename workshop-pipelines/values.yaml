@@ -1,60 +1,78 @@
-# Values file for workshop-pipelines Helm chart version 0.1.6
-# Repository: https://maximilianopizarro.github.io/workshop-pipelines/
-# Chart: workshop-pipelines
-# Version: 0.1.6
-
-# Namespace configuration
-namespace: workshop-pipelines  # Replace with your OpenShift namespace (e.g., yourusername-dev)
-
-# Pipeline configuration
-pipeline:
-  # Source image in OpenShift internal registry
-  sourceImage: image-registry.openshift-image-registry.svc:5000/workshop-pipelines/workshop-pipelines:latest
-  
-  # Target image in external registry (e.g., Quay.io)
-  targetImage: quay.io/maximilianopizarro/workshop-pipelines
-  
-  # Quay.io secret configuration for promote-to-quay task (optional)
-  quaySecret:
-    # Secret name (must match the pattern: <quay-username>-workshoppipelines-pull-secret)
-    name: maximilianopizarro-workshoppipelines-pull-secret
-    # Quay.io robot account username (format: username+robotname)
-    username: "maximilianopizarro+workshoppipelines"
-    # Quay.io robot account password (from robot account creation)
-    password: "LOTMJQQCYI42EDUX4U3CDF0332YOOU0VRW6FQWZ2QAPGK78KCIJEIMBQ0TB13BWK"
-    # Email for docker registry secret
-    email: "maximiliano.pizarro.5@gmail.com"
-
-# Route configuration
+replicaCount: 1
+namespace: workshop-pipelines
 route:
   enabled: true
-  host: workshop-pipelines-workshop-pipelines.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-
-# PostgreSQL configuration - Bitnami PostgreSQL disabled
-# Using custom PostgreSQL deployment instead
-postgresql:
+image:
+  repository: quay.io/maximilianopizarro/workshop-pipelines
+  pullPolicy: IfNotPresent
+  tag: latest
+pipeline:
+  sourceImage: 'workshop-pipelines:latest'
+  targetImage: quay.io/maximilianopizarro/workshop-pipelines
+  quaySecret:
+    name: maximilianopizarro-workshoppipelines-pull-secret
+    username: maximilianopizarro+workshoppipelines
+    password: LOTMJQQCYI42EDUX4U3CDF0332YOOU0VRW6FQWZ2QAPGK78KCIJEIMBQ0TB13BWK
+    email: maximiliano.pizarro.5@gmail.copm
+  workspacePVC:
+    enabled: true
+    name: workshop-pipelines-workspace
+    size: 4Gi
+    storageClassName: gp2
+    accessMode: ReadWriteOnce
+  promoteToQuay:
+    retries: 3
+serviceAccount:
+  create: true
+service:
+  type: ClusterIP
+  port: 8080
+ingress:
   enabled: false
+  hosts:
+    - paths:
+        - path: /
+          pathType: ImplementationSpecific
+      host: '""'
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+env:
+  GC_MAX_METASPACE_SIZE: '1024'
+  JAVA_INITIAL_MEM_RATIO: '50'
+  JAVA_MAX_INITIAL_MEM: '2048'
+  JAVA_MAX_MEM_RATIO: '85'
+  JDK_JAVA_OPTIONS: >-
+    -Xms1G -Xmx2G -XX:-UseGCOverheadLimit -XX:-ExitOnOutOfMemoryError
+    -XX:+UseParallelGC -Dfile.encoding=UTF8 -Duser.timezone=America/Buenos_Aires
+  JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET: >-
+    YlhrdGMyVmpjbVYwTFhSdmEyVnVMWFJ2TFdOb1lXNW5aUzFwYmkxd2NtOWtkV04wYVc5dUxXRnVaQzEwYnkxclpXVndMV2x1TFdFdGMyVmpkWEpsTFhCc1lXTmwK
+  SPRING_DATASOURCE_PASSWORD: postgres
+  SPRING_DATASOURCE_URL: 'jdbc:postgresql://workshop-pipelines-db:5432/workshop-pipelines'
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_PROFILES_ACTIVE: 'prod,api-docs'
+postgresql:
+  auth:
+    database: workshop-pipelines
+    username: postgres
+    password: postgres
+  enabled: false
+  image:
+    registry: ghcr.io
+    repository: bat-bs/bitnami-pgvector
+    tag: pg16
+  primary:
+    initdb:
+      scripts:
+        create-librechat-db.sql: |-
+          -- Ensure the database exists
+          CREATE DATABASE "workshop-pipelines" WITH OWNER postgres;
 
-# Database configuration for Spring Boot application
-database:
-  # Database connection settings
-  host: workshop-pipelines-db
-  port: 5432
-  name: workshoppipelines
-  username: workshop
-  password: workshop123!
-  # JDBC URL (will be constructed from above values)
-  url: "jdbc:postgresql://workshop-pipelines-db:5432/workshoppipelines"
-  
-# Spring Boot application configuration
-spring:
-  datasource:
-    url: "jdbc:postgresql://workshop-pipelines-db:5432/workshoppipelines"
-    username: "workshop"
-    password: "workshop123!"
-    driver-class-name: "org.postgresql.Driver"
-  jpa:
-    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
-    hibernate:
-      ddl-auto: "update"
-    show-sql: "false"
+          -- Connect to the new database and create the pgvector extension
+          \c workshop-pipelines
+          CREATE EXTENSION IF NOT EXISTS vector;
+
+          -- CREATE USER postgres WITH PASSWORD 'postgres';
+          -- GRANT ALL PRIVILEGES ON DATABASE "workshop-pipelines" TO postgres;
