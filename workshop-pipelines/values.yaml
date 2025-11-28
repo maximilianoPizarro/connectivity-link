@@ -46,6 +46,6 @@ postgresql:
     repository: rhel8/postgresql-15
     tag: latest
     pullPolicy: IfNotPresent
-  # Security Context configuration - empty to let SCC anyuid handle it
-  containerSecurityContext: {}
-  podSecurityContext: {}
+  # Security Context configuration - null to let SCC anyuid handle it
+  containerSecurityContext: null
+  podSecurityContext: null
