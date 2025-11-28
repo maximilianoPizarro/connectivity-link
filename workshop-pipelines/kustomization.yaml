@@ -7,3 +7,4 @@ resources:
 # Note: values.yaml is not a Kubernetes resource, it's used by ArgoCD for Helm chart values
 # It should not be included in kustomization.yaml
 
+namespace: workshop-pipelines
