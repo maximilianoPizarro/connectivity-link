@@ -4,28 +4,28 @@
 # Version: 0.1.6
 
 # Namespace configuration
-namespace: <YOUR-NAMESPACE>  # Replace with your OpenShift namespace (e.g., yourusername-dev)
+namespace: workshop-pipelines  # Replace with your OpenShift namespace (e.g., yourusername-dev)
 
 # Pipeline configuration
 pipeline:
   # Source image in OpenShift internal registry
-  sourceImage: image-registry.openshift-image-registry.svc:5000/<YOUR-NAMESPACE>/workshop-pipelines:latest
+  sourceImage: image-registry.openshift-image-registry.svc:5000/workshop-pipelines/workshop-pipelines:latest
   
   # Target image in external registry (e.g., Quay.io)
-  targetImage: quay.io/<YOUR-QUAY-USERNAME>/workshop-pipelines
+  targetImage: quay.io/maximilianopizarro/workshop-pipelines
   
   # Quay.io secret configuration for promote-to-quay task (optional)
   quaySecret:
     # Secret name (must match the pattern: <quay-username>-workshoppipelines-pull-secret)
-    name: <YOUR-QUAY-USERNAME>-workshoppipelines-pull-secret
+    name: maximilianopizarro-workshoppipelines-pull-secret
     # Quay.io robot account username (format: username+robotname)
-    username: "<YOUR-USERNAME>+<ROBOT-NAME>"
+    username: "maximilianopizarro+workshoppipelines"
     # Quay.io robot account password (from robot account creation)
-    password: "<ROBOT-ACCOUNT-PASSWORD>"
+    password: "LOTMJQQCYI42EDUX4U3CDF0332YOOU0VRW6FQWZ2QAPGK78KCIJEIMBQ0TB13BWK"
     # Email for docker registry secret
-    email: "<YOUR-EMAIL>"
+    email: "maximiliano.pizarro.5@gmail.com"
 
 # Route configuration
 route:
   enabled: true
-  host: workshop-pipelines-<YOUR-NAMESPACE>.apps.<YOUR-CLUSTER-DOMAIN>
+  host: workshop-pipelines-workshop-pipelines.cluster-24p6f.24p6f.sandbox2386.opentlc.com
