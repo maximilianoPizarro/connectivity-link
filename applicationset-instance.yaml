@@ -11,7 +11,7 @@ spec:
             namespace: openshift-gitops
             path: namespaces
             sync_wave: "1"
-   
+
           - name: operators
             namespace: openshift-gitops
             path: operators
@@ -21,7 +21,7 @@ spec:
             namespace: rhbk-operator
             path: rhbk
             sync_wave: "2"
-      
+
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -40,65 +40,30 @@ spec:
           - name: neuralbank-stack
             namespace: neuralbank-stack
             path: neuralbank-stack
-            sync_wave: "5"
             sourceType: Helm
-            # Opcional
-            # helm:
-            #   valueFiles:
-            #     - helm-values.yaml
-
-          - name: workshop-pipelines-repo
-            namespace: ""
-            path: workshop-pipelines
-            sync_wave: "1"
-            clusterScoped: true
+            sync_wave: "5"
 
           - name: workshop-pipelines
             namespace: workshop-pipelines
-            sync_wave: "4"
+            path: workshop-pipelines
             sourceType: Helm
-            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
-            chart: workshop-pipelines
-            chartVersion: "0.1.6" 
-            
+            sync_wave: "5"
+
   template:
     metadata:
-      name: '{{name}}'   
+      name: '{{name}}'
     spec:
       project: default
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{namespace}}'
       source:
-        {{- if .helmRepoURL}}
-        repoURL: '{{.helmRepoURL}}'
-        chart: '{{.chart}}'
-        {{- if .chartVersion}}
-        targetRevision: '{{.chartVersion}}'
-        {{- else}}
-        targetRevision: '*'
-        {{- end}}
-        helm:
-          valueFiles:
-            - $values/workshop-pipelines/values.yaml
-        additionalSources:
-          - repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
-            targetRevision: main
-            ref: values
-        {{- else}}
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{path}}'
-        {{- if eq .sourceType "Helm"}}
         helm:
           valueFiles:
             - values.yaml
-        {{- end}}
-        {{- end}}
-      destination:
-        server: 'https://kubernetes.default.svc'
-        {{- if .clusterScoped}}
-        # Cluster-scoped resources don't need a namespace
-        {{- else}}
-        namespace: '{{namespace}}'
-        {{- end}}
       syncPolicy:
         automated:
           selfHeal: true
