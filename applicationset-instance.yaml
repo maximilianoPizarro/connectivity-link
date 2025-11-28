@@ -47,6 +47,9 @@ spec:
             namespace: workshop-pipelines
             path: workshop-pipelines
             sourceType: Helm
+            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
+            chart: workshop-pipelines
+            chartVersion: "0.1.6"
             sync_wave: "5"
 
   template:
