@@ -6,12 +6,12 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   provider:
-    issuerURL: "https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank"
+    issuerURL: "https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank"
     clientID: neuralbank
     clientSecret: "K1bczttGOVgrjZQ7LkRGcDLLcqab9zGB"
-    authorizationEndpoint : "https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
-    redirectURI : "https://neuralbank.apps.cluster-2v259.2v259.sandbox952.opentlc.com/auth/callback"
-    tokenEndpoint: "https://rhbk.apps.cluster-2v259.2v259.sandbox952.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
+    authorizationEndpoint : "https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI : "https://neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/auth/callback"
+    tokenEndpoint: "https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
    
   targetRef:
     group: gateway.networking.k8s.io
