@@ -29,3 +29,14 @@ pipeline:
 route:
   enabled: true
   host: workshop-pipelines-workshop-pipelines.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+
+# PostgreSQL configuration
+postgresql:
+  # ServiceAccount configuration
+  serviceAccount:
+    # Create the service account (set to false since we create it via template)
+    create: false
+    # Name of the service account to use
+    name: workshop-pipelines-postgresql
+    # Automount API credentials
+    automountServiceAccountToken: false
