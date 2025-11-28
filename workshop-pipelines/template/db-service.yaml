@@ -6,7 +6,7 @@ metadata:
   labels:
     app: workshop-pipelines-db
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   type: ClusterIP
   ports:

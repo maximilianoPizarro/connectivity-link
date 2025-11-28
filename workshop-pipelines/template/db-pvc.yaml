@@ -4,7 +4,7 @@ metadata:
   name: workshop-pipelines-db-pvc
   namespace: workshop-pipelines
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   accessModes:
     - ReadWriteOnce

@@ -76,7 +76,7 @@ kind: ClusterRoleBinding
 metadata:
   name: workshop-pipelines-gitops-clusterrolebinding
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "5"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

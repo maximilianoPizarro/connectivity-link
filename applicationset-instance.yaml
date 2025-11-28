@@ -46,7 +46,6 @@ spec:
           - name: workshop-pipelines
             namespace: workshop-pipelines
             path: workshop-pipelines
-            sourceType: Helm
             sync_wave: "5"
 
   template:
