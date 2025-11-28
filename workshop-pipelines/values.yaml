@@ -46,15 +46,6 @@ postgresql:
     repository: rhel8/postgresql-15
     tag: latest
     pullPolicy: IfNotPresent
-  # Security Context configuration - using user 1001 with SCC anyuid
-  containerSecurityContext:
-    runAsUser: 1001
-    runAsGroup: 1001
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-  podSecurityContext:
-    fsGroup: 1001
-    runAsUser: 1001
-    runAsGroup: 1001
+  # Security Context configuration - empty to let SCC anyuid handle it
+  containerSecurityContext: {}
+  podSecurityContext: {}
