@@ -23,14 +23,15 @@ CLEAN_ALL=false
 # Aplicaciones en orden inverso de sync_wave para desinstalación
 # Orden: sync_wave 5 -> 4 -> 3 -> 2 -> 1
 declare -a APPLICATIONS=(
-    "neuralbank-stack"      # sync_wave: 5
-    "workshop-pipelines"    # sync_wave: 4
-    "servicemeshoperator3"  # sync_wave: 3
-    "rhcl-operator"         # sync_wave: 3
-    "developer-hub"         # sync_wave: 2
-    "rhbk"                  # sync_wave: 2
-    "operators"             # sync_wave: 2
-    "namespaces"            # sync_wave: 1
+    "neuralbank-stack"           # sync_wave: 5
+    "workshop-pipelines"         # sync_wave: 4
+    "workshop-pipelines-repo"   # sync_wave: 1 (HelmChartRepository)
+    "servicemeshoperator3"       # sync_wave: 3
+    "rhcl-operator"              # sync_wave: 3
+    "developer-hub"             # sync_wave: 2
+    "rhbk"                      # sync_wave: 2
+    "operators"                 # sync_wave: 2
+    "namespaces"                # sync_wave: 1
 )
 
 # Namespaces a limpiar (si --clean-all)
@@ -327,6 +328,9 @@ main() {
                 ;;
             "workshop-pipelines")
                 namespace="workshop-pipelines"
+                ;;
+            "workshop-pipelines-repo")
+                namespace="openshift-gitops"
                 ;;
         esac
         

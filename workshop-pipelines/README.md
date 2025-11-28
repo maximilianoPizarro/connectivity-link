@@ -9,9 +9,24 @@ The chart is sourced from:
 https://maximilianopizarro.github.io/workshop-pipelines/
 ```
 
+## Structure
+
+This directory contains:
+
+- **`helmchartrepository.yaml`**: OpenShift HelmChartRepository resource that registers the Helm repository in the cluster
+- **`role.yaml`**: ClusterRole and ClusterRoleBinding that grant ArgoCD permissions to create and manage HelmChartRepository resources
+- **`values.yaml`**: Custom values file for the workshop-pipelines Helm chart (version 0.1.6)
+- **`kustomization.yaml`**: Kustomize configuration to organize the resources
+
 ## Configuration
 
-The `values.yaml` file in this directory contains custom values that override the default chart values. Modify this file to customize the deployment according to your needs.
+The `values.yaml` file contains the exact structure from chart version 0.1.6. You must configure the following values before deployment:
+
+1. **Namespace**: Replace `<YOUR-NAMESPACE>` with your OpenShift namespace
+2. **Pipeline Source Image**: Update the sourceImage path with your namespace
+3. **Pipeline Target Image**: Configure your Quay.io username and repository
+4. **Route Host**: Update with your namespace and cluster domain
+5. **Quay.io Secret** (optional): Configure if you want to enable image promotion to Quay.io
 
 ## Usage
 

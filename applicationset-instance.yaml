@@ -47,14 +47,19 @@ spec:
             #   valueFiles:
             #     - helm-values.yaml
 
+          - name: workshop-pipelines-repo
+            namespace: ""
+            path: workshop-pipelines
+            sync_wave: "1"
+            clusterScoped: true
+
           - name: workshop-pipelines
             namespace: workshop-pipelines
             sync_wave: "4"
             sourceType: Helm
             helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
             chart: workshop-pipelines
-            # Chart version (optional, leave empty for latest)
-            # chartVersion: 
+            chartVersion: "0.1.6" 
             
   template:
     metadata:
@@ -89,7 +94,11 @@ spec:
         {{- end}}
       destination:
         server: 'https://kubernetes.default.svc'
+        {{- if .clusterScoped}}
+        # Cluster-scoped resources don't need a namespace
+        {{- else}}
         namespace: '{{namespace}}'
+        {{- end}}
       syncPolicy:
         automated:
           selfHeal: true

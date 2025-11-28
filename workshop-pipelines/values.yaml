@@ -1,23 +1,31 @@
-# Values file for workshop-pipelines Helm chart
-# This file customizes the installation from the workshop-pipelines Helm repository
+# Values file for workshop-pipelines Helm chart version 0.1.6
 # Repository: https://maximilianopizarro.github.io/workshop-pipelines/
+# Chart: workshop-pipelines
+# Version: 0.1.6
 
-# Chart name and version (adjust as needed)
-# chart: workshop-pipelines
-# version: 
+# Namespace configuration
+namespace: <YOUR-NAMESPACE>  # Replace with your OpenShift namespace (e.g., yourusername-dev)
 
-# Add your custom values below
-# Example structure (adjust based on the actual chart values):
-# replicaCount: 1
-# image:
-#   repository: 
-#   tag: 
-#   pullPolicy: IfNotPresent
-# service:
-#   type: ClusterIP
-#   port: 8080
-# ingress:
-#   enabled: false
+# Pipeline configuration
+pipeline:
+  # Source image in OpenShift internal registry
+  sourceImage: image-registry.openshift-image-registry.svc:5000/<YOUR-NAMESPACE>/workshop-pipelines:latest
+  
+  # Target image in external registry (e.g., Quay.io)
+  targetImage: quay.io/<YOUR-QUAY-USERNAME>/workshop-pipelines
+  
+  # Quay.io secret configuration for promote-to-quay task (optional)
+  quaySecret:
+    # Secret name (must match the pattern: <quay-username>-workshoppipelines-pull-secret)
+    name: <YOUR-QUAY-USERNAME>-workshoppipelines-pull-secret
+    # Quay.io robot account username (format: username+robotname)
+    username: "<YOUR-USERNAME>+<ROBOT-NAME>"
+    # Quay.io robot account password (from robot account creation)
+    password: "<ROBOT-ACCOUNT-PASSWORD>"
+    # Email for docker registry secret
+    email: "<YOUR-EMAIL>"
 
-# Add any other chart-specific values here
-
+# Route configuration
+route:
+  enabled: true
+  host: workshop-pipelines-<YOUR-NAMESPACE>.apps.<YOUR-CLUSTER-DOMAIN>
