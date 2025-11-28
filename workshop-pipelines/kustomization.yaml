@@ -3,26 +3,14 @@ kind: Kustomization
 resources:
   - template/helmchartrepository.yaml
   - template/role.yaml
-  - template/scc-rolebinding.yaml
-  - template/postgresql-patch-sa.yaml
-  - template/postgresql-patch-job.yaml
+  - template/db-secret.yaml
+  - template/db-pvc.yaml
+  - template/db-sa.yaml
+  - template/db-service.yaml
+  - template/db-deployment.yaml
   - rolebinding.yaml
-
-# JSON patch to remove securityContext from PostgreSQL StatefulSet
-# This allows the SCC anyuid to manage security context automatically
-patchesJson6902:
-  - target:
-      group: apps
-      version: v1
-      kind: StatefulSet
-      name: workshop-pipelines-postgresql
-    path: template/postgresql-securitycontext-patch.json
 
 # Note: values.yaml is not a Kubernetes resource, it's used by ArgoCD for Helm chart values
 # It should not be included in kustomization.yaml
-# 
-# Note: For this patch to work, ArgoCD needs to be configured to use Kustomize
-# as a post-renderer for Helm charts, or the ApplicationSet needs to be configured
-# to apply Kustomize patches to Helm-rendered resources.
 
 namespace: workshop-pipelines

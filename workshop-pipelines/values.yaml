@@ -30,22 +30,31 @@ route:
   enabled: true
   host: workshop-pipelines-workshop-pipelines.cluster-24p6f.24p6f.sandbox2386.opentlc.com
 
-# PostgreSQL configuration
+# PostgreSQL configuration - Bitnami PostgreSQL disabled
+# Using custom PostgreSQL deployment instead
 postgresql:
-  # ServiceAccount configuration
-  serviceAccount:
-    # Create the service account (set to false since we create it via template)
-    create: false
-    # Name of the service account to use
-    name: workshop-pipelines-postgresql
-    # Automount API credentials
-    automountServiceAccountToken: false
-  # Image configuration - Using Red Hat PostgreSQL image
-  image:
-    registry: registry.redhat.io
-    repository: rhel8/postgresql-15
-    tag: latest
-    pullPolicy: IfNotPresent
-  # Security Context configuration - null to let SCC anyuid handle it
-  containerSecurityContext: null
-  podSecurityContext: null
+  enabled: false
+
+# Database configuration for Spring Boot application
+database:
+  # Database connection settings
+  host: workshop-pipelines-db
+  port: 5432
+  name: workshoppipelines
+  username: workshop
+  password: workshop123!
+  # JDBC URL (will be constructed from above values)
+  url: "jdbc:postgresql://workshop-pipelines-db:5432/workshoppipelines"
+  
+# Spring Boot application configuration
+spring:
+  datasource:
+    url: "jdbc:postgresql://workshop-pipelines-db:5432/workshoppipelines"
+    username: "workshop"
+    password: "workshop123!"
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    hibernate:
+      ddl-auto: "update"
+    show-sql: "false"

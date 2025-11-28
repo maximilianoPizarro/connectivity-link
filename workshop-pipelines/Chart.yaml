@@ -38,8 +38,9 @@ maintainers: # (optional)
 
 icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/logo-rhel.png
 
-dependencies:
-- condition: postgresql.enabled
-  name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 15.5.38
+# Bitnami PostgreSQL dependency disabled - using custom PostgreSQL deployment
+# dependencies:
+# - condition: postgresql.enabled
+#   name: postgresql
+#   repository: https://charts.bitnami.com/bitnami
+#   version: 15.5.38
