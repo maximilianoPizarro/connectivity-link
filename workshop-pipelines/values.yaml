@@ -40,12 +40,21 @@ postgresql:
     name: workshop-pipelines-postgresql
     # Automount API credentials
     automountServiceAccountToken: false
-  # Image configuration
+  # Image configuration - Using Red Hat PostgreSQL image
   image:
-    registry: docker.io
-    repository: bitnami/postgresql
-    tag: 16.4.0-debian-12-r13  # Using a valid tag version
+    registry: registry.redhat.io
+    repository: rhel8/postgresql-15
+    tag: latest
     pullPolicy: IfNotPresent
-  # Security Context configuration - empty to let SCC handle it
-  containerSecurityContext: {}
-  podSecurityContext: {}
+  # Security Context configuration - using user 1001 with SCC anyuid
+  containerSecurityContext:
+    runAsUser: 1001
+    runAsGroup: 1001
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  podSecurityContext:
+    fsGroup: 1001
+    runAsUser: 1001
+    runAsGroup: 1001
