@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - template/helmchartrepository.yaml
   - template/role.yaml
+  - template/scc-rolebinding.yaml
   - rolebinding.yaml
 
 # Note: values.yaml is not a Kubernetes resource, it's used by ArgoCD for Helm chart values
