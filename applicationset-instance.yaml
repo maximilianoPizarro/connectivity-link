@@ -15,7 +15,6 @@ spec:
           - name: operators
             namespace: openshift-gitops
             path: operators
-            sourceType: Helm
             sync_wave: "2"
 
           - name: rhbk
@@ -55,13 +54,13 @@ spec:
       name: '{{name}}'
     spec:
       project: default
-      destination:
-        server: 'https://kubernetes.default.svc'
-        namespace: '{{namespace}}'
       source:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           selfHeal: true
