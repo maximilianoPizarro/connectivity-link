@@ -27,14 +27,6 @@ frontend:
     port: 8080
   replicaCount: 1
 
-# --- Proxy (Gateway Nginx) ---
-proxy:
-  image:
-    repository: nginxinc/nginx-unprivileged
-    tag: "latest"
-  service:
-    type: LoadBalancer
-    port: 8080
 
 # --- Keycloak Configuration ---
 keycloak:
