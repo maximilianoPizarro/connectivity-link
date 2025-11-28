@@ -20,7 +20,7 @@ spec:
 
           - name: rhbk
             namespace: rhbk-operator
-            path: rhbks
+            path: rhbk
             sync_wave: "2"
 
           - name: developer-hub
@@ -62,9 +62,6 @@ spec:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{path}}'
-        helm:
-          valueFiles:
-            - helm-values.yaml
       syncPolicy:
         automated:
           selfHeal: true
