@@ -45,16 +45,48 @@ spec:
             # Opcional
             # helm:
             #   valueFiles:
-            #     - helm-values.yaml            
+            #     - helm-values.yaml
+
+          - name: workshop-pipelines
+            namespace: workshop-pipelines
+            sync_wave: "4"
+            sourceType: Helm
+            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
+            chart: workshop-pipelines
+            # Chart version (optional, leave empty for latest)
+            # chartVersion: 
+            
   template:
     metadata:
       name: '{{name}}'   
     spec:
       project: default
       source:
+        {{- if .helmRepoURL}}
+        repoURL: '{{.helmRepoURL}}'
+        chart: '{{.chart}}'
+        {{- if .chartVersion}}
+        targetRevision: '{{.chartVersion}}'
+        {{- else}}
+        targetRevision: '*'
+        {{- end}}
+        helm:
+          valueFiles:
+            - $values/workshop-pipelines/values.yaml
+        additionalSources:
+          - repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+            targetRevision: main
+            ref: values
+        {{- else}}
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{path}}'
+        {{- if eq .sourceType "Helm"}}
+        helm:
+          valueFiles:
+            - values.yaml
+        {{- end}}
+        {{- end}}
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{namespace}}'
