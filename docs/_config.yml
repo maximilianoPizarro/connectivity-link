@@ -1,15 +1,17 @@
 # Site Settings
 title: "Connectivity Link — Demo & GitOps Overview"
 description: "A comprehensive demo of Connectivity Link using a GitOps workflow"
-url: "" # Leave empty for local development
-baseurl: "" # Leave empty for root
+url: "https://maximilianopizarro.github.io"
+baseurl: "/connectivity-link"
 
 # Build Settings
 markdown: kramdown
 highlighter: rouge
+# GitHub Pages supports these plugins by default
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+# If plugins don't work, remove them and use only built-in Jekyll features
 
 # Theme Settings
 theme: null

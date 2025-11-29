@@ -15,7 +15,7 @@ title: Connectivity Link — Demo & GitOps Overview
 </p>
 
 <div align="center">
-  <img src="{{ '/rhcl-overview.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/rhcl-overview.png" width="900"/>
 </div>
 
 ## 🚀 Quick Start Recommendation
@@ -97,7 +97,7 @@ If you prefer to update manually, search and replace `apps.cluster-lv5jx.lv5jx.s
 
 
 <div align="center">
-  <img src="{{ '/replace-guid.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/replace-guid.png" width="900"/>
 </div>
 
 
@@ -116,7 +116,7 @@ Or check your cluster's console URL - it typically follows the pattern: `console
 ### Step 1: Install OpenShift GitOps Operator
 
 <div align="center">
-  <img src="{{ '/gitops.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/gitops.png" width="900"/>
 </div>
 
 Install the OpenShift GitOps Operator (via OperatorHub in the OpenShift console or via OLM). This is the only manual step required before applying the manifests in this demo.
@@ -140,11 +140,11 @@ oc apply -f applicationset-instance.yaml
 - After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed
 
 <div align="center">
-  <img src="{{ '/openshift-gitops.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/openshift-gitops.png" width="900"/>
 </div>
 
 <div align="center">
-  <img src="{{ '/openshift-operator.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/openshift-operator.png" width="900"/>
 </div>
 
 ### Step 4: Configure Keycloak Client Settings (Manual)
@@ -448,11 +448,11 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 ### The Application Solution without Auth 🙌:
 
 <div align="center">
-  <img src="{{ '/rhcl.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/rhcl.png" width="900"/>
 </div>
 
 ### The Application Solution with Auth 🔐 powered by Red Hat Build of Keycloak & Authorino:
 
 <div align="center">
-  <img src="{{ '/rhcl-policy-topogy.png' | relative_url }}" width="900"/>
+  <img src="{{ site.baseurl }}/rhcl-policy-topogy.png" width="900"/>
 </div>

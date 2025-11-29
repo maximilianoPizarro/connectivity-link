@@ -37,20 +37,7 @@ body {
     padding: 20px;
 }
 
-/* Header */
-.site-header {
-    border-bottom: 2px solid var(--rh-red);
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-}
-
-.site-title {
-    color: var(--rh-red);
-    font-size: 2.5em;
-    font-weight: bold;
-    text-align: left;
-    margin: 0;
-}
+/* Header - Removed, title is now in content */
 
 /* Content - Left Aligned */
 .content {
