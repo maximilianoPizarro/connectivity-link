@@ -680,3 +680,41 @@ Integrating with a **cloud native strategy** and the **Kuadrant project** brings
 The power of this solution lies in its declarative nature—you define the desired state through Kubernetes manifests, and the GitOps workflow ensures that state is achieved and maintained automatically. This approach eliminates manual configuration errors, provides complete audit trails through Git history, and enables rapid deployment across multiple environments with consistency. The **Zero Trust** model is enforced at every layer: authentication through Keycloak, authorization via Authorino, rate limiting for API protection, and service mesh policies for inter-service communication. With **Connectivity Link** and **Kuadrant**, you're establishing a comprehensive security framework that scales with your infrastructure, creating a robust foundation for modern, secure microservices architectures.
 
 ---
+
+## 📢 Share This Content
+
+If you found this guide helpful, please share it with your network! Help others discover how to implement Zero Trust security with Connectivity Link and GitOps.
+
+<div align="center" style="margin: 2rem 0;">
+  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://maximilianopizarro.github.io/connectivity-link/" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/Share%20on-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Share on LinkedIn" style="margin: 0.25rem;">
+  </a>
+  <a href="https://twitter.com/intent/tweet?url=https://maximilianopizarro.github.io/connectivity-link/&text=Security%20Microservice%20with%20Connectivity%20Link%20using%20OpenID%20Connect%20%28OIDC%29%20-%20Zero%20Trust%20Architecture" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/Share%20on-Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Share on Twitter" style="margin: 0.25rem;">
+  </a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://maximilianopizarro.github.io/connectivity-link/" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/Share%20on-Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Share on Facebook" style="margin: 0.25rem;">
+  </a>
+  <a href="https://api.whatsapp.com/send?text=Security%20Microservice%20with%20Connectivity%20Link%20-%20https://maximilianopizarro.github.io/connectivity-link/" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/Share%20on-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Share on WhatsApp" style="margin: 0.25rem;">
+  </a>
+  <a href="mailto:?subject=Security%20Microservice%20with%20Connectivity%20Link&body=Check%20out%20this%20great%20resource%3A%20https://maximilianopizarro.github.io/connectivity-link/" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/Share%20via-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Share via Email" style="margin: 0.25rem;">
+  </a>
+</div>
+
+<div align="center" style="margin-top: 1.5rem;">
+  <p style="font-size: 0.9rem; color: #888; margin-bottom: 1rem;">Connect with the author:</p>
+  <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/LinkedIn-Maximiliano%20Pizarro-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Profile" style="margin: 0.25rem;">
+  </a>
+  <a href="https://github.com/maximilianoPizarro/connectivity-link" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin: 0 0.5rem; text-decoration: none;">
+    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository" style="margin: 0.25rem;">
+  </a>
+</div>
+
+<p align="center" style="margin-top: 1.5rem; color: #888; font-size: 0.9rem;">
+  <strong>Thank you for sharing!</strong> Your support helps the community grow and learn together.
+</p>
+
+---
