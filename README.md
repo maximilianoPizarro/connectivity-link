@@ -1,4 +1,4 @@
-# Connectivity Link — Demo & GitOps Overview
+# Security Microservice with Connectivity Link using OpenID Connect (OIDC)
 
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
