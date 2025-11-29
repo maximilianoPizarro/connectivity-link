@@ -1,0 +1,33 @@
+# Site Settings
+title: "Connectivity Link — Demo & GitOps Overview"
+description: "A comprehensive demo of Connectivity Link using a GitOps workflow"
+url: "" # Leave empty for local development
+baseurl: "" # Leave empty for root
+
+# Build Settings
+markdown: kramdown
+highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Theme Settings
+theme: null
+plugins_dir: _plugins
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+

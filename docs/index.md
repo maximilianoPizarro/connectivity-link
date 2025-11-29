@@ -1,6 +1,10 @@
+---
+layout: default
+title: Connectivity Link — Demo & GitOps Overview
+---
+
 # Connectivity Link — Demo & GitOps Overview
 
-<link rel="icon" href="https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/main/favicon-152.ico" type="image/x-icon" >
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/openshift-%23121011.svg?style=for-the-badge&logo=redhat&logoColor=dark" alt="OpenSHift">
@@ -11,7 +15,7 @@
 </p>
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-overview.png" width="900"/>
+  <img src="{{ '/rhcl-overview.png' | relative_url }}" width="900"/>
 </div>
 
 ## 🚀 Quick Start Recommendation
@@ -93,7 +97,7 @@ If you prefer to update manually, search and replace `apps.cluster-lv5jx.lv5jx.s
 
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/replace-guid.png" width="900"/>
+  <img src="{{ '/replace-guid.png' | relative_url }}" width="900"/>
 </div>
 
 
@@ -112,7 +116,7 @@ Or check your cluster's console URL - it typically follows the pattern: `console
 ### Step 1: Install OpenShift GitOps Operator
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/gitops.png" width="900"/>
+  <img src="{{ '/gitops.png' | relative_url }}" width="900"/>
 </div>
 
 Install the OpenShift GitOps Operator (via OperatorHub in the OpenShift console or via OLM). This is the only manual step required before applying the manifests in this demo.
@@ -136,11 +140,11 @@ oc apply -f applicationset-instance.yaml
 - After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-gitops.png" width="900"/>
+  <img src="{{ '/openshift-gitops.png' | relative_url }}" width="900"/>
 </div>
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/openshift-operator.png" width="900"/>
+  <img src="{{ '/openshift-operator.png' | relative_url }}" width="900"/>
 </div>
 
 ### Step 4: Configure Keycloak Client Settings (Manual)
@@ -444,11 +448,11 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 ### The Application Solution without Auth 🙌:
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl.png" width="900"/>
+  <img src="{{ '/rhcl.png' | relative_url }}" width="900"/>
 </div>
 
 ### The Application Solution with Auth 🔐 powered by Red Hat Build of Keycloak & Authorino:
 
 <div align="center">
-  <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topogy.png" width="900"/>
+  <img src="{{ '/rhcl-policy-topogy.png' | relative_url }}" width="900"/>
 </div>
