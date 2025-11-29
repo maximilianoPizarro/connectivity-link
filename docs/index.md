@@ -1,9 +1,12 @@
 ---
 layout: default
-title: Connectivity Link — Demo & GitOps Overview
+title: Security Microservice with Connectivity Link
+description: Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+
 ---
 
-# Connectivity Link — Demo & GitOps Overview
+# Security Microservice with Connectivity Link
+
+**Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+**
 
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
@@ -62,54 +65,263 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
   - Install and configure service mesh operators
   - Set up RBAC for ArgoCD to manage resources across namespaces
 
-## 🔧 Configuration: Cluster Domain Setup
+## 🔧 Configuration: Pre-configure DNS with ApplicationSets
 
-**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
-
-### Automatic Domain Update (In Development)
-
-We provide a bash script to automatically replace all cluster domain references:
-
-
-```bash
-chmod +x update-cluster-domain.sh
-./update-cluster-domain.sh <your-cluster-base-domain>
-```
-
-**Example:**
-```bash
-./update-cluster-domain.sh apps.your-cluster.example.com
-```
-
-The script will:
-- Find all YAML files containing the demo cluster domain
-- Replace them with your cluster's base domain
-- Show a summary of updated files
-
-### Manual Domain Update
-
-If you prefer to update manually, search and replace `apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com` with your cluster's base domain in the following locations:
-
-- `neuralbank-stack/values.yaml` - Keycloak and application URLs
-- `rhcl-operator/` - OIDC policies and route configurations
-- `servicemeshoperator3/` - Gateway route hostnames
-- `rhbk/` - Keycloak hostname and redirect URIs
-
-
-<div align="center">
-  <img src="{{ site.baseurl }}/replace-guid.png" width="900"/>
-</div>
-
+**⚠️ Important**: Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
 
 ### Finding Your Cluster Domain
 
-To find your OpenShift cluster's base domain:
+First, find your OpenShift cluster's base domain:
 
 ```bash
 oc get ingress.config/cluster -o jsonpath='{.spec.domain}'
 ```
 
 Or check your cluster's console URL - it typically follows the pattern: `console-openshift-console.apps.<your-cluster-domain>`
+
+### Option 1: ApplicationSet with Kustomize Patches (Recommended)
+
+This approach uses **Kustomize patches** to update DNS hostnames in Keycloak, Routes, and OIDC policies. Update the **`keycloak_host`** and **`app_host`** values in the generator elements:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-plain
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: namespaces
+            namespace: openshift-gitops
+            path: namespaces
+            sync_wave: "1"
+          - name: operators
+            namespace: openshift-gitops
+            path: operators
+            sync_wave: "2"
+          - name: developer-hub
+            namespace: developer-hub
+            path: developer-hub
+            sync_wave: "2"
+          - name: servicemeshoperator3
+            namespace: openshift-operators
+            path: servicemeshoperator3
+            sync_wave: "3"
+          - name: rhcl-operator
+            namespace: openshift-operators
+            path: rhcl-operator
+            sync_wave: "3"
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-rhbk
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: rhbk
+            namespace: rhbk-operator
+            path: rhbk
+            sync_wave: "2"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+        kustomize:
+          patches:
+          - target:
+              group: k8s.keycloak.org
+              kind: Keycloak
+              name: rhbk
+            patch: |-
+              - op: replace
+                path: /spec/hostname/hostname
+                value: "{{.keycloak_host}}"
+          - target:
+              group: k8s.keycloak.org
+              kind: KeycloakRealmImport
+              name: neuralbank-full-import
+            patch: |-
+              - op: replace
+                path: /spec/realm/clients/0/redirectUris/0
+                value: "https://{{.app_host}}/*"
+          - target:
+              group: route.openshift.io
+              kind: Route
+              name: neuralbank-external-route
+            patch: |-
+              - op: replace
+                path: /spec/host
+                value: "{{.app_host}}"
+          - target:
+              group: extensions.kuadrant.io
+              kind: OIDCPolicy
+              name: neuralbank-oidc
+            patch: |-
+              - op: replace
+                path: /spec/provider/issuerURL
+                value: "https://{{.keycloak_host}}/realms/neuralbank"
+              - op: replace
+                path: /spec/provider/authorizationEndpoint
+                value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
+              - op: replace
+                path: /spec/provider/tokenEndpoint
+                value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
+              - op: replace
+                path: /spec/provider/redirectURI
+                value: "https://{{.app_host}}/auth/callback"
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+```
+
+**Key Configuration Points:**
+- **`keycloak_host`**: Update this value with your Keycloak hostname (e.g., `rhbk.apps.<your-cluster-domain>`)
+- **`app_host`**: Update this value with your application hostname (e.g., `neuralbank.apps.<your-cluster-domain>`)
+- The Kustomize patches automatically update all DNS references in Keycloak, Routes, and OIDC policies
+
+### Option 2: ApplicationSet with Helm Parameters
+
+For Helm-based deployments, use **Helm parameters** to inject DNS values. Update the **`keycloak_host`** and **`app_host`** values in the generator:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-helm-internal
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: neuralbank-stack
+            namespace: neuralbank-stack
+            path: neuralbank-stack
+            sync_wave: "5"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+        helm:
+          parameters:
+            - name: "keycloak.issuerUrl"
+              value: "https://{{.keycloak_host}}/realms/neuralbank"
+            - name: "keycloak.redirectUri"
+              value: "https://{{.app_host}}/auth/callback"
+            - name: "keycloak.authorizationEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
+            - name: "keycloak.tokenEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
+            - name: "keycloak.postLogoutRedirectUri"
+              value: "https://{{.app_host}}"
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+```
+
+**Key Configuration Points:**
+- **`keycloak_host`**: Update this value with your Keycloak hostname
+- **`app_host`**: Update this value with your application hostname
+- Helm parameters automatically inject DNS values into the Helm chart values
+
+### Option 3: External Helm Chart ApplicationSet
+
+For external Helm charts, configure the chart repository and version:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-helm-external
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: workshop-pipelines
+            namespace: workshop-pipelines
+            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
+            chart: workshop-pipelines
+            chartVersion: "0.1.6"
+            sync_wave: "5"
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{.helmRepoURL}}'
+        targetRevision: '{{.chartVersion}}'
+        chart: '{{.chart}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+```
+
+### Benefits of Pre-configuring DNS
+
+- **No manual file editing**: DNS values are configured once in the ApplicationSet
+- **GitOps-friendly**: All configuration is version-controlled in the ApplicationSet manifests
+- **Dynamic updates**: Change DNS values by updating the ApplicationSet and ArgoCD will sync automatically
+- **Environment-specific**: Use different ApplicationSets for different environments (dev, staging, prod)
 
 ## 🚀 Getting Started
 
@@ -124,9 +336,9 @@ Install the OpenShift GitOps Operator (via OperatorHub in the OpenShift console 
 - **Console method**: Operators → OperatorHub → search for "OpenShift GitOps" → Install
 - **CLI alternative**: Use `oc` to install the operator with OLM if you have an appropriate catalog/package available
 
-### Step 2: Update Cluster Domain (Required)
+### Step 2: Configure DNS in ApplicationSets (Required)
 
-Before proceeding, update the cluster domain references as described in the [Configuration](#-configuration-cluster-domain-setup) section above.
+Before proceeding, **pre-configure your cluster domain** in the ApplicationSet definitions as described in the [Configuration](#-configuration-pre-configure-dns-with-applicationsets) section above. Update the **`keycloak_host`** and **`app_host`** values in the ApplicationSet generators to match your OpenShift cluster domain.
 
 ### Step 3: Create ApplicationSet Instance
 
@@ -228,7 +440,7 @@ oc create route edge neuralbank-external-route \
 ### Top-Level Files
 
 - [`applicationset-instance.yaml`](applicationset-instance.yaml) — ArgoCD ApplicationSet/instance manifest that ties multiple applications together
-- [`update-cluster-domain.sh`](update-cluster-domain.sh) — Bash script to automatically update cluster domain references
+- [`update-cluster-domain.sh`](update-cluster-domain.sh) — Bash script to automatically update cluster domain references (legacy method; **recommended**: use ApplicationSets with Kustomize patches as described in [Configuration](#-configuration-pre-configure-dns-with-applicationsets))
 
 ### Developer Hub (`developer-hub/`)
 
@@ -456,3 +668,7 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 <div align="center">
   <img src="{{ site.baseurl }}/rhcl-policy-topogy.png" width="900"/>
 </div>
+
+---
+
+**Content written by Maximiliano Pizarro - Specialist Solution Architect at Red Hat LATAM**

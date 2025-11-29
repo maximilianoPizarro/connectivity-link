@@ -1,6 +1,6 @@
 # Site Settings
-title: "Connectivity Link — Demo & GitOps Overview"
-description: "A comprehensive demo of Connectivity Link using a GitOps workflow"
+title: "Security Microservice with Connectivity Link"
+description: "Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+"
 url: "https://maximilianopizarro.github.io"
 baseurl: "/connectivity-link"
 

@@ -48,7 +48,7 @@
         .rh-site-header {
             background-color: #151515;
             color: #ffffff;
-            padding: 1rem 0;
+            padding: 1.5rem 0;
             border-bottom: 3px solid var(--rh-color-brand-red-on-white);
         }
         
@@ -57,7 +57,7 @@
             margin: 0 auto;
             padding: 0 1rem;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
         }
         
@@ -74,10 +74,22 @@
         }
         
         .rh-site-header__title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
             margin: 0;
             font-family: 'Red Hat Text', sans-serif;
+            line-height: 1.2;
+        }
+        
+        .rh-site-header__subtitle {
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin: 0.5rem 0 0 0;
+            opacity: 0.85;
+            font-family: 'Red Hat Text', sans-serif;
+            max-width: 800px;
+            line-height: 1.5;
+            color: #e0e0e0;
         }
         
         .rh-main {
@@ -287,13 +299,18 @@
 <body>
     <header class="rh-site-header">
         <div class="rh-site-header__container">
-            <a href="{{ site.baseurl }}/" class="rh-site-header__logo">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
                     <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 30C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z" fill="#EE0000"/>
                     <path d="M16 8c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 14c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z" fill="#EE0000"/>
                 </svg>
-                <h1 class="rh-site-header__title">Connectivity Link — Demo</h1>
-            </a>
+                <div>
+                    <a href="{{ site.baseurl }}/" class="rh-site-header__logo" style="text-decoration: none;">
+                        <h1 class="rh-site-header__title">Security Microservice with Connectivity Link</h1>
+                    </a>
+                    <p class="rh-site-header__subtitle">Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+</p>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -308,6 +325,7 @@
             <a href="https://github.com/maximilianoPizarro/connectivity-link">GitHub Repository</a>
             <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it">LinkedIn</a>
         </div>
+        <p>Content written by <strong>Maximiliano Pizarro</strong> - Specialist Solution Architect at Red Hat LATAM</p>
         <p>&copy; {{ 'now' | date: "%Y" }} Red Hat, Inc. | Built with Red Hat Design System</p>
     </footer>
     
