@@ -1,9 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: connectivity-link-demo
+  name: connectivity-gitlab-resources
   namespace: openshift-gitops
 spec:
+  goTemplate: true
   generators:
     - list:
         elements:
@@ -11,17 +12,12 @@ spec:
             namespace: openshift-gitops
             path: namespaces
             sync_wave: "1"
-
+          
           - name: operators
             namespace: openshift-gitops
             path: operators
             sync_wave: "2"
-
-          - name: rhbk
-            namespace: rhbk-operator
-            path: rhbk
-            sync_wave: "2"
-
+            
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -37,16 +33,107 @@ spec:
             path: rhcl-operator
             sync_wave: "3"
 
+          - name: rhbk
+            namespace: rhbk-operator
+            path: rhbk
+            sync_wave: "2"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+
           - name: neuralbank-stack
             namespace: neuralbank-stack
             path: neuralbank-stack
-            sourceType: Helm
             sync_wave: "5"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
 
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+        kustomize:
+          patches:
+          - target:
+              group: k8s.keycloak.org
+              kind: Keycloak
+              name: rhbk
+            patch: |-
+              - op: replace
+                path: /spec/hostname/hostname
+                value: "{{.keycloak_host}}"
+          - target:
+              group: k8s.keycloak.org
+              kind: KeycloakRealmImport
+              name: neuralbank-full-import
+            patch: |-
+              - op: replace
+                path: /spec/realm/clients/0/redirectUris/0
+                value: "https://{{.app_host}}/*"
+          - target:
+              group: route.openshift.io
+              kind: Route
+              name: neuralbank-external-route
+            patch: |-
+              - op: replace
+                path: /spec/host
+                value: "{{.app_host}}"
+          - target:
+              group: extensions.kuadrant.io
+              kind: OIDCPolicy
+              name: neuralbank-oidc
+            patch: |-
+              - op: replace
+                path: /spec/provider/issuerURL
+                value: "https://{{.keycloak_host}}/realms/neuralbank"
+              - op: replace
+                path: /spec/provider/authorizationEndpoint
+                value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
+              - op: replace
+                path: /spec/provider/tokenEndpoint
+                value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
+              - op: replace
+                path: /spec/provider/redirectURI
+                value: "https://{{.app_host}}/auth/callback"
+        helm:
+          parameters:
+            - name: "keycloak.issuerUrl"
+              value: "https://{{.keycloak_host}}/realms/neuralbank"
+            - name: "keycloak.redirectUri"
+              value: "https://{{.app_host}}/auth/callback"
+            - name: "keycloak.authorizationEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
+            - name: "keycloak.tokenEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
+            - name: "keycloak.postLogoutRedirectUri"
+              value: "https://{{.app_host}}"
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-external-apps
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
           - name: workshop-pipelines
             namespace: workshop-pipelines
-            path: workshop-pipelines
-            sourceType: Helm
             helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
             chart: workshop-pipelines
             chartVersion: "0.1.6"
@@ -54,20 +141,19 @@ spec:
 
   template:
     metadata:
-      name: '{{name}}'
+      name: '{{.name}}'
     spec:
       project: default
       source:
-        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
-        targetRevision: main
-        path: '{{path}}'
+        repoURL: '{{.helmRepoURL}}'
+        targetRevision: '{{.chartVersion}}'
+        chart: '{{.chart}}'
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{namespace}}'
+        namespace: '{{.namespace}}'
       syncPolicy:
         automated:
           selfHeal: true
           prune: true
         syncOptions:
           - CreateNamespace=true
-          - PruneLast=true
