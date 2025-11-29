@@ -4,7 +4,7 @@ kind: ClusterRole
 metadata:
   name: workshop-pipelines-gitops-clusterrole
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "-1"
 rules:
   - apiGroups:
       - helm.openshift.io
@@ -100,7 +100,7 @@ kind: ClusterRoleBinding
 metadata:
   name: workshop-pipelines-gitops-clusterrolebinding
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
