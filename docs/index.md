@@ -9,6 +9,10 @@ description: Zero Trust Architecture: Automate the installation with OpenShift G
   <p style="margin-top: 1rem; font-size: 0.875rem; color: #888; font-style: italic;">Developed and written by Maximiliano Pizarro - Specialist Solution Architect at Red Hat LATAM</p>
 </div>
 
+<div align="center" style="margin: 2rem 0;">
+  <iframe width="900" height="506" src="https://www.youtube.com/embed/YXOaY-pXajE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="max-width: 100%; border-radius: 4px;"></iframe>
+</div>
+
 <div align="center">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/openshift-%23121011.svg?style=for-the-badge&logo=redhat&logoColor=dark" alt="OpenSHift">
