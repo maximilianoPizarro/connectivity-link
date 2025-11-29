@@ -1,12 +1,8 @@
 ---
 layout: default
-title: Security Microservice with Connectivity Link
+title: Security Microservice with Connectivity Link using OpenID Connect (OIDC)
 description: Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+
 ---
-
-# Security Microservice with Connectivity Link
-
-**Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+**
 
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
@@ -18,8 +14,9 @@ description: Zero Trust Architecture: Automate the installation with OpenShift G
 </p>
 
 <div align="center">
-  <img src="{{ site.baseurl }}/rhcl-overview.png" width="900"/>
+  <img src="{{ site.baseurl }}/connectivity_link.png" width="900"/>
 </div>
+
 
 ## 🚀 Quick Start Recommendation
 
@@ -28,6 +25,10 @@ description: Zero Trust Architecture: Automate the installation with OpenShift G
 - Set up your own GitOps workflows with ArgoCD pointing to your fork
 - Modify cluster-specific settings (like domain names) in your own repository
 - Maintain your own version control and deployment pipeline
+
+<div align="center">
+  <img src="{{ site.baseurl }}/rhcl-overview.png" width="900"/>
+</div>
 
 After forking, update the repository references in `applicationset-instance.yaml` to point to your fork.
 
@@ -39,6 +40,10 @@ After forking, update the repository references in `applicationset-instance.yaml
 - **Outcome**: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository
 
 ## 📖 Overview
+
+<div align="center">
+  <img src="{{ site.baseurl }}/openshift-operator.png" width="900"/>
+</div>
 
 This repository contains a comprehensive demo of **Connectivity Link** using a GitOps workflow. It demonstrates how applications and infrastructure are declared as Kubernetes/Helm manifests and managed with ArgoCD (OpenShift GitOps). The demo includes:
 
@@ -355,9 +360,6 @@ oc apply -f applicationset-instance.yaml
   <img src="{{ site.baseurl }}/openshift-gitops.png" width="900"/>
 </div>
 
-<div align="center">
-  <img src="{{ site.baseurl }}/openshift-operator.png" width="900"/>
-</div>
 
 ### Step 4: Configure Keycloak Client Settings (Manual)
 
@@ -670,5 +672,3 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 </div>
 
 ---
-
-**Content written by Maximiliano Pizarro - Specialist Solution Architect at Red Hat LATAM**
