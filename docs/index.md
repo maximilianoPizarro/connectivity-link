@@ -4,19 +4,19 @@ title: Security Microservice with Connectivity Link using OpenID Connect (OIDC)
 description: Zero Trust Architecture: Automate the installation with OpenShift GitOps of Connectivity Link, Service Mesh 3, Red Hat Build of Keycloak, and a full-stack application secured with Authorino (OIDC) and rate limiting on OpenShift 4.20+
 ---
 
-<p align="left">
+<div align="center">
+  <img src="{{ site.baseurl }}/connectivity_link.png" width="900"/>
+  <p style="margin-top: 1rem; font-size: 0.875rem; color: #888; font-style: italic;">Developed and written by Maximiliano Pizarro - Specialist Solution Architect at Red Hat LATAM</p>
+</div>
+
+<div align="center">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/openshift-%23121011.svg?style=for-the-badge&logo=redhat&logoColor=dark" alt="OpenSHift">
 <img src="https://img.shields.io/badge/argocd-0077B5?style=for-the-badge&logo=argo" alt="kubernetes">
 <img src="https://img.shields.io/badge/helm-0db7ed?style=for-the-badge&logo=helm&logoColor=white" alt="Helm">
 <a href="https://github.com/maximilianoPizarro/connectivity-link"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=linkedin&logoColor=black" alt="github" /></a>
 <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="linkedin" /></a>
-</p>
-
-<div align="center">
-  <img src="{{ site.baseurl }}/connectivity_link.png" width="900"/>
 </div>
-
 
 ## 🚀 Quick Start Recommendation
 
@@ -670,5 +670,11 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 <div align="center">
   <img src="{{ site.baseurl }}/rhcl-policy-topogy.png" width="900"/>
 </div>
+
+## 🌟 Benefits of Cloud Native Integration with Kuadrant
+
+Integrating with a **cloud native strategy** and the **Kuadrant project** brings significant advantages to modern application deployment and security. The simplicity of this approach is remarkable: by adding just a few manifest files with the appropriate configuration, you can transform your application's security posture. **GitOps** plays a crucial role in orchestrating these changes in a clean environment within seconds, enabling a true **Zero Trust** architecture implementation.
+
+The power of this solution lies in its declarative nature—you define the desired state through Kubernetes manifests, and the GitOps workflow ensures that state is achieved and maintained automatically. This approach eliminates manual configuration errors, provides complete audit trails through Git history, and enables rapid deployment across multiple environments with consistency. The **Zero Trust** model is enforced at every layer: authentication through Keycloak, authorization via Authorino, rate limiting for API protection, and service mesh policies for inter-service communication. With **Connectivity Link** and **Kuadrant**, you're establishing a comprehensive security framework that scales with your infrastructure, creating a robust foundation for modern, secure microservices architectures.
 
 ---
