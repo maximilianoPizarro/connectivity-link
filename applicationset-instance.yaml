@@ -1,7 +1,10 @@
+# ---------------------------------------------------------------------------
+# 1. INFRAESTRUCTURA Y OPERADORES (Estrategia: Kustomize / Patches)
+# ---------------------------------------------------------------------------
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: connectivity-gitlab-resources
+  name: connectivity-infra-kustomize
   namespace: openshift-gitops
 spec:
   goTemplate: true
@@ -40,13 +43,6 @@ spec:
             keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
             app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
 
-          - name: neuralbank-stack
-            namespace: neuralbank-stack
-            path: neuralbank-stack
-            sync_wave: "5"
-            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-
   template:
     metadata:
       name: '{{.name}}'
@@ -56,6 +52,7 @@ spec:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
+        
         kustomize:
           patches:
           - target:
@@ -99,18 +96,7 @@ spec:
               - op: replace
                 path: /spec/provider/redirectURI
                 value: "https://{{.app_host}}/auth/callback"
-        helm:
-          parameters:
-            - name: "keycloak.issuerUrl"
-              value: "https://{{.keycloak_host}}/realms/neuralbank"
-            - name: "keycloak.redirectUri"
-              value: "https://{{.app_host}}/auth/callback"
-            - name: "keycloak.authorizationEndpoint"
-              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
-            - name: "keycloak.tokenEndpoint"
-              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
-            - name: "keycloak.postLogoutRedirectUri"
-              value: "https://{{.app_host}}"
+
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
@@ -125,7 +111,58 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: connectivity-external-apps
+  name: connectivity-apps-helm-internal
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: neuralbank-stack
+            namespace: neuralbank-stack
+            path: neuralbank-stack
+            sync_wave: "5"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+        
+        helm:
+          parameters:
+            - name: "keycloak.issuerUrl"
+              value: "https://{{.keycloak_host}}/realms/neuralbank"
+            - name: "keycloak.redirectUri"
+              value: "https://{{.app_host}}/auth/callback"
+            - name: "keycloak.authorizationEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/auth"
+            - name: "keycloak.tokenEndpoint"
+              value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
+            - name: "keycloak.postLogoutRedirectUri"
+              value: "https://{{.app_host}}"
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-helm-external
   namespace: openshift-gitops
 spec:
   goTemplate: true
