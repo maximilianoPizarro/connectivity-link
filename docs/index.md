@@ -13,7 +13,6 @@ description: Zero Trust Architecture: Automate the installation with OpenShift G
 <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="linkedin" /></a>
 </div>
 
-
 <div align="center" style="margin: 2rem 0;">
   <iframe width="900" height="506" src="https://www.youtube.com/embed/YXOaY-pXajE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="max-width: 100%; border-radius: 4px;"></iframe>
   <p style="margin-top: 1rem; font-size: 0.875rem; color: #888; font-style: italic;">Developed and written by Maximiliano Pizarro - Specialist Solution Architect at Red Hat LATAM</p>
