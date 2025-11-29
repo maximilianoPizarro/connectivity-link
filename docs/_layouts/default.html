@@ -43,6 +43,7 @@
             background-color: #1a1a1a;
             margin: 0;
             padding: 0;
+            font-size: 20px; /* Increased from 16px (125% increase) */
         }
         
         .rh-site-header {
@@ -74,7 +75,7 @@
         }
         
         .rh-site-header__title {
-            font-size: 1.5rem;
+            font-size: 1.875rem; /* Increased from 1.5rem (125% increase) */
             font-weight: 700;
             margin: 0;
             font-family: 'Red Hat Text', sans-serif;
@@ -82,7 +83,7 @@
         }
         
         .rh-site-header__subtitle {
-            font-size: 0.9rem;
+            font-size: 1.125rem; /* Increased from 0.9rem (125% increase) */
             font-weight: 400;
             margin: 0.5rem 0 0 0;
             opacity: 0.85;
@@ -93,7 +94,7 @@
         }
         
         .rh-main {
-            max-width: 1200px;
+            max-width: 1400px; /* Increased to accommodate larger images */
             margin: 0 auto;
             padding: 2rem 1rem;
         }
@@ -106,30 +107,30 @@
         
         .rh-content h1 {
             color: var(--rh-color-brand-red-on-white);
-            font-size: 2rem;
+            font-size: 2.5rem; /* Increased from 2rem (125% increase) */
             font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: 2.5rem; /* Increased spacing */
+            margin-bottom: 1.25rem;
             border-bottom: 3px solid var(--rh-color-brand-red-on-white);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.625rem;
             font-family: 'Red Hat Text', sans-serif;
         }
         
         .rh-content h2 {
             color: #ffffff;
-            font-size: 1.5rem;
+            font-size: 1.875rem; /* Increased from 1.5rem (125% increase) */
             font-weight: 600;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: 2.5rem; /* Increased spacing */
+            margin-bottom: 1.25rem;
             font-family: 'Red Hat Text', sans-serif;
         }
         
         .rh-content h3 {
             color: #ffffff;
-            font-size: 1.25rem;
+            font-size: 1.5625rem; /* Increased from 1.25rem (125% increase) */
             font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.875rem; /* Increased spacing */
+            margin-bottom: 0.9375rem;
             font-family: 'Red Hat Text', sans-serif;
         }
         
@@ -138,28 +139,29 @@
         .rh-content h6 {
             color: #ffffff;
             font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.875rem; /* Increased spacing */
+            margin-bottom: 0.9375rem;
             font-family: 'Red Hat Text', sans-serif;
         }
         
         .rh-content code {
             background-color: #2d2d2d;
             color: #e0e0e0;
-            padding: 0.2em 0.4em;
+            padding: 0.25em 0.5em; /* Increased padding */
             border-radius: 3px;
             font-family: 'Red Hat Mono', 'Overpass Mono', monospace;
-            font-size: 0.9em;
+            font-size: 1.125em; /* Increased from 0.9em (125% increase) */
         }
         
         .rh-content pre {
             background-color: #151515;
             color: #ffffff;
-            padding: 1rem;
+            padding: 1.25rem; /* Increased padding */
             border-radius: 4px;
             overflow-x: auto;
             border-left: 4px solid var(--rh-color-brand-red-on-white);
-            margin: 1.5rem 0;
+            margin: 1.875rem 0; /* Increased spacing */
+            font-size: 1.125em; /* Increased code size */
         }
         
         .rh-content pre code {
@@ -173,8 +175,9 @@
             height: auto;
             border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            margin: 1.5rem 0;
+            margin: 1.875rem auto; /* Centered with auto margins */
             border: 1px solid #404040;
+            display: block;
         }
         
         .rh-content img[alt*="badge"],
@@ -187,7 +190,7 @@
         
         .rh-content p[align="left"] {
             text-align: left;
-            margin: 1.5rem 0;
+            margin: 1.875rem 0; /* Increased spacing */
         }
         
         .rh-content a {
@@ -202,18 +205,18 @@
         
         .rh-content ul,
         .rh-content ol {
-            margin: 1rem 0;
-            padding-left: 2rem;
+            margin: 1.25rem 0; /* Increased spacing */
+            padding-left: 2.5rem; /* Increased padding */
         }
         
         .rh-content li {
-            margin: 0.5rem 0;
+            margin: 0.625rem 0; /* Increased spacing */
         }
         
         .rh-content blockquote {
             border-left: 4px solid var(--rh-color-brand-red-on-white);
-            padding-left: 1rem;
-            margin: 1.5rem 0;
+            padding-left: 1.25rem; /* Increased padding */
+            margin: 1.875rem 0; /* Increased spacing */
             color: #b0b0b0;
             font-style: italic;
         }
@@ -221,13 +224,14 @@
         .rh-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
+            margin: 1.875rem 0; /* Increased spacing */
         }
         
         .rh-content table th,
         .rh-content table td {
-            padding: 0.75rem;
+            padding: 0.9375rem; /* Increased padding */
             border: 1px solid #404040;
+            font-size: 1em; /* Explicit size */
         }
         
         .rh-content table th {
@@ -241,13 +245,26 @@
         }
         
         .rh-content div[align="center"] {
-            text-align: left;
-            margin: 1.5rem 0;
+            text-align: center;
+            margin: 1.875rem 0; /* Increased spacing */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .rh-content div[align="center"] img {
-            margin: 1.5rem 0;
+            margin: 1.875rem auto; /* Centered with auto margins */
             display: block;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+        }
+        
+        /* Responsive image sizing - adjust large images to fit container */
+        .rh-content div[align="center"] img[width="900"] {
+            max-width: min(900px, 100%);
+            width: 100%;
+            height: auto;
         }
         
         .rh-footer {
