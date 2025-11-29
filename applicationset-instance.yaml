@@ -1,10 +1,7 @@
-# ---------------------------------------------------------------------------
-# 1. INFRAESTRUCTURA Y OPERADORES (Estrategia: Kustomize / Patches)
-# ---------------------------------------------------------------------------
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: connectivity-infra-kustomize
+  name: connectivity-infra-plain
   namespace: openshift-gitops
 spec:
   goTemplate: true
@@ -15,34 +12,22 @@ spec:
             namespace: openshift-gitops
             path: namespaces
             sync_wave: "1"
-          
           - name: operators
             namespace: openshift-gitops
             path: operators
             sync_wave: "2"
-            
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
             sync_wave: "2"
-
           - name: servicemeshoperator3
             namespace: openshift-operators
             path: servicemeshoperator3
             sync_wave: "3"
-
           - name: rhcl-operator
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
-
-          - name: rhbk
-            namespace: rhbk-operator
-            path: rhbk
-            sync_wave: "2"
-            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-
   template:
     metadata:
       name: '{{.name}}'
@@ -52,7 +37,42 @@ spec:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
-        
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-rhbk
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: rhbk
+            namespace: rhbk-operator
+            path: rhbk
+            sync_wave: "2"
+            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
         kustomize:
           patches:
           - target:
@@ -96,7 +116,6 @@ spec:
               - op: replace
                 path: /spec/provider/redirectURI
                 value: "https://{{.app_host}}/auth/callback"
-
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
@@ -124,7 +143,6 @@ spec:
             sync_wave: "5"
             keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
             app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-
   template:
     metadata:
       name: '{{.name}}'
@@ -134,7 +152,6 @@ spec:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
-        
         helm:
           parameters:
             - name: "keycloak.issuerUrl"
@@ -147,7 +164,6 @@ spec:
               value: "https://{{.keycloak_host}}/realms/neuralbank/protocol/openid-connect/token"
             - name: "keycloak.postLogoutRedirectUri"
               value: "https://{{.app_host}}"
-
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
@@ -175,7 +191,6 @@ spec:
             chart: workshop-pipelines
             chartVersion: "0.1.6"
             sync_wave: "5"
-
   template:
     metadata:
       name: '{{.name}}'
