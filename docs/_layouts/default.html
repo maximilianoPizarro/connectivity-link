@@ -150,7 +150,7 @@
             padding: 0.25em 0.5em; /* Increased padding */
             border-radius: 3px;
             font-family: 'Red Hat Mono', 'Overpass Mono', monospace;
-            font-size: 1.125em; /* Increased from 0.9em (125% increase) */
+            font-size: 0.95em; /* Slightly reduced */
         }
         
         .rh-content pre {
@@ -161,14 +161,48 @@
             overflow-x: auto;
             border-left: 4px solid var(--rh-color-brand-red-on-white);
             margin: 1.875rem 0; /* Increased spacing */
-            font-size: 1.125em; /* Increased code size */
+            font-size: 0.9em; /* Reduced code size */
+            position: relative;
         }
         
         .rh-content pre code {
             background-color: transparent;
             color: #ffffff;
             padding: 0;
+            font-size: 0.95em; /* Slightly smaller */
         }
+        
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-family: 'Red Hat Text', sans-serif;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-button:hover {
+            background-color: var(--rh-color-brand-red-on-white);
+            color: #ffffff;
+            border-color: var(--rh-color-brand-red-on-white);
+        }
+        
+        .copy-button:active {
+            transform: scale(0.95);
+        }
+        
+        .copy-button.copied {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: #ffffff;
+        }
+        
         
         .rh-content img {
             max-width: 100%;
@@ -348,5 +382,50 @@
     
     <!-- Red Hat Design System JS -->
     <script src="https://unpkg.com/@redhat/ux-red-hat-design-system@4.0.0/dist/js/rhds.min.js"></script>
+    
+    <!-- Copy to Clipboard Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all pre elements
+            const preElements = document.querySelectorAll('.rh-content pre');
+            
+            preElements.forEach(function(pre) {
+                // Create copy button
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = 'Copy';
+                copyButton.setAttribute('aria-label', 'Copy code to clipboard');
+                
+                // Add click event
+                copyButton.addEventListener('click', function() {
+                    const code = pre.querySelector('code');
+                    const textToCopy = code ? code.textContent : pre.textContent;
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(textToCopy).then(function() {
+                        // Update button text
+                        copyButton.textContent = 'Copied!';
+                        copyButton.classList.add('copied');
+                        
+                        // Reset after 2 seconds
+                        setTimeout(function() {
+                            copyButton.textContent = 'Copy';
+                            copyButton.classList.remove('copied');
+                        }, 2000);
+                    }).catch(function(err) {
+                        console.error('Failed to copy text: ', err);
+                        copyButton.textContent = 'Error';
+                        setTimeout(function() {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    });
+                });
+                
+                // Append button to pre element
+                pre.style.position = 'relative';
+                pre.appendChild(copyButton);
+            });
+        });
+    </script>
 </body>
 </html>
