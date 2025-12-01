@@ -10,7 +10,32 @@ metadata:
 spec:
   components: {}
   containerRegistry: {}
-  devEnvironments: {}
+  devEnvironments:
+    # Configuración de namespace por defecto para workspaces
+    defaultNamespace:
+      autoProvision: true
+      template: "<username>-devspaces"
+    # Componentes por defecto para todos los workspaces
+    defaultComponents:
+      - name: universal-developer-image
+        container:
+          image: registry.redhat.io/devspaces/udi-rhel9@sha256:8f980b826039e2a36855a3d19ce163bb8762ff10a34c885ad744698878168b57
+    # Editor por defecto
+    defaultEditor: che-incubator/che-code/latest
+    # Configuración de seguridad del contenedor (sin límites estrictos)
+    containerSecurityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        add:
+          - SETGID
+          - SETUID
+    # Deshabilitar límites de recursos estrictos
+    disableContainerBuildCapabilities: false
+    # Tiempo de inactividad antes de suspender el workspace (30 minutos)
+    secondsOfInactivityBeforeIdling: 1800
+    # Estrategia de almacenamiento
+    storage:
+      pvcStrategy: per-user
   gitServices: {}
   networking: {}
 
