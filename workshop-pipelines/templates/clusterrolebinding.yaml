@@ -4,7 +4,7 @@ kind: ClusterRole
 metadata:
   name: workshop-pipelines-gitops-clusterrole
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "2"
 rules:
   - apiGroups:
       - helm.openshift.io
