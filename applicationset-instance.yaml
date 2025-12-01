@@ -28,10 +28,6 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
-          - name: workshop-pipelines-rbac
-            namespace: workshop-pipelines
-            path: workshop-pipelines
-            sync_wave: "2"
   template:
     metadata:
       name: '{{.name}}'
@@ -211,5 +207,41 @@ spec:
         automated:
           selfHeal: true
           prune: true
+        syncOptions:
+          - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-rbac
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: workshop-pipelines-rbac
+            namespace: workshop-pipelines
+            path: workshop-pipelines
+            sync_wave: "2"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true

@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - clusterrolebinding.yaml
   - rolebinding.yaml
+  - scc-rolebinding.yaml
 
 namespace: workshop-pipelines
 
