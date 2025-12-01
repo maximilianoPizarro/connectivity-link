@@ -149,7 +149,7 @@ spec:
           - name: neuralbank-stack
             namespace: neuralbank-stack
             path: neuralbank-stack
-            sync_wave: "5"
+            sync_wave: "4"
             keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
             app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
   template:
@@ -199,7 +199,7 @@ spec:
             helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
             chart: workshop-pipelines
             chartVersion: "0.1.6"
-            sync_wave: "5"
+            sync_wave: "4"
   template:
     metadata:
       name: '{{.name}}'
