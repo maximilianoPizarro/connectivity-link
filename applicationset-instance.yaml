@@ -31,7 +31,7 @@ spec:
           - name: devspaces
             namespace: openshift-devspaces
             path: devspaces
-            sync_wave: "3"
+            sync_wave: "4"
   template:
     metadata:
       name: '{{.name}}'

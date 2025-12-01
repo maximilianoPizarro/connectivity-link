@@ -5,7 +5,7 @@ metadata:
   name: devspaces
   namespace: openshift-devspaces
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   # Component configuration
   components:
