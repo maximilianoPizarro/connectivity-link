@@ -4,7 +4,7 @@ metadata:
   name: rhbk-operator
   namespace: rhbk-operator
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   targetNamespaces:
     - rhbk-operator
@@ -15,7 +15,7 @@ metadata:
   name: rhbk-operator
   namespace: rhbk-operator
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   channel: stable-v26.2
   name: rhbk-operator
