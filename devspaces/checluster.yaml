@@ -7,12 +7,12 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
-  # Configuración de componentes
+  # Component configuration
   components:
-    # Configuración del servidor Che
+    # Che server configuration
     cheServer:
       extraProperties:
-        # Configuración de recursos por defecto para workspaces (sin límites estrictos)
+        # Default resource configuration for workspaces (without strict limits)
         CHE_WORKSPACE_DEFAULT__CPU__REQUEST: "1"
         CHE_WORKSPACE_DEFAULT__CPU__LIMIT: ""
         CHE_WORKSPACE_DEFAULT__MEMORY__REQUEST: "2Gi"
@@ -21,14 +21,14 @@ spec:
         CHE_WORKSPACE_SIDECAR_DEFAULT__CPU__LIMIT: ""
         CHE_WORKSPACE_SIDECAR_DEFAULT__MEMORY__REQUEST: "128Mi"
         CHE_WORKSPACE_SIDECAR_DEFAULT__MEMORY__LIMIT: ""
-        # Deshabilitar límites de recursos para workspaces
+        # Disable resource limits for workspaces
         CHE_WORKSPACE_DEFAULT__RESOURCE__LIMITS__CPU: ""
         CHE_WORKSPACE_DEFAULT__RESOURCE__LIMITS__MEMORY: ""
         CHE_WORKSPACE_DEFAULT__RESOURCE__REQUESTS__CPU: "1"
         CHE_WORKSPACE_DEFAULT__RESOURCE__REQUESTS__MEMORY: "2Gi"
       debug: false
       logLevel: INFO
-      # Configuración de recursos del servidor Che
+      # Che server resource configuration
       resources:
         requests:
           cpu: "100m"
@@ -37,7 +37,7 @@ spec:
           cpu: "500m"
           memory: "512Mi"
     
-    # Configuración de la base de datos
+    # Database configuration
     database:
       externalDb: false
       postgresHostName: ""
@@ -50,35 +50,35 @@ spec:
         claimSize: "10Gi"
         storageClass: ""
     
-    # Configuración de métricas
+    # Metrics configuration
     metrics:
       enable: true
     
-    # Configuración del dashboard
+    # Dashboard configuration
     dashboard:
       enable: true
     
-    # Configuración de DevWorkspace
+    # DevWorkspace configuration
     devWorkspace:
       enable: true
-      # Sin límite de workspaces en ejecución
+      # No limit on running workspaces
       runningLimit: ""
       secondsOfInactivityBeforeIdling: 1800
       secondsOfRunBeforeIdling: -1
-      # Editor por defecto
+      # Default editor
       defaultEditor: "che-incubator/che-code/insiders"
-      # Componentes por defecto sin límites de recursos
+      # Default components without resource limits
       defaultComponents:
         - name: universal-developer-image
           container:
             image: quay.io/devfile/universal-developer-image:ubi8-latest
-            # Sin límites de recursos
+            # Without resource limits
             memoryRequest: "1Gi"
             memoryLimit: ""
             cpuRequest: "500m"
             cpuLimit: ""
   
-  # Configuración de networking
+  # Networking configuration
   networking:
     hostname: ""
     tlsSupport: true
@@ -88,46 +88,42 @@ spec:
           app: che
           component: che-gateway-config
   
-  # Configuración de Git
+  # Git configuration
   gitServices:
-    github:
-      endpoint: ""
-    gitlab:
-      endpoint: ""
-    bitbucket:
-      endpoint: ""
-    azureDevOps:
-      endpoint: ""
+    github: []
+    gitlab: []
+    bitbucket: []
+    azureDevOps: []
   
-  # Configuración de storage
+  # Storage configuration
   storage:
     pvcStrategy: "per-workspace"
     pvcClaimSize: "10Gi"
     preCreateSubPaths: true
   
-  # Configuración de container registry
+  # Container registry configuration
   containerRegistry:
     hostname: ""
     organization: ""
   
-  # Configuración de devfile registry
+  # Devfile registry configuration
   devfileRegistry:
     disableInternalRegistry: false
     externalDevfileRegistries:
       - url: "https://registry.devfile.io"
   
-  # Configuración de plugin registry
+  # Plugin registry configuration
   pluginRegistry:
     disableInternalRegistry: false
     externalPluginRegistries:
       - url: "https://registry.redhat.io"
   
-  # Configuración de image pull secrets
+  # Image pull secrets configuration
   imagePuller:
     enable: false
     spec: {}
   
-  # Configuración de server
+  # Server configuration
   server:
     cheFlavor: "devspaces"
     allowAutoProvision: true
