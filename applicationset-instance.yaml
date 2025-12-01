@@ -31,7 +31,7 @@ spec:
           - name: devspaces
             namespace: openshift-devspaces
             path: devspaces
-            sync_wave: "4"
+            sync_wave: "5"
   template:
     metadata:
       name: '{{.name}}'
@@ -50,6 +50,7 @@ spec:
           prune: true
         syncOptions:
           - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
 
 ---
 apiVersion: argoproj.io/v1alpha1
