@@ -21,7 +21,7 @@ workshop-pipelines:
       enabled: true
       name: workshop-pipelines-workspace
       size: 4Gi
-      storageClassName: gp2
+      storageClassName: gp3-csi
       accessMode: ReadWriteOnce
     promoteToQuay:
       retries: 3
