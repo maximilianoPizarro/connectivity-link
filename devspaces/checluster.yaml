@@ -1,5 +1,5 @@
 ---
-apiVersion: org.eclipse.che/v1
+apiVersion: org.eclipse.che/v2
 kind: CheCluster
 metadata:
   name: devspaces
@@ -7,54 +7,9 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
-  # Server configuration
-  server:
-    cheFlavor: "devspaces"
-    allowAutoProvision: true
-    allowUserDefinedWorkspaceNamespaces: true
-    workspaceNamespaceDefault: ""
-    workspaceNamespaces:
-      - "<username>-devspaces"
-  
-  # Database configuration
-  database:
-    externalDb: false
-    postgresHostName: ""
-    postgresPort: ""
-    postgresUser: ""
-    postgresPassword: ""
-    postgresDb: "dbche"
-    credentialsSecretName: "postgres-credentials"
-    pvc:
-      claimSize: "10Gi"
-      storageClass: ""
-  
-  # Metrics configuration
-  metrics:
-    enable: true
-  
-  # Dashboard configuration
-  dashboard:
-    enable: true
-  
-  # DevWorkspace configuration
-  devWorkspace:
-    enable: true
-  
-  # Authentication configuration
-  auth:
-    identityProviderURL: ""
-    oAuthClientName: ""
-    oAuthSecret: ""
-  
-  # Kubernetes/OpenShift configuration
-  k8s:
-    ingressDomain: ""
-    tlsSecretName: ""
-  
-  # Storage configuration
-  storage:
-    pvcStrategy: "per-workspace"
-    pvcClaimSize: "10Gi"
-    preCreateSubPaths: true
+  components: {}
+  containerRegistry: {}
+  devEnvironments: {}
+  gitServices: {}
+  networking: {}
 
