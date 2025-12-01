@@ -24,7 +24,7 @@ spec:
           image: registry.redhat.io/devspaces/udi-rhel9:latest
           memoryLimit: "4Gi"
           memoryRequest: "512Mi"
-    defaultEditor: che-code/latest
+    defaultEditor: che-incubator/che-code/latest
     containerSecurityContext:
       allowPrivilegeEscalation: true
       capabilities:
