@@ -28,6 +28,10 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
+          - name: workshop-pipelines-rbac
+            namespace: workshop-pipelines
+            path: workshop-pipelines
+            sync_wave: "4"
   template:
     metadata:
       name: '{{.name}}'
