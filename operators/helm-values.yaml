@@ -4,7 +4,8 @@ subscriptions:
   - name: devspaces
     namespace: openshift-operators
     channel: stable
-    source: redhat-operators    
+    source: redhat-operators
+    startingCSV: devspacesoperator.v3.24.0
   - name: rhcl-operator
     namespace: openshift-operators
     channel: stable

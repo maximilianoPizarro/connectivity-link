@@ -12,6 +12,9 @@ spec:
   name: {{ .name }}
   source: {{ .source }}
   sourceNamespace: openshift-marketplace
+{{- if .startingCSV }}
+  startingCSV: {{ .startingCSV }}
+{{- end }}
 ---
 {{- if ne .namespace "openshift-operators" }}
 apiVersion: v1
