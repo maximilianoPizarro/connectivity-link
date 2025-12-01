@@ -28,6 +28,10 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
+          - name: devspaces
+            namespace: openshift-devspaces
+            path: devspaces
+            sync_wave: "3"
   template:
     metadata:
       name: '{{.name}}'
@@ -208,7 +212,7 @@ spec:
           selfHeal: true
           prune: true
         syncOptions:
-          - CreateNamespace=true
+          - CreateNamespace=false
 
 ---
 apiVersion: argoproj.io/v1alpha1
