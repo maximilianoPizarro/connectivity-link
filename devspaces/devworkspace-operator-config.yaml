@@ -1,0 +1,16 @@
+apiVersion: controller.devfile.io/v1alpha1
+kind: DevWorkspaceOperatorConfig
+metadata:
+  name: devworkspace-operator-config
+  namespace: openshift-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+config:
+  # Configuraciones del operador DevWorkspace
+  # workspace:
+  #   cleanupCronJob:
+  #     enabled: true
+  #     dryRun: false
+  #     retainTime: 2592000  # 30 días en segundos
+  #     schedule: "0 0 1 * *"  # Se ejecuta el primer día de cada mes a medianoche
+
