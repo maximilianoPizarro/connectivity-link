@@ -2,6 +2,9 @@ apiVersion: org.eclipse.che/v2
 kind: CheCluster
 metadata:
   name: devspaces
+  namespace: openshift-devspaces
+  labels:
+    app.kubernetes.io/instance: devspaces
   annotations:
     argocd.argoproj.io/sync-wave: "5"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -11,9 +14,6 @@ spec:
       debug: false
       # metrics:
       #   enabled: true
-    dashboard:
-      publicUrl: "" 
-  containerRegistry: {}
   devEnvironments:
     defaultNamespace:
       autoProvision: true
@@ -35,6 +35,3 @@ spec:
     secondsOfInactivityBeforeIdling: 1800
     storage:
       pvcStrategy: per-user
-  gitServices: {}
-  networking:
-    domain: ""
