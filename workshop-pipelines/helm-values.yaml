@@ -1,6 +1,8 @@
 workshop-pipelines:
   replicaCount: 1
   namespace: workshop-pipelines
+  commonAnnotations:
+    argocd.argoproj.io/sync-wave: "5"
   route:
     enabled: true
   image:
