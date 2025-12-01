@@ -6,6 +6,11 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
+  # Habilitar autenticación OAuth nativa de OpenShift
+  sso:
+    provider: dex
+    dex:
+      openShiftOAuth: true
   rbac:
     defaultPolicy: ''
     policy: |
