@@ -16,6 +16,7 @@ rules:
       - pods
       - configmaps
       - events
+      - persistentvolumeclaims
     verbs:
       - create
       - delete
