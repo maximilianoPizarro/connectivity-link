@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  # Opciones del Repositorio (Aquí se monta el CMP)
+  repo:
+    sidecarContainers:
+      - name: my-custom-plugin-sidecar
+        command: [/var/run/argocd/argocd-cmp-server]
+        image: registry.redhat.io/openshift-gitops-1/argocd-rhel8:latest
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          # Montamos el ConfigMap que creamos en el paso 3
+          - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+            name: my-custom-plugin
+            subPath: plugin.yaml
+
+    volumes:
+      - configMap:
+          name: my-custom-plugin
+        name: my-custom-plugin
+
+  # Configuraciones globales adicionales
+  resourceCustomizations: |
+    # Ejemplo: Solucionar problemas de salud en PVCs o CRDs raros
+    "*.k8s.io/PersistentVolumeClaim":
+      health.lua: |
+        hs = {}
+        if obj.status ~= nil and obj.status.phase == "Bound" then
+          hs.status = "Healthy"
+          hs.message = "Volume is bound"
+        else
+          hs.status = "Progressing"
+          hs.message = "Waiting for volume"
+        end
+        return hs

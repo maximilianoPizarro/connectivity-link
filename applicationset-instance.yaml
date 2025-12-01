@@ -8,6 +8,10 @@ spec:
   generators:
     - list:
         elements:
+          - name: openshift-gitops
+            namespace: openshift-gitops
+            path: openshift-gitops
+            sync_wave: "0"
           - name: namespaces
             namespace: openshift-gitops
             path: namespaces
