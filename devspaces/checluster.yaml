@@ -1,5 +1,5 @@
 ---
-apiVersion: org.eclipse.che/v2
+apiVersion: org.eclipse.che/v1
 kind: CheCluster
 metadata:
   name: devspaces
@@ -7,127 +7,54 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
-  # Component configuration
-  components:
-    # Che server configuration
-    cheServer:
-      extraProperties:
-        # Default resource configuration for workspaces (without strict limits)
-        CHE_WORKSPACE_DEFAULT__CPU__REQUEST: "1"
-        CHE_WORKSPACE_DEFAULT__CPU__LIMIT: ""
-        CHE_WORKSPACE_DEFAULT__MEMORY__REQUEST: "2Gi"
-        CHE_WORKSPACE_DEFAULT__MEMORY__LIMIT: ""
-        CHE_WORKSPACE_SIDECAR_DEFAULT__CPU__REQUEST: "100m"
-        CHE_WORKSPACE_SIDECAR_DEFAULT__CPU__LIMIT: ""
-        CHE_WORKSPACE_SIDECAR_DEFAULT__MEMORY__REQUEST: "128Mi"
-        CHE_WORKSPACE_SIDECAR_DEFAULT__MEMORY__LIMIT: ""
-        # Disable resource limits for workspaces
-        CHE_WORKSPACE_DEFAULT__RESOURCE__LIMITS__CPU: ""
-        CHE_WORKSPACE_DEFAULT__RESOURCE__LIMITS__MEMORY: ""
-        CHE_WORKSPACE_DEFAULT__RESOURCE__REQUESTS__CPU: "1"
-        CHE_WORKSPACE_DEFAULT__RESOURCE__REQUESTS__MEMORY: "2Gi"
-      debug: false
-      logLevel: INFO
-      # Che server resource configuration
-      resources:
-        requests:
-          cpu: "100m"
-          memory: "256Mi"
-        limits:
-          cpu: "500m"
-          memory: "512Mi"
-    
-    # Database configuration
-    database:
-      externalDb: false
-      postgresHostName: ""
-      postgresPort: ""
-      postgresUser: ""
-      postgresPassword: ""
-      postgresDb: "dbche"
-      credentialsSecretName: "postgres-credentials"
-      pvc:
-        claimSize: "10Gi"
-        storageClass: ""
-    
-    # Metrics configuration
-    metrics:
-      enable: true
-    
-    # Dashboard configuration
-    dashboard:
-      enable: true
-    
-    # DevWorkspace configuration
-    devWorkspace:
-      enable: true
-      # No limit on running workspaces
-      runningLimit: ""
-      secondsOfInactivityBeforeIdling: 1800
-      secondsOfRunBeforeIdling: -1
-      # Default editor
-      defaultEditor: "che-incubator/che-code/insiders"
-      # Default components without resource limits
-      defaultComponents:
-        - name: universal-developer-image
-          container:
-            image: quay.io/devfile/universal-developer-image:ubi8-latest
-            # Without resource limits
-            memoryRequest: "1Gi"
-            memoryLimit: ""
-            cpuRequest: "500m"
-            cpuLimit: ""
+  # Server configuration
+  server:
+    cheFlavor: "devspaces"
+    allowAutoProvision: true
+    allowUserDefinedWorkspaceNamespaces: true
+    workspaceNamespaceDefault: ""
+    workspaceNamespaces:
+      - "<username>-devspaces"
   
-  # Networking configuration
-  networking:
-    hostname: ""
-    tlsSupport: true
-    auth:
-      gateway:
-        configLabels:
-          app: che
-          component: che-gateway-config
+  # Database configuration
+  database:
+    externalDb: false
+    postgresHostName: ""
+    postgresPort: ""
+    postgresUser: ""
+    postgresPassword: ""
+    postgresDb: "dbche"
+    credentialsSecretName: "postgres-credentials"
+    pvc:
+      claimSize: "10Gi"
+      storageClass: ""
   
-  # Git configuration
-  gitServices:
-    github: []
-    gitlab: []
-    bitbucket: []
-    azureDevOps: []
+  # Metrics configuration
+  metrics:
+    enable: true
+  
+  # Dashboard configuration
+  dashboard:
+    enable: true
+  
+  # DevWorkspace configuration
+  devWorkspace:
+    enable: true
+  
+  # Authentication configuration
+  auth:
+    identityProviderURL: ""
+    oAuthClientName: ""
+    oAuthSecret: ""
+  
+  # Kubernetes/OpenShift configuration
+  k8s:
+    ingressDomain: ""
+    tlsSecretName: ""
   
   # Storage configuration
   storage:
     pvcStrategy: "per-workspace"
     pvcClaimSize: "10Gi"
     preCreateSubPaths: true
-  
-  # Container registry configuration
-  containerRegistry:
-    hostname: ""
-    organization: ""
-  
-  # Devfile registry configuration
-  devfileRegistry:
-    disableInternalRegistry: false
-    externalDevfileRegistries:
-      - url: "https://registry.devfile.io"
-  
-  # Plugin registry configuration
-  pluginRegistry:
-    disableInternalRegistry: false
-    externalPluginRegistries:
-      - url: "https://registry.redhat.io"
-  
-  # Image pull secrets configuration
-  imagePuller:
-    enable: false
-    spec: {}
-  
-  # Server configuration
-  server:
-    cheFlavor: "devspaces"
-    allowAutoProvision: true
-    allowUserDefinedWorkspaceNamespaces: true
-    workspaceNamespaces:
-      - "<username>-devspaces"
 
