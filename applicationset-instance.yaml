@@ -16,10 +16,6 @@ spec:
             namespace: openshift-gitops
             path: namespaces
             sync_wave: "1"
-          - name: operators
-            namespace: openshift-gitops
-            path: operators
-            sync_wave: "2"
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -45,6 +41,44 @@ spec:
         repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-operators-helm
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: operators
+            namespace: openshift-gitops
+            path: operators
+            sync_wave: "2"
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+        helm:
+          valueFiles:
+            - helm-values.yaml
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
