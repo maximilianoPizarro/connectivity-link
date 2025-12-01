@@ -24,7 +24,7 @@ spec:
           image: registry.redhat.io/devspaces/udi-rhel9:latest
           memoryLimit: "4Gi"
           memoryRequest: "512Mi"
-    defaultEditor: che-incubator/che-code/latest
+    defaultEditor: che-code/latest
     containerSecurityContext:
       allowPrivilegeEscalation: true
       capabilities:
@@ -36,4 +36,5 @@ spec:
     storage:
       pvcStrategy: per-user
   gitServices: {}
-  networking: {}
+  networking:
+    domain: ""
