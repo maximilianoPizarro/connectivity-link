@@ -10,5 +10,6 @@ spec:
   channel: fast
   installPlanApproval: Automatic
   name: devworkspace-operator
+  startingCSV: devworkspace-operator.v0.38.0
   source: redhat-operators
   sourceNamespace: openshift-marketplace
