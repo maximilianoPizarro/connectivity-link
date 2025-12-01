@@ -1,0 +1,14 @@
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: devspaces
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  href: https://devspaces.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+  location: ApplicationMenu
+  text: Red Hat OpenShift Dev Spaces
+  applicationMenu:
+    section: Red Hat Applications
+
