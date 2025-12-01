@@ -24,6 +24,14 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: openshift-devspaces
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/managed-by: openshift-gitops
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "1"
