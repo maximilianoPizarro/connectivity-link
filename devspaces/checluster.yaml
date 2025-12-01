@@ -1,4 +1,3 @@
----
 apiVersion: org.eclipse.che/v2
 kind: CheCluster
 metadata:
@@ -7,34 +6,34 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  components: {}
+  components:
+    cheServer:
+      debug: false
+      # metrics:
+      #   enabled: true
+    dashboard:
+      publicUrl: "" 
   containerRegistry: {}
   devEnvironments:
-    # Configuración de namespace por defecto para workspaces
     defaultNamespace:
       autoProvision: true
       template: "<username>-devspaces"
-    # Componentes por defecto para todos los workspaces
     defaultComponents:
       - name: universal-developer-image
         container:
-          image: registry.redhat.io/devspaces/udi-rhel9@sha256:8f980b826039e2a36855a3d19ce163bb8762ff10a34c885ad744698878168b57
-    # Editor por defecto
+          image: registry.redhat.io/devspaces/udi-rhel9:latest
+          memoryLimit: "4Gi"
+          memoryRequest: "512Mi"
     defaultEditor: che-incubator/che-code/latest
-    # Configuración de seguridad del contenedor (sin límites estrictos)
     containerSecurityContext:
       allowPrivilegeEscalation: true
       capabilities:
         add:
           - SETGID
           - SETUID
-    # Deshabilitar límites de recursos estrictos
     disableContainerBuildCapabilities: false
-    # Tiempo de inactividad antes de suspender el workspace (30 minutos)
     secondsOfInactivityBeforeIdling: 1800
-    # Estrategia de almacenamiento
     storage:
       pvcStrategy: per-user
   gitServices: {}
   networking: {}
-
