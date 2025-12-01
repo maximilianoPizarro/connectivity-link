@@ -6,6 +6,15 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
+  # Habilitar ApplicationSet controller
+  applicationSet:
+    resources:
+      limits:
+        cpu: "2"
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
   # Habilitar autenticación OAuth nativa de OpenShift
   sso:
     provider: dex
