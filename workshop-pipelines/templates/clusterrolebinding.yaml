@@ -42,11 +42,15 @@ rules:
       - "*"
   - apiGroups:
       - networking.k8s.io
-      - policy
     resources:
       - networkpolicies
-      - poddisruptionbudgets
       - ingresses
+    verbs:
+      - "*"
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
     verbs:
       - "*"
   - apiGroups:
