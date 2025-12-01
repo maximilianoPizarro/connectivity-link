@@ -51,6 +51,7 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
 
 ---
 apiVersion: argoproj.io/v1alpha1

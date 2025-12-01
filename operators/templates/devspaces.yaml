@@ -10,5 +10,6 @@ spec:
   channel: stable
   installPlanApproval: Automatic
   name: devspaces
+  startingCSV: devspacesoperator.v3.23.0
   source: redhat-operators
   sourceNamespace: openshift-marketplace
