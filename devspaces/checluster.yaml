@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: devspaces
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "7"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true,Replace=true
 spec:
   components:
