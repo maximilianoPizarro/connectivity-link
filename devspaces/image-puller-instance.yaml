@@ -6,9 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "6"
 spec:
-  images: >-
-    registry.redhat.io/devspaces/udi-rhel9:latest;
-    quay.io/che-incubator/che-code:latest
+  images: udi-rhel9=registry.redhat.io/devspaces/udi-rhel9:latest;che-code=quay.io/che-incubator/che-code:latest
   
   daemonsetName: k8s-image-puller
   deploymentName: k8s-image-puller-operator
