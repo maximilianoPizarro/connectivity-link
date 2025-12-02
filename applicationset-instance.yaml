@@ -69,6 +69,7 @@ spec:
           # Helm applications - External repo
           - name: workshop-pipelines
             namespace: workshop-pipelines
+            path: workshop-pipelines
             helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
             chart: workshop-pipelines
             chartVersion: "0.1.6"
