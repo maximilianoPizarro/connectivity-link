@@ -72,7 +72,7 @@ data:
               resolvers:
                 - resolver: emailMatchingUserEntityProfileEmail
         gitlab:
-          - id: connectivity-link-developer-hub
+          connectivity-link-developer-hub:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -81,7 +81,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-neuralbank-stack
+          connectivity-link-neuralbank-stack:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -90,7 +90,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-rhbk
+          connectivity-link-rhbk:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -99,7 +99,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-rhcl-operator
+          connectivity-link-rhcl-operator:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -108,7 +108,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-servicemeshoperator3
+          connectivity-link-servicemeshoperator3:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -117,7 +117,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-devspaces
+          connectivity-link-devspaces:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -126,7 +126,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-operators
+          connectivity-link-operators:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -135,7 +135,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-workshop-pipelines
+          connectivity-link-workshop-pipelines:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -144,7 +144,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-openshift-gitops
+          connectivity-link-openshift-gitops:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
@@ -153,7 +153,7 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
-          - id: connectivity-link-namespaces
+          connectivity-link-namespaces:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
