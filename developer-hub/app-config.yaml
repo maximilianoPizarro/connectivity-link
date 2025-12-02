@@ -17,9 +17,9 @@ data:
           token: ${GITHUB_INTEGRATION}
       gitlab:
         - host: gitlab.com
-          # Token is optional for public repositories
-          # Uncomment and set GITLAB_INTEGRATION secret if needed for private repos or rate limits
-          # token: ${GITLAB_INTEGRATION}
+          # Token is required to avoid rate limits when using multiple providers
+          # Set GITLAB_INTEGRATION secret with your GitLab personal access token
+          token: ${GITLAB_INTEGRATION}
     auth:
       environment: production
       session:
@@ -77,6 +77,8 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /developer-hub/catalog-info.yaml
+            # Token inherited from integrations.gitlab, but can be overridden here if needed
+            # token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -89,7 +91,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 20 }
           connectivity-link-rhbk:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -98,7 +100,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 25 }
           connectivity-link-rhcl-operator:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -107,7 +109,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 30 }
           connectivity-link-servicemeshoperator3:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -116,7 +118,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 35 }
           connectivity-link-devspaces:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -125,7 +127,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 40 }
           connectivity-link-operators:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -134,7 +136,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 45 }
           connectivity-link-workshop-pipelines:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -143,7 +145,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 50 }
           connectivity-link-openshift-gitops:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -152,7 +154,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 55 }
           connectivity-link-namespaces:
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
@@ -161,7 +163,7 @@ data:
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
-              initialDelay: { seconds: 15 }
+              initialDelay: { seconds: 60 }
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API]
     lightspeed:
