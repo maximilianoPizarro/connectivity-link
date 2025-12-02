@@ -39,11 +39,6 @@ spec:
             path: rhcl-operator
             sync_wave: "3"
             app_type: plain
-          - name: devspaces
-            namespace: openshift-devspaces
-            path: devspaces
-            sync_wave: "5"
-            app_type: plain
           # RBAC applications
           - name: workshop-pipelines-rbac
             namespace: workshop-pipelines
@@ -132,16 +127,16 @@ spec:
   generators:
     - list:
         elements:
-          - name: sonarqube8
-            namespace: sonarqube8
-            path: sonarqube8
+          - name: nexus2
+            namespace: nexus2
+            path: nexus2
   template:
     metadata:
       name: '{{.name}}'
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/redhat-cop/gitops-catalog.git'
+        repoURL: 'https://github.com/maximilianoPizarro/gitops-catalog.git'
         targetRevision: main
         path: '{{.path}}/base'
       destination:
@@ -153,3 +148,33 @@ spec:
           prune: true
         syncOptions:
           - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devspaces
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+spec:
+  project: default
+  source:
+    repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+    targetRevision: main
+    path: devspaces
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: openshift-devspaces
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - SkipDryRunOnMissingResource=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: checlusters.org.eclipse.che
+
