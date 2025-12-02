@@ -60,7 +60,7 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 
 ## 🔧 Configuration: Cluster Domain Setup
 
-**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
+**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
 
 ### Automatic Domain Update
 
@@ -83,7 +83,7 @@ The script will:
 
 ### Manual Domain Update
 
-If you prefer to update manually, search and replace `apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com` with your cluster's base domain in the following locations:
+If you prefer to update manually, search and replace `apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com` with your cluster's base domain in the following locations:
 
 - `neuralbank-stack/values.yaml` - Keycloak and application URLs
 - `rhcl-operator/` - OIDC policies and route configurations

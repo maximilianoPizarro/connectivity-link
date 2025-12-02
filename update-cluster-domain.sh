@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Default demo cluster domain
-OLD_DOMAIN="apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com"
+OLD_DOMAIN="apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
 
 echo -e "${YELLOW}========================================${NC}"
 echo -e "${YELLOW}Cluster Domain Update Script${NC}"

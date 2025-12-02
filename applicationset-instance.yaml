@@ -72,8 +72,8 @@ spec:
             namespace: rhbk-operator
             path: rhbk
             sync_wave: "2"
-            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+            app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
   template:
     metadata:
       name: '{{.name}}'
@@ -151,8 +151,8 @@ spec:
             namespace: neuralbank-stack
             path: neuralbank-stack
             sync_wave: "5"
-            keycloak_host: rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
-            app_host: neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+            keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+            app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
   template:
     metadata:
       name: '{{.name}}'

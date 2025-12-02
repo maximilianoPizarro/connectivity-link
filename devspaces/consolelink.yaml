@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "6"
 spec:
-  href: https://devspaces.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com
+  href: https://devspaces.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
   location: ApplicationMenu
   text: Red Hat OpenShift Dev Spaces
   applicationMenu:

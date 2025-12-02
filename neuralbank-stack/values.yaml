@@ -30,13 +30,13 @@ frontend:
 
 # --- Keycloak Configuration ---
 keycloak:
-  issuerUrl: 'https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank'
+  issuerUrl: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'
   clientSecret: 'Ll1iA42wOvr3pEOn1xIBzGaX11JaSgeD'
-  authorizationEndpoint: 'https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
-  redirectUri: 'https://neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/auth/callback'
-  tokenEndpoint: 'https://rhbk.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
-  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-24p6f.24p6f.sandbox2386.opentlc.com'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
+  redirectUri: 'https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback'
+  tokenEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
 
 # --- API Configuration ---
 api:
