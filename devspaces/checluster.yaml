@@ -25,7 +25,7 @@ spec:
           memoryRequest: "512Mi"
     defaultEditor: che-incubator/che-code/latest
     disableContainerBuildCapabilities: false
-    secondsOfInactivityBeforeIdling: 1800
+    secondsOfInactivityBeforeIdling: 3600
     storage:
       pvcStrategy: per-user
   security:
