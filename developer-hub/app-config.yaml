@@ -72,25 +72,98 @@ data:
               resolvers:
                 - resolver: emailMatchingUserEntityProfileEmail
         gitlab:
-          - id: connectivity-link
+          - id: connectivity-link-developer-hub
             host: gitlab.com
             project: maximilianoPizarro/connectivity-link
             branch: main
-            catalogPath: /catalog-info.yaml
-            # Token is optional for public repositories
-            # Uncomment if you need to use a token (e.g., for rate limit increases)
-            # token: ${GITLAB_INTEGRATION}
+            catalogPath: /developer-hub/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-neuralbank-stack
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /neuralbank-stack/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-rhbk
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /rhbk/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-rhcl-operator
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /rhcl-operator/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-servicemeshoperator3
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /servicemeshoperator3/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-devspaces
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /devspaces/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-operators
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /operators/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-workshop-pipelines
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /workshop-pipelines/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-openshift-gitops
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /openshift-gitops/catalog-info.yaml
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          - id: connectivity-link-namespaces
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /namespaces/catalog-info.yaml
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API]
-      locations:
-        - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/all.yaml
-          rules:
-            - allow: [Component, API, Group, System, Location]
     lightspeed:
       servers:
         #- id: ollama
