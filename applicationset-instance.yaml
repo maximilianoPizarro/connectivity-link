@@ -66,15 +66,6 @@ spec:
             app_type: helm-internal
             keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
             app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
-          # Helm applications - External repo
-          - name: workshop-pipelines
-            namespace: workshop-pipelines
-            path: workshop-pipelines
-            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
-            chart: workshop-pipelines
-            chartVersion: "0.1.6"
-            sync_wave: "5"
-            app_type: helm-external
   template:
     metadata:
       name: '{{.name}}'
@@ -95,3 +86,38 @@ spec:
           - CreateNamespace=true
           - SkipDryRunOnMissingResource=true
           - RespectIgnoreDifferences=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-helm-external
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: workshop-pipelines
+            namespace: workshop-pipelines
+            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
+            chart: workshop-pipelines
+            chartVersion: "0.1.6"
+            sync_wave: "5"
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{.helmRepoURL}}'
+        targetRevision: '{{.chartVersion}}'
+        chart: '{{.chart}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=false
