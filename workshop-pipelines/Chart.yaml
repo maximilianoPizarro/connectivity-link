@@ -37,8 +37,3 @@ maintainers: # (optional)
     url: http://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it
 
 icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/logo-rhel.png
-
-dependencies:
-- name: workshop-pipelines
-  version: "0.1.6"
-  repository: "https://maximilianopizarro.github.io/workshop-pipelines/"
