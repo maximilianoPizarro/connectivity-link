@@ -1,0 +1,3 @@
+# Ignore Backstage catalog-info.yaml files - these are not Kubernetes resources
+catalog-info.yaml
+
