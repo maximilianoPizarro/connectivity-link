@@ -172,6 +172,28 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 60 }
+      locations:
+        # GitLab catalog-info.yaml files - Full URLs required for GitLab integration
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/developer-hub/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/neuralbank-stack/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhbk/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhcl-operator/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/servicemeshoperator3/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/devspaces/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/operators/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/workshop-pipelines/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/openshift-gitops/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/namespaces/catalog-info.yaml
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API]
     lightspeed:
