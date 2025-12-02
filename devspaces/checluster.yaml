@@ -13,6 +13,14 @@ spec:
   components:
     cheServer:
       debug: false
+      deployment:
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
   devEnvironments:
     defaultNamespace:
       autoProvision: true
@@ -21,8 +29,10 @@ spec:
       - name: universal-developer-image
         container:
           image: registry.redhat.io/devspaces/udi-rhel9:latest
-          memoryLimit: "4Gi"
-          memoryRequest: "512Mi"
+          memoryLimit: "8Gi"
+          memoryRequest: "4Gi"
+          cpuLimit: "4000m"
+          cpuRequest: "2000m"
     defaultEditor: che-incubator/che-code/latest
     disableContainerBuildCapabilities: false
     secondsOfInactivityBeforeIdling: 3600
