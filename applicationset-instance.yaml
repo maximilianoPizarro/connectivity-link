@@ -121,3 +121,35 @@ spec:
           prune: true
         syncOptions:
           - CreateNamespace=false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: redhat-cop
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: sonarqube8
+            namespace: sonarqube8
+            path: sonarqube8
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/redhat-cop/gitops-catalog.git'
+        targetRevision: main
+        path: '{{.path}}/base'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true

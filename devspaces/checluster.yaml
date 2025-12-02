@@ -24,13 +24,14 @@ spec:
           memoryLimit: "4Gi"
           memoryRequest: "512Mi"
     defaultEditor: che-incubator/che-code/latest
+    disableContainerBuildCapabilities: false
+    secondsOfInactivityBeforeIdling: 1800
+    storage:
+      pvcStrategy: per-user
+  security:
     containerSecurityContext:
       allowPrivilegeEscalation: true
       capabilities:
         add:
           - SETGID
           - SETUID
-    disableContainerBuildCapabilities: false
-    secondsOfInactivityBeforeIdling: 1800
-    storage:
-      pvcStrategy: per-user
