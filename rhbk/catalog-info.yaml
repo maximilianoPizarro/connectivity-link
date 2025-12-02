@@ -1,0 +1,80 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: keycloak
+  description: Red Hat Build of Keycloak - Identity and Access Management service providing OIDC authentication
+  annotations:
+    backstage.io/view-url: https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    argocd/app-name: rhbk
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/rhbk
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/rhbk
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - keycloak
+    - authentication
+    - oidc
+    - identity-provider
+    - postgresql
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: authentication-system
+  providesApis:
+    - keycloak-api
+  dependsOn:
+    - component:rhbk/postgresql
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: postgresql
+  description: PostgreSQL database for Keycloak
+  annotations:
+    argocd/app-name: rhbk
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: database
+  lifecycle: production
+  owner: platform-team
+  system: authentication-system
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: keycloak-api
+  description: Keycloak OIDC and Admin REST API
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Keycloak API
+      version: "1.0.0"
+    paths:
+      /realms/{realm}/.well-known/openid-configuration:
+        get:
+          summary: OIDC discovery endpoint
+      /realms/{realm}/protocol/openid-connect/token:
+        post:
+          summary: OIDC token endpoint
+      /admin/realms:
+        get:
+          summary: Admin API - List realms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: authentication-system
+  description: Authentication and identity management system
+spec:
+  owner: platform-team
+  domain: security
+

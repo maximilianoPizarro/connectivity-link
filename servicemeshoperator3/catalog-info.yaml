@@ -1,0 +1,73 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: istio-gateway
+  description: Istio Service Mesh Gateway - Kubernetes Gateway API implementation for traffic management and routing
+  annotations:
+    argocd/app-name: servicemeshoperator3
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/servicemeshoperator3
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/servicemeshoperator3
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - istio
+    - service-mesh
+    - gateway-api
+    - traffic-management
+    - mtls
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: service-mesh-system
+  providesApis:
+    - istio-gateway-api
+  dependsOn:
+    - component:operators/servicemesh-operator
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: service-mesh-control-plane
+  description: Istio Service Mesh Control Plane (SMCP) - Manages the Istio control plane and data plane
+  annotations:
+    argocd/app-name: servicemeshoperator3
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: service-mesh-system
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: istio-gateway-api
+  description: Istio Gateway API for traffic routing and management
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Istio Gateway API
+      version: "1.0.0"
+    paths:
+      /gateway:
+        get:
+          summary: Gateway configuration
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: service-mesh-system
+  description: Service mesh and traffic management system
+spec:
+  owner: platform-team
+  domain: networking
+

@@ -1,0 +1,37 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: devspaces
+  description: Red Hat OpenShift Dev Spaces - Cloud-based development environment with workspaces
+  annotations:
+    backstage.io/view-url: https://devspaces.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    argocd/app-name: devspaces
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/devspaces
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/devspaces
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - devspaces
+    - development-environment
+    - workspaces
+    - ide
+    - che
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: development-platform
+  dependsOn:
+    - component:operators/devspaces-operator
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: development-platform
+  description: Development platform and tooling system
+spec:
+  owner: platform-team
+  domain: development
+

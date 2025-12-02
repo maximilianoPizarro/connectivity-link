@@ -1,0 +1,65 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: developer-hub
+  description: Red Hat Developer Hub (Backstage) instance with Keycloak authentication and catalog integration
+  annotations:
+    backstage.io/view-url: https://developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    argocd/app-name: developer-hub
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/developer-hub
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/developer-hub
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - backstage
+    - developer-portal
+    - keycloak
+    - authentication
+    - catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: developer-platform
+  providesApis:
+    - developer-hub-api
+  consumesApis:
+    - keycloak-api
+  dependsOn:
+    - component:rhbk/keycloak
+    - component:openshift-gitops/argocd
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: developer-hub-api
+  description: Developer Hub REST API for catalog and plugin management
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Developer Hub API
+      version: "1.0.0"
+    paths:
+      /api/catalog:
+        get:
+          summary: Get catalog entities
+      /api/auth:
+        get:
+          summary: Authentication endpoints
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: developer-platform
+  description: Developer Platform system including Developer Hub, authentication, and catalog services
+spec:
+  owner: platform-team
+  domain: platform
+

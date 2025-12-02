@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: connectivity-link-components
+  description: All components from the connectivity-link repository
+spec:
+  type: url
+  targets:
+    - ./developer-hub/catalog-info.yaml
+    - ./neuralbank-stack/catalog-info.yaml
+    - ./rhbk/catalog-info.yaml
+    - ./rhcl-operator/catalog-info.yaml
+    - ./servicemeshoperator3/catalog-info.yaml
+    - ./devspaces/catalog-info.yaml
+    - ./operators/catalog-info.yaml
+    - ./workshop-pipelines/catalog-info.yaml
+    - ./openshift-gitops/catalog-info.yaml
+    - ./namespaces/catalog-info.yaml
+

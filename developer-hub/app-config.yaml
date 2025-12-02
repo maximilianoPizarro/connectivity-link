@@ -15,6 +15,11 @@ data:
       github:
         - host: github.com
           token: ${GITHUB_INTEGRATION}
+      gitlab:
+        - host: gitlab.com
+          # Token is optional for public repositories
+          # Uncomment and set GITLAB_INTEGRATION secret if needed for private repos or rate limits
+          # token: ${GITLAB_INTEGRATION}
     auth:
       environment: production
       session:
@@ -70,9 +75,24 @@ data:
           - allow: [Component, Group, User, Resource, Location, Template, API]
       locations:
         - type: url
-          target: https://github.com/redhat-ai-dev/ai-lab-template/blob/main/all.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/all.yaml
           rules:
-            - allow: [Component, API, Group, System]
+            - allow: [Component, API, Group, System, Location]
+      providers:
+        gitlab:
+          - id: connectivity-link
+            host: gitlab.com
+            group: maximilianoPizarro
+            project: connectivity-link
+            branch: main
+            catalogPath: /catalog-info.yaml
+            # Token is optional for public repositories
+            # Uncomment if you need to use a token (e.g., for rate limit increases)
+            # token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
     lightspeed:
       servers:
         #- id: ollama

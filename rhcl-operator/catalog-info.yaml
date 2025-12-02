@@ -1,0 +1,81 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: rhcl-operator
+  description: Red Hat Connectivity Link Operator - Manages API gateway, OIDC authentication, and authorization policies using Kuadrant/Authorino
+  annotations:
+    argocd/app-name: rhcl-operator
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/rhcl-operator
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/rhcl-operator
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - rhcl
+    - kuadrant
+    - authorino
+    - api-gateway
+    - oidc
+    - authorization
+    - connectivity-link
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: connectivity-system
+  providesApis:
+    - kuadrant-api
+    - authorino-api
+  consumesApis:
+    - keycloak-api
+  dependsOn:
+    - component:rhbk/keycloak
+    - component:servicemeshoperator3/istio-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gateway
+  description: Kubernetes Gateway API HTTPRoute resources for NeuralBank application routing
+  annotations:
+    argocd/app-name: rhcl-operator
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: connectivity-system
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kuadrant-api
+  description: Kuadrant API Gateway management API
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: authorino-api
+  description: Authorino authentication and authorization API
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: connectivity-system
+  description: Connectivity and API gateway system
+spec:
+  owner: platform-team
+  domain: networking
+

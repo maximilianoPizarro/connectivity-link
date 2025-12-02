@@ -1,0 +1,36 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: workshop-pipelines
+  description: Workshop Pipelines - Tekton pipelines for CI/CD workflows deployed via Helm chart from external repository
+  annotations:
+    argocd/app-name: workshop-pipelines
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/workshop-pipelines
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/workshop-pipelines
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - tekton
+    - pipelines
+    - cicd
+    - helm
+    - external-chart
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: cicd-platform
+  dependsOn:
+    - component:operators/pipelines-operator
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: cicd-platform
+  description: CI/CD and pipeline automation platform
+spec:
+  owner: platform-team
+  domain: devops
+
