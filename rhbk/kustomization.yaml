@@ -6,6 +6,7 @@ resources:
   - keycloak-initial-admin.yaml
   - keycloak-db-secret.yaml
   - keycloak.yaml
-  - keycloak-backstage-realm.yaml
+  - keycloak-neuralbank-realm.yaml
+  - keycloak-devhub-realm.yaml
 
 namespace: rhbk-operator
