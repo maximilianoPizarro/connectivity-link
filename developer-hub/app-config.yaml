@@ -198,7 +198,7 @@ data:
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/namespaces/catalog-info.yaml
       rules:
-          - allow: [Component, Group, User, Resource, Location, Template, API]
+          - allow: [Component, Group, User, Resource, Location, Template, API, System, Domain]
     lightspeed:
       servers:
         #- id: ollama
