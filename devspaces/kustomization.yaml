@@ -4,5 +4,5 @@ resources:
   - checluster.yaml
   #- consolelink.yaml
   - image-puller-instance.yaml
-namespace: openshift-devspaces
+namespace: devspaces
 

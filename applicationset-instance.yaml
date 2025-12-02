@@ -136,9 +136,9 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/maximilianoPizarro/gitops-catalog.git'
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
-        path: '{{.path}}/base'
+        path: '{{.path}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
@@ -150,31 +150,42 @@ spec:
           - CreateNamespace=true
 ---
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: devspaces
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "7"
+    argocd.argoproj.io/sync-wave: "7"  
 spec:
-  project: default
-  source:
-    repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
-    targetRevision: main
-    path: devspaces
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: openshift-devspaces
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-      - CreateNamespace=true
-      - SkipDryRunOnMissingResource=true
-      - RespectIgnoreDifferences=true
-  ignoreDifferences:
-    - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: checlusters.org.eclipse.che
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: devspaces
+            namespace: devspaces
+            path: devspaces
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false  # Deshabilitar prune para evitar que ArgoCD elimine la CRD instalada por el operador
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+      ignoreDifferences:
+        - group: apiextensions.k8s.io
+          kind: CustomResourceDefinition
+          name: checlusters.org.eclipse.che
 

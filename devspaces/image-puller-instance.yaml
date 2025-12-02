@@ -2,7 +2,7 @@ apiVersion: che.eclipse.org/v1alpha1
 kind: KubernetesImagePuller
 metadata:
   name: image-puller-config
-  namespace: openshift-devspaces
+  namespace: devspaces
   annotations:
     argocd.argoproj.io/sync-wave: "6"
 spec:
