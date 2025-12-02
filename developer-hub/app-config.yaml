@@ -71,14 +71,6 @@ data:
             signIn:
               resolvers:
                 - resolver: emailMatchingUserEntityProfileEmail
-      rules:
-          - allow: [Component, Group, User, Resource, Location, Template, API]
-      locations:
-        - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/all.yaml
-          rules:
-            - allow: [Component, API, Group, System, Location]
-      providers:
         gitlab:
           - id: connectivity-link
             host: gitlab.com
@@ -93,6 +85,13 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
+      rules:
+          - allow: [Component, Group, User, Resource, Location, Template, API]
+      locations:
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/all.yaml
+          rules:
+            - allow: [Component, API, Group, System, Location]
     lightspeed:
       servers:
         #- id: ollama
