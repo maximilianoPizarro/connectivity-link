@@ -53,7 +53,10 @@ data:
           - "'self'"
           - "data:"
           - https://img.freepik.com
-          - https://cdn.dribbble.com     
+          - https://cdn.dribbble.com
+      reading:
+        allow:
+          - host: gitlab.com
     signInPage: oidc
     catalog:
       providers:
@@ -173,27 +176,27 @@ data:
               timeout: { minutes: 5 }
               initialDelay: { seconds: 60 }
       locations:
-        # GitLab catalog-info.yaml files - Full URLs required for GitLab integration
+        # GitLab catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/developer-hub/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/developer-hub/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/neuralbank-stack/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/neuralbank-stack/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhbk/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhbk/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhcl-operator/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhcl-operator/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/servicemeshoperator3/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/servicemeshoperator3/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/devspaces/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/devspaces/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/operators/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/operators/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/workshop-pipelines/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/workshop-pipelines/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/openshift-gitops/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/openshift-gitops/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/namespaces/catalog-info.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/namespaces/catalog-info.yaml
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API]
     lightspeed:
