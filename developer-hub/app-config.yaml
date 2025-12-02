@@ -77,8 +77,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /developer-hub/catalog-info.yaml
-            # Token inherited from integrations.gitlab, but can be overridden here if needed
-            # token: ${GITLAB_INTEGRATION}
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -88,6 +87,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /neuralbank-stack/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -97,6 +97,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /rhbk/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -106,6 +107,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /rhcl-operator/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -115,6 +117,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /servicemeshoperator3/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -124,6 +127,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /devspaces/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -133,6 +137,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /operators/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -142,6 +147,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /workshop-pipelines/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -151,6 +157,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /openshift-gitops/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
@@ -160,6 +167,7 @@ data:
             project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /namespaces/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
