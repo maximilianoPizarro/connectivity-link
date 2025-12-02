@@ -8,47 +8,121 @@ metadata:
     rhdh.redhat.com/backstage-name: developer-hub
 data:
   rbac-policy.csv: |
-    # Define a comprehensive 'admin' role
+    # ============================================
+    # FULL ADMIN PERMISSIONS FOR maximilianopizarro
+    # ============================================
+    
+    # Catalog Entity Permissions - Full CRUD
+    p, user:default/maximilianopizarro, catalog-entity, read, allow
+    p, user:default/maximilianopizarro, catalog-entity, create, allow
+    p, user:default/maximilianopizarro, catalog-entity, update, allow
+    p, user:default/maximilianopizarro, catalog-entity, delete, allow
+    
+    # Catalog Location Permissions - Full CRUD
+    p, user:default/maximilianopizarro, catalog.location, read, allow
+    p, user:default/maximilianopizarro, catalog.location, create, allow
+    p, user:default/maximilianopizarro, catalog.location, update, allow
+    p, user:default/maximilianopizarro, catalog.location, delete, allow
+    
+    # Catalog Entity Creation Permission
+    p, user:default/maximilianopizarro, catalog.entity.create, create, allow
+    
+    # Permission Policy Management - Full CRUD
+    p, user:default/maximilianopizarro, permission.policy, read, allow
+    p, user:default/maximilianopizarro, permission.policy, create, allow
+    p, user:default/maximilianopizarro, permission.policy, update, allow
+    p, user:default/maximilianopizarro, permission.policy, delete, allow
+    
+    # Scaffolder Permissions - Full Access
+    p, user:default/maximilianopizarro, scaffolder-template, read, allow
+    p, user:default/maximilianopizarro, scaffolder-template, write, allow
+    p, user:default/maximilianopizarro, scaffolder.task, read, allow
+    p, user:default/maximilianopizarro, scaffolder.task, create, allow
+    p, user:default/maximilianopizarro, scaffolder.task, update, allow
+    p, user:default/maximilianopizarro, scaffolder.task, delete, allow
+    p, user:default/maximilianopizarro, scaffolder.action.execute, use, allow
+    
+    # Lightspeed (AI Chat) Permissions - Full CRUD
+    p, user:default/maximilianopizarro, lightspeed.chat, read, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, create, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, update, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, delete, allow
+    
+    # TechDocs Permissions - Full Access
+    p, user:default/maximilianopizarro, techdocs.entity, read, allow
+    p, user:default/maximilianopizarro, techdocs.entity, create, allow
+    p, user:default/maximilianopizarro, techdocs.entity, update, allow
+    p, user:default/maximilianopizarro, techdocs.entity, delete, allow
+    
+    # API Permissions - Full Access
+    p, user:default/maximilianopizarro, api.entity, read, allow
+    p, user:default/maximilianopizarro, api.entity, create, allow
+    p, user:default/maximilianopizarro, api.entity, update, allow
+    p, user:default/maximilianopizarro, api.entity, delete, allow
+    
+    # Resource Permissions - Full Access
+    p, user:default/maximilianopizarro, resource.entity, read, allow
+    p, user:default/maximilianopizarro, resource.entity, create, allow
+    p, user:default/maximilianopizarro, resource.entity, update, allow
+    p, user:default/maximilianopizarro, resource.entity, delete, allow
+    
+    # System Permissions - Full Access
+    p, user:default/maximilianopizarro, system.entity, read, allow
+    p, user:default/maximilianopizarro, system.entity, create, allow
+    p, user:default/maximilianopizarro, system.entity, update, allow
+    p, user:default/maximilianopizarro, system.entity, delete, allow
+    
+    # Domain Permissions - Full Access
+    p, user:default/maximilianopizarro, domain.entity, read, allow
+    p, user:default/maximilianopizarro, domain.entity, create, allow
+    p, user:default/maximilianopizarro, domain.entity, update, allow
+    p, user:default/maximilianopizarro, domain.entity, delete, allow
+    
+    # Group Permissions - Full Access
+    p, user:default/maximilianopizarro, group.entity, read, allow
+    p, user:default/maximilianopizarro, group.entity, create, allow
+    p, user:default/maximilianopizarro, group.entity, update, allow
+    p, user:default/maximilianopizarro, group.entity, delete, allow
+    
+    # User Permissions - Full Access
+    p, user:default/maximilianopizarro, user.entity, read, allow
+    p, user:default/maximilianopizarro, user.entity, create, allow
+    p, user:default/maximilianopizarro, user.entity, update, allow
+    p, user:default/maximilianopizarro, user.entity, delete, allow
+    
+    # Template Permissions - Full Access
+    p, user:default/maximilianopizarro, template.entity, read, allow
+    p, user:default/maximilianopizarro, template.entity, create, allow
+    p, user:default/maximilianopizarro, template.entity, update, allow
+    p, user:default/maximilianopizarro, template.entity, delete, allow
+    
+    # ============================================
+    # ROLE DEFINITIONS FOR OTHER USERS (Optional)
+    # ============================================
+    
+    # Define a comprehensive 'platformengineer' role
     p, role:default/platformengineer, lightspeed.chat, read, allow
     p, role:default/platformengineer, lightspeed.chat, create, allow
     p, role:default/platformengineer, lightspeed.chat, update, allow
     p, role:default/platformengineer, lightspeed.chat, delete, allow
-
     p, role:default/platformengineer, catalog-entity, read, allow
     p, role:default/platformengineer, catalog-entity, create, allow
     p, role:default/platformengineer, catalog-entity, update, allow
     p, role:default/platformengineer, catalog-entity, delete, allow
-
     p, role:default/platformengineer, catalog.location, read, allow
     p, role:default/platformengineer, catalog.location, create, allow
     p, role:default/platformengineer, catalog.location, delete, allow
-
     p, role:default/platformengineer, catalog.entity.create, create, allow
     p, role:default/platformengineer, scaffolder-template, read, allow
     p, role:default/platformengineer, scaffolder.task, read, allow
     p, role:default/platformengineer, scaffolder.task, create, allow
     p, role:default/platformengineer, scaffolder.task, delete, allow
     p, role:default/platformengineer, scaffolder.action.execute, use, allow
-
     p, role:default/platformengineer, permission.policy, read, allow
-
-    # Assign maximilianopizarro to the new 'platformengineer' role
+    
+    # Assign maximilianopizarro to platformengineer role (additional role assignment)
     g, user:default/maximilianopizarro, role:default/platformengineer
     
-    # Full admin permissions for maximilianopizarro
-    p, user:default/maximilianopizarro, catalog-entity, read, allow
-    p, user:default/maximilianopizarro, catalog-entity, create, allow
-    p, user:default/maximilianopizarro, catalog-entity, update, allow
-    p, user:default/maximilianopizarro, catalog-entity, delete, allow
-    p, user:default/maximilianopizarro, catalog.location, read, allow
-    p, user:default/maximilianopizarro, catalog.location, create, allow
-    p, user:default/maximilianopizarro, catalog.location, delete, allow
-    p, user:default/maximilianopizarro, catalog.entity.create, create, allow
-    p, user:default/maximilianopizarro, permission.policy, read, allow
-    p, user:default/maximilianopizarro, permission.policy, create, allow
-    p, user:default/maximilianopizarro, permission.policy, update, allow
-    p, user:default/maximilianopizarro, permission.policy, delete, allow
-
     # If you still want the 'rhdhpai-users' role for other users, keep its definition:
     p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow
     p, role:default/rhdhpai-users, lightspeed.chat.create, create, allow
@@ -63,9 +137,10 @@ data:
     p, role:default/rhdhpai-users, scaffolder-template, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.read, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.create, create, allow
-
+    
     # If you still need 'template-executers' for other users, keep its definition:
     p, role:default/template-executers, scaffolder.action.execute, use, allow
-
+    
+    # Additional role assignments for maximilianopizarro (redundant but ensures coverage)
     g, user:default/maximilianopizarro, role:default/rhdhpai-users
     g, user:default/maximilianopizarro, role:default/template-executers
