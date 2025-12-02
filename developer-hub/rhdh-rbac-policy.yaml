@@ -34,6 +34,20 @@ data:
 
     # Assign maximilianopizarro to the new 'platformengineer' role
     g, user:default/maximilianopizarro, role:default/platformengineer
+    
+    # Full admin permissions for maximilianopizarro
+    p, user:default/maximilianopizarro, catalog-entity, read, allow
+    p, user:default/maximilianopizarro, catalog-entity, create, allow
+    p, user:default/maximilianopizarro, catalog-entity, update, allow
+    p, user:default/maximilianopizarro, catalog-entity, delete, allow
+    p, user:default/maximilianopizarro, catalog.location, read, allow
+    p, user:default/maximilianopizarro, catalog.location, create, allow
+    p, user:default/maximilianopizarro, catalog.location, delete, allow
+    p, user:default/maximilianopizarro, catalog.entity.create, create, allow
+    p, user:default/maximilianopizarro, permission.policy, read, allow
+    p, user:default/maximilianopizarro, permission.policy, create, allow
+    p, user:default/maximilianopizarro, permission.policy, update, allow
+    p, user:default/maximilianopizarro, permission.policy, delete, allow
 
     # If you still want the 'rhdhpai-users' role for other users, keep its definition:
     p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow

@@ -6,14 +6,14 @@ metadata:
 spec:
   type: url
   targets:
-    - ./developer-hub/catalog-info.yaml
-    - ./neuralbank-stack/catalog-info.yaml
-    - ./rhbk/catalog-info.yaml
-    - ./rhcl-operator/catalog-info.yaml
-    - ./servicemeshoperator3/catalog-info.yaml
-    - ./devspaces/catalog-info.yaml
-    - ./operators/catalog-info.yaml
-    - ./workshop-pipelines/catalog-info.yaml
-    - ./openshift-gitops/catalog-info.yaml
-    - ./namespaces/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/developer-hub/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/neuralbank-stack/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhbk/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/rhcl-operator/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/servicemeshoperator3/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/devspaces/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/operators/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/workshop-pipelines/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/openshift-gitops/catalog-info.yaml
+    - https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/namespaces/catalog-info.yaml
 

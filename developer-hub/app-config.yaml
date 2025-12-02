@@ -74,8 +74,7 @@ data:
         gitlab:
           - id: connectivity-link
             host: gitlab.com
-            group: maximilianoPizarro
-            project: connectivity-link
+            project: maximilianoPizarro/connectivity-link
             branch: main
             catalogPath: /catalog-info.yaml
             # Token is optional for public repositories
