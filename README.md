@@ -117,9 +117,18 @@ Before proceeding, update the cluster domain references as described in the [Con
 
 Create the ApplicationSet / ArgoCD instance using the top-level manifest:
 
+**Option 1: Apply via ArgoCD UI (Recommended)**
+1. Open the OpenShift GitOps (ArgoCD) console
+2. Go to Settings > Repositories and ensure this repository is added
+3. Create a new Application pointing to this repository and the `applicationset-instance.yaml` file
+4. ArgoCD will process the ApplicationSet and create all applications
+
+**Option 2: Apply via kubectl (if YAML validation passes)**
 ```bash
 oc apply -f applicationset-instance.yaml
 ```
+
+**Note:** If you encounter YAML parsing errors, it's because the ApplicationSet uses Go templates (`{{- if eq .app_type "rbac"}}`) which are processed by ArgoCD, not by Kubernetes. In this case, use Option 1 (ArgoCD UI) or apply the ApplicationSet as an ArgoCD Application.
 
 - `applicationset-instance.yaml` creates/instantiates the applications defined in this repo and points them to this repository for ArgoCD to reconcile
 - After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed

@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: latest
+  startingCSV: openshift-pipelines-operator-rh.v1.20.1
   installPlanApproval: Automatic
   name: openshift-pipelines-operator-rh
   source: redhat-operators
