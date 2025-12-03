@@ -1,3 +1,25 @@
+---
+# Root group - all teams are children of this group
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: backstage
+  description: Root organization group for Developer Hub
+spec:
+  type: organization
+  profile:
+    displayName: Developer Hub Organization
+    email: admin@developer-hub.local
+  children:
+    - developers
+    - devteam1
+    - infrastructure
+    - platformengineers
+    - rhdh
+    - platform-team
+    - application-team
+
+---
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
