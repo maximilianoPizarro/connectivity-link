@@ -58,6 +58,19 @@ spec:
   type: rest
   lifecycle: production
   owner: platform-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Kuadrant API Gateway Management API
+      version: "1.0.0"
+      description: API for managing Kuadrant API Gateway resources and policies
+    paths:
+      /api/gateway:
+        get:
+          summary: List API gateways
+      /api/policy:
+        get:
+          summary: List gateway policies
 
 ---
 apiVersion: backstage.io/v1alpha1
@@ -69,6 +82,19 @@ spec:
   type: rest
   lifecycle: production
   owner: platform-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Authorino Authentication and Authorization API
+      version: "1.0.0"
+      description: API for managing authentication and authorization policies using Authorino
+    paths:
+      /api/auth:
+        post:
+          summary: Authenticate request
+      /api/authz:
+        post:
+          summary: Authorize request
 
 ---
 apiVersion: backstage.io/v1alpha1

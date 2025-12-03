@@ -243,7 +243,7 @@ data:
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/raw/main/groups/domains.yaml
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/domains.yaml
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
         # Red Hat Developer Hub Software Templates Collection
