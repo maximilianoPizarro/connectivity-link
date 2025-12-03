@@ -361,8 +361,8 @@ spec:
       default: "releases"
     - name: NEXUS_USERNAME
       description: Nexus username
-    - name: NEXUS_PASSWORD
-      description: Nexus password (from secret)
+    # NEXUS_PASSWORD is provided via environment variable from secret
+    # No need to pass as parameter for security
     - name: GROUP_ID
       description: Maven group ID
     - name: ARTIFACT_ID
@@ -388,7 +388,7 @@ spec:
         NEXUS_URL=$(params.NEXUS_URL)
         REPO=$(params.NEXUS_REPOSITORY)
         USERNAME=$(params.NEXUS_USERNAME)
-        PASSWORD=$(params.NEXUS_PASSWORD)
+        PASSWORD="${NEXUS_PASSWORD}"
         GROUP_ID=$(params.GROUP_ID)
         ARTIFACT_ID=$(params.ARTIFACT_ID)
         VERSION=$(params.VERSION)
