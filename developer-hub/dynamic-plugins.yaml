@@ -59,17 +59,17 @@ data:
       # Kubernetes Backend Plugin
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-kubernetes-backend:bs_1.42.5__0.20.1!backstage-plugin-kubernetes-backend
         disabled: false
-      # MCP server backend plugin
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:bs_1.42.5__0.1.2!backstage-plugin-mcp-actions-backend
+      # MCP server backend plugin (Latest version)
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:next__0.1.2!backstage-plugin-mcp-actions-backend
         disabled: false
-      # MCP tools plugins
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool:bs_1.42.5__0.2.1!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
+      # MCP tools plugins (Latest versions)
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool:next__0.4.0!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
         disabled: false
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool:bs_1.42.5__0.2.0!red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/redhat-developer-hub-backstage-plugin-techdocs-mcp-tool:next__0.1.1!redhat-developer-hub-backstage-plugin-techdocs-mcp-tool
         disabled: false
-      # Nexus Repository Manager Plugin (Frontend)
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-nexus-repository-manager:bs_1.42.5__1.16.0!backstage-community-plugin-nexus-repository-manager
+      # Nexus Repository Manager Plugin (Frontend) - Latest version
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-nexus-repository-manager:next__1.16.0!backstage-community-plugin-nexus-repository-manager
         disabled: false
-      # Tekton Plugin (Frontend)
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-tekton:bs_1.42.5__3.29.0!backstage-community-plugin-tekton
+      # Tekton Plugin (Frontend) - Latest version
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-tekton:next__3.29.0!backstage-community-plugin-tekton
         disabled: false

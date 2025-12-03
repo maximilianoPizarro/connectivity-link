@@ -51,7 +51,8 @@ spec:
   tasks:
     - name: clone-repo
       taskRef:
-        kind: ClusterTask
+        apiVersion: tekton.dev/v1
+        kind: Task
         name: git-clone
       params:
         - name: url
@@ -66,7 +67,8 @@ spec:
       runAfter:
         - clone-repo
       taskRef:
-        kind: ClusterTask
+        apiVersion: tekton.dev/v1
+        kind: Task
         name: s2i-dotnet
       params:
         - name: VERSION
@@ -81,6 +83,7 @@ spec:
       runAfter:
         - build-dotnet
       taskRef:
+        apiVersion: tekton.dev/v1
         kind: Task
         name: dotnet-build-nuget
       params:
@@ -98,6 +101,7 @@ spec:
       runAfter:
         - build-nuget-package
       taskRef:
+        apiVersion: tekton.dev/v1
         kind: Task
         name: nexus-upload
       params:
