@@ -12,6 +12,8 @@ data:
     # FULL ADMIN PERMISSIONS FOR maximilianopizarro
     # ============================================
     
+    # Note: user9-rhdh admin permissions are defined below
+    
     # Catalog Entity Permissions - Full CRUD
     p, user:default/maximilianopizarro, catalog-entity, read, allow
     p, user:default/maximilianopizarro, catalog-entity, create, allow
@@ -161,3 +163,158 @@ data:
     # Additional role assignments for maximilianopizarro (redundant but ensures coverage)
     g, user:default/maximilianopizarro, role:default/rhdhpai-users
     g, user:default/maximilianopizarro, role:default/template-executers
+    
+    # ============================================
+    # FULL ADMIN PERMISSIONS FOR user9-rhdh
+    # ============================================
+    
+    # Catalog Entity Permissions - Full CRUD
+    p, user:default/user9-rhdh, catalog-entity, read, allow
+    p, user:default/user9-rhdh, catalog-entity, create, allow
+    p, user:default/user9-rhdh, catalog-entity, update, allow
+    p, user:default/user9-rhdh, catalog-entity, delete, allow
+    
+    # Catalog Location Permissions - Full CRUD
+    p, user:default/user9-rhdh, catalog.location, read, allow
+    p, user:default/user9-rhdh, catalog.location, create, allow
+    p, user:default/user9-rhdh, catalog.location, update, allow
+    p, user:default/user9-rhdh, catalog.location, delete, allow
+    
+    # Catalog Entity Creation Permission
+    p, user:default/user9-rhdh, catalog.entity.create, create, allow
+    
+    # Permission Policy Management - Full CRUD
+    p, user:default/user9-rhdh, permission.policy, read, allow
+    p, user:default/user9-rhdh, permission.policy, create, allow
+    p, user:default/user9-rhdh, permission.policy, update, allow
+    p, user:default/user9-rhdh, permission.policy, delete, allow
+    
+    # Scaffolder Permissions - Full Access
+    p, user:default/user9-rhdh, scaffolder-template, read, allow
+    p, user:default/user9-rhdh, scaffolder-template, write, allow
+    p, user:default/user9-rhdh, scaffolder.task, read, allow
+    p, user:default/user9-rhdh, scaffolder.task, create, allow
+    p, user:default/user9-rhdh, scaffolder.task, update, allow
+    p, user:default/user9-rhdh, scaffolder.task, delete, allow
+    p, user:default/user9-rhdh, scaffolder.action.execute, use, allow
+    
+    # Lightspeed (AI Chat) Permissions - Full CRUD
+    p, user:default/user9-rhdh, lightspeed.chat, read, allow
+    p, user:default/user9-rhdh, lightspeed.chat, create, allow
+    p, user:default/user9-rhdh, lightspeed.chat, update, allow
+    p, user:default/user9-rhdh, lightspeed.chat, delete, allow
+    
+    # TechDocs Permissions - Full Access
+    p, user:default/user9-rhdh, techdocs.entity, read, allow
+    p, user:default/user9-rhdh, techdocs.entity, create, allow
+    p, user:default/user9-rhdh, techdocs.entity, update, allow
+    p, user:default/user9-rhdh, techdocs.entity, delete, allow
+    
+    # API Permissions - Full Access
+    p, user:default/user9-rhdh, api.entity, read, allow
+    p, user:default/user9-rhdh, api.entity, create, allow
+    p, user:default/user9-rhdh, api.entity, update, allow
+    p, user:default/user9-rhdh, api.entity, delete, allow
+    
+    # Resource Permissions - Full Access
+    p, user:default/user9-rhdh, resource.entity, read, allow
+    p, user:default/user9-rhdh, resource.entity, create, allow
+    p, user:default/user9-rhdh, resource.entity, update, allow
+    p, user:default/user9-rhdh, resource.entity, delete, allow
+    
+    # System Permissions - Full Access
+    p, user:default/user9-rhdh, system.entity, read, allow
+    p, user:default/user9-rhdh, system.entity, create, allow
+    p, user:default/user9-rhdh, system.entity, update, allow
+    p, user:default/user9-rhdh, system.entity, delete, allow
+    
+    # Domain Permissions - Full Access
+    p, user:default/user9-rhdh, domain.entity, read, allow
+    p, user:default/user9-rhdh, domain.entity, create, allow
+    p, user:default/user9-rhdh, domain.entity, update, allow
+    p, user:default/user9-rhdh, domain.entity, delete, allow
+    
+    # Group Permissions - Full Access
+    p, user:default/user9-rhdh, group.entity, read, allow
+    p, user:default/user9-rhdh, group.entity, create, allow
+    p, user:default/user9-rhdh, group.entity, update, allow
+    p, user:default/user9-rhdh, group.entity, delete, allow
+    
+    # User Permissions - Full Access
+    p, user:default/user9-rhdh, user.entity, read, allow
+    p, user:default/user9-rhdh, user.entity, create, allow
+    p, user:default/user9-rhdh, user.entity, update, allow
+    p, user:default/user9-rhdh, user.entity, delete, allow
+    
+    # Template Permissions - Full Access
+    p, user:default/user9-rhdh, template.entity, read, allow
+    p, user:default/user9-rhdh, template.entity, create, allow
+    p, user:default/user9-rhdh, template.entity, update, allow
+    p, user:default/user9-rhdh, template.entity, delete, allow
+    
+    # Dynamic Plugins Permissions - Full Access (Install, View, Configure)
+    p, user:default/user9-rhdh, plugin.dynamic, read, allow
+    p, user:default/user9-rhdh, plugin.dynamic, create, allow
+    p, user:default/user9-rhdh, plugin.dynamic, update, allow
+    p, user:default/user9-rhdh, plugin.dynamic, delete, allow
+    p, user:default/user9-rhdh, plugin.dynamic, install, allow
+    p, user:default/user9-rhdh, plugin.dynamic, uninstall, allow
+    
+    # Plugin Configuration Permissions - Full Access
+    p, user:default/user9-rhdh, plugin.config, read, allow
+    p, user:default/user9-rhdh, plugin.config, create, allow
+    p, user:default/user9-rhdh, plugin.config, update, allow
+    p, user:default/user9-rhdh, plugin.config, delete, allow
+    
+    # Assign user9-rhdh to platformengineer role
+    g, user:default/user9-rhdh, role:default/platformengineer
+    g, user:default/user9-rhdh, role:default/rhdhpai-users
+    g, user:default/user9-rhdh, role:default/template-executers
+    
+    # ============================================
+    # BASIC PERMISSIONS FOR ALL AUTHENTICATED USERS
+    # ============================================
+    # These permissions allow any authenticated user to:
+    # - Sign in and access the application
+    # - View catalog entities (read-only)
+    # - View catalog locations (read-only)
+    # - View TechDocs
+    # - View APIs
+    # - View Resources
+    # - View Systems
+    # - View Domains
+    # - View Groups
+    # - View Users (their own profile)
+    
+    # Catalog Entity Permissions - Read Only
+    p, role:default/authenticated, catalog-entity, read, allow
+    
+    # Catalog Location Permissions - Read Only
+    p, role:default/authenticated, catalog.location, read, allow
+    
+    # TechDocs Permissions - Read Only
+    p, role:default/authenticated, techdocs.entity, read, allow
+    
+    # API Permissions - Read Only
+    p, role:default/authenticated, api.entity, read, allow
+    
+    # Resource Permissions - Read Only
+    p, role:default/authenticated, resource.entity, read, allow
+    
+    # System Permissions - Read Only
+    p, role:default/authenticated, system.entity, read, allow
+    
+    # Domain Permissions - Read Only
+    p, role:default/authenticated, domain.entity, read, allow
+    
+    # Group Permissions - Read Only
+    p, role:default/authenticated, group.entity, read, allow
+    
+    # User Permissions - Read Only (users can view their own profile)
+    p, role:default/authenticated, user.entity, read, allow
+    
+    # Scaffolder Template Permissions - Read Only (users can view templates)
+    p, role:default/authenticated, scaffolder-template, read, allow
+    
+    # Assign all authenticated users to the authenticated role
+    # This is automatically done by Backstage for logged-in users

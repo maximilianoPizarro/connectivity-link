@@ -13,6 +13,8 @@ metadata:
     app.kubernetes.io/component: pipeline
     tekton.dev/pipeline: dotnet-demo-pipeline
 spec:
+  # Use the existing 'pipeline' service account in the namespace
+  serviceAccountName: pipeline
   pipelineRef:
     name: dotnet-demo-pipeline
   params:

@@ -353,6 +353,8 @@ metadata:
   labels:
     app: dotnet-demo
 spec:
+  # Note: This Task uses the service account specified in the PipelineRun
+  # (typically 'pipeline' service account) to access the nexus-credentials secret
   params:
     - name: NEXUS_URL
       description: Nexus repository URL

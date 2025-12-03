@@ -238,6 +238,9 @@ data:
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
+        # Red Hat Developer Hub Software Templates Collection
+        - type: url
+          target: https://raw.githubusercontent.com/redhat-developer/red-hat-developer-hub-software-templates/main/templates.yaml
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API, System, Domain]
     # Kubernetes Integration for Tekton Pipeline visualization
@@ -307,6 +310,7 @@ data:
         admin:
           users:
             - name: user:default/maximilianopizarro
+            - name: user:default/user9-rhdh
     # Nexus Repository Manager Plugin Configuration
     nexusRepositoryManager:
       # Nexus instance configuration
