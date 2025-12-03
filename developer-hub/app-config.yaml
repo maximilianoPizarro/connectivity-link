@@ -88,8 +88,14 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
+            # User and group synchronization settings
+            # Users are automatically created on first login
+            # Groups and group memberships are synced from Keycloak
             signIn:
               resolvers:
+                # Try preferredUsername first (matches Keycloak username)
+                - resolver: preferredUsernameMatchingUserEntityName
+                # Fallback to email matching
                 - resolver: emailMatchingUserEntityProfileEmail
         gitlab:
           connectivity-link-developer-hub:

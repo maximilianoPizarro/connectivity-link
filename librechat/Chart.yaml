@@ -1,0 +1,37 @@
+apiVersion: v2
+appVersion: v0.8.0-rc4
+description: A Helm chart for deploying LibreChat, an open-source, AI-powered chat application. Enhanced ChatGPT Clone: Features Agents, MCP, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, GPT-5, Mistral, OpenRouter, Vertex AI, Gemini, Artifacts, AI model switching, message search, Code Interpreter, langchain, DALL-E-3, OpenAPI Actions, Functions, Secure Multi-User Auth, Presets, open-source for self-hosting. Active.
+home: https://www.librechat.ai
+icon: https://www.librechat.ai/librechat_alt.svg
+
+type: application
+
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+version: "v0.8.0-rc4"
+keywords:
+  - librechat
+  - chat
+  - ai
+  - llm
+  - chatbot
+  - open-source
+
+home: https://maximilianopizarro.github.io/librechat/
+
+maintainers:
+  - name: Carlos Estay
+    email: cestay@redhat.com
+  - name: Maximiliano Pizarro
+    email: mapizarr@redhat.com
+
+icon: https://raw.githubusercontent.com/maximilianoPizarro/librechat/main/logo-rhel.png
+
+
+dependencies:
+- name: librechat
+  version: "1.8.15"
+  repository: "https://charts.openshift.io"

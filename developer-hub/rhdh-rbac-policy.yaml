@@ -113,163 +113,112 @@ data:
     p, user:default/maximilianopizarro, plugin.config, delete, allow
     
     # ============================================
-    # ROLE DEFINITIONS FOR OTHER USERS (Optional)
+    # GROUP-BASED ROLE DEFINITIONS
+    # Permissions are assigned to groups, not individual users
+    # Users inherit permissions from their group membership in Keycloak
     # ============================================
     
-    # Define a comprehensive 'platformengineer' role
-    p, role:default/platformengineer, lightspeed.chat, read, allow
-    p, role:default/platformengineer, lightspeed.chat, create, allow
-    p, role:default/platformengineer, lightspeed.chat, update, allow
-    p, role:default/platformengineer, lightspeed.chat, delete, allow
-    p, role:default/platformengineer, catalog-entity, read, allow
-    p, role:default/platformengineer, catalog-entity, create, allow
-    p, role:default/platformengineer, catalog-entity, update, allow
-    p, role:default/platformengineer, catalog-entity, delete, allow
-    p, role:default/platformengineer, catalog.location, read, allow
-    p, role:default/platformengineer, catalog.location, create, allow
-    p, role:default/platformengineer, catalog.location, delete, allow
-    p, role:default/platformengineer, catalog.entity.create, create, allow
-    p, role:default/platformengineer, scaffolder-template, read, allow
-    p, role:default/platformengineer, scaffolder.task, read, allow
-    p, role:default/platformengineer, scaffolder.task, create, allow
-    p, role:default/platformengineer, scaffolder.task, delete, allow
-    p, role:default/platformengineer, scaffolder.action.execute, use, allow
-    p, role:default/platformengineer, permission.policy, read, allow
-    p, role:default/platformengineer, plugin.dynamic, read, allow
-    p, role:default/platformengineer, plugin.dynamic, install, allow
-    p, role:default/platformengineer, plugin.config, read, allow
+    # Platform Engineers Group - Full access (platformengineers group in Keycloak)
+    # Members: user7-platform, user8-platform
+    p, role:default/platformengineers, lightspeed.chat, read, allow
+    p, role:default/platformengineers, lightspeed.chat, create, allow
+    p, role:default/platformengineers, lightspeed.chat, update, allow
+    p, role:default/platformengineers, lightspeed.chat, delete, allow
+    p, role:default/platformengineers, catalog-entity, read, allow
+    p, role:default/platformengineers, catalog-entity, create, allow
+    p, role:default/platformengineers, catalog-entity, update, allow
+    p, role:default/platformengineers, catalog-entity, delete, allow
+    p, role:default/platformengineers, catalog.location, read, allow
+    p, role:default/platformengineers, catalog.location, create, allow
+    p, role:default/platformengineers, catalog.location, update, allow
+    p, role:default/platformengineers, catalog.location, delete, allow
+    p, role:default/platformengineers, catalog.entity.create, create, allow
+    p, role:default/platformengineers, scaffolder-template, read, allow
+    p, role:default/platformengineers, scaffolder-template, write, allow
+    p, role:default/platformengineers, scaffolder.task, read, allow
+    p, role:default/platformengineers, scaffolder.task, create, allow
+    p, role:default/platformengineers, scaffolder.task, update, allow
+    p, role:default/platformengineers, scaffolder.task, delete, allow
+    p, role:default/platformengineers, scaffolder.action.execute, use, allow
+    p, role:default/platformengineers, permission.policy, read, allow
+    p, role:default/platformengineers, plugin.dynamic, read, allow
+    p, role:default/platformengineers, plugin.dynamic, install, allow
+    p, role:default/platformengineers, plugin.config, read, allow
     
-    # Assign maximilianopizarro to platformengineer role (additional role assignment)
-    g, user:default/maximilianopizarro, role:default/platformengineer
+    # Developers Group - Standard developer access (developers group in Keycloak)
+    # Members: user1-dev, user2-dev
+    p, role:default/developers, lightspeed.chat, read, allow
+    p, role:default/developers, lightspeed.chat, create, allow
+    p, role:default/developers, catalog-entity, read, allow
+    p, role:default/developers, catalog-entity, create, allow
+    p, role:default/developers, catalog-entity, update, allow
+    p, role:default/developers, catalog.location, read, allow
+    p, role:default/developers, catalog.location, create, allow
+    p, role:default/developers, catalog.entity.create, create, allow
+    p, role:default/developers, scaffolder-template, read, allow
+    p, role:default/developers, scaffolder.task, read, allow
+    p, role:default/developers, scaffolder.action.execute, use, allow
     
-    # If you still want the 'rhdhpai-users' role for other users, keep its definition:
-    p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow
-    p, role:default/rhdhpai-users, lightspeed.chat.create, create, allow
-    p, role:default/rhdhpai-users, lightspeed.chat.delete, delete, allow    
-    p, role:default/rhdhpai-users, catalog-entity, read, allow
-    p, role:default/rhdhpai-users, catalog-entity, update, allow
-    p, role:default/rhdhpai-users, catalog-entity, delete, allow
-    p, role:default/rhdhpai-users, catalog.location.read, read, allow
-    p, role:default/rhdhpai-users, catalog.location.create, create, allow
-    p, role:default/rhdhpai-users, catalog.location.delete, delete, allow
-    p, role:default/rhdhpai-users, catalog.entity.create, create, allow
-    p, role:default/rhdhpai-users, scaffolder-template, read, allow
-    p, role:default/rhdhpai-users, scaffolder.task.read, read, allow
-    p, role:default/rhdhpai-users, scaffolder.task.create, create, allow
+    # Dev Team 1 - Standard developer access (devteam1 group in Keycloak)
+    # Members: user3-devteam1, user4-devteam1
+    p, role:default/devteam1, lightspeed.chat, read, allow
+    p, role:default/devteam1, lightspeed.chat, create, allow
+    p, role:default/devteam1, catalog-entity, read, allow
+    p, role:default/devteam1, catalog-entity, create, allow
+    p, role:default/devteam1, catalog-entity, update, allow
+    p, role:default/devteam1, catalog.location, read, allow
+    p, role:default/devteam1, catalog.location, create, allow
+    p, role:default/devteam1, catalog.entity.create, create, allow
+    p, role:default/devteam1, scaffolder-template, read, allow
+    p, role:default/devteam1, scaffolder.task, read, allow
+    p, role:default/devteam1, scaffolder.action.execute, use, allow
     
-    # If you still need 'template-executers' for other users, keep its definition:
-    p, role:default/template-executers, scaffolder.action.execute, use, allow
+    # Infrastructure Group - Infrastructure management access (infrastructure group in Keycloak)
+    # Members: user5-infra, user6-infra
+    p, role:default/infrastructure, lightspeed.chat, read, allow
+    p, role:default/infrastructure, lightspeed.chat, create, allow
+    p, role:default/infrastructure, catalog-entity, read, allow
+    p, role:default/infrastructure, catalog-entity, create, allow
+    p, role:default/infrastructure, catalog-entity, update, allow
+    p, role:default/infrastructure, catalog.location, read, allow
+    p, role:default/infrastructure, catalog.location, create, allow
+    p, role:default/infrastructure, catalog.entity.create, create, allow
+    p, role:default/infrastructure, scaffolder-template, read, allow
+    p, role:default/infrastructure, scaffolder.task, read, allow
+    p, role:default/infrastructure, scaffolder.action.execute, use, allow
     
-    # Additional role assignments for maximilianopizarro (redundant but ensures coverage)
-    g, user:default/maximilianopizarro, role:default/rhdhpai-users
-    g, user:default/maximilianopizarro, role:default/template-executers
+    # RHDH Group - Developer Hub team access (rhdh group in Keycloak)
+    # Members: user9-rhdh, user10-rhdh
+    p, role:default/rhdh, lightspeed.chat, read, allow
+    p, role:default/rhdh, lightspeed.chat, create, allow
+    p, role:default/rhdh, catalog-entity, read, allow
+    p, role:default/rhdh, catalog-entity, create, allow
+    p, role:default/rhdh, catalog-entity, update, allow
+    p, role:default/rhdh, catalog.location, read, allow
+    p, role:default/rhdh, catalog.location, create, allow
+    p, role:default/rhdh, catalog.entity.create, create, allow
+    p, role:default/rhdh, scaffolder-template, read, allow
+    p, role:default/rhdh, scaffolder.task, read, allow
+    p, role:default/rhdh, scaffolder.action.execute, use, allow
+    
+    # Assign groups to their roles (users inherit permissions from their group)
+    # Note: Group membership is synced from Keycloak automatically
+    g, group:default/platformengineers, role:default/platformengineers
+    g, group:default/developers, role:default/developers
+    g, group:default/devteam1, role:default/devteam1
+    g, group:default/infrastructure, role:default/infrastructure
+    g, group:default/rhdh, role:default/rhdh
     
     # ============================================
-    # FULL ADMIN PERMISSIONS FOR user9-rhdh
+    # INDIVIDUAL USER ROLE ASSIGNMENTS
+    # Only for users who need special permissions beyond their group
     # ============================================
     
-    # Catalog Entity Permissions - Full CRUD
-    p, user:default/user9-rhdh, catalog-entity, read, allow
-    p, user:default/user9-rhdh, catalog-entity, create, allow
-    p, user:default/user9-rhdh, catalog-entity, update, allow
-    p, user:default/user9-rhdh, catalog-entity, delete, allow
+    # maximilianopizarro - Full admin (also in admin list in app-config.yaml)
+    g, user:default/maximilianopizarro, role:default/platformengineers
     
-    # Catalog Location Permissions - Full CRUD
-    p, user:default/user9-rhdh, catalog.location, read, allow
-    p, user:default/user9-rhdh, catalog.location, create, allow
-    p, user:default/user9-rhdh, catalog.location, update, allow
-    p, user:default/user9-rhdh, catalog.location, delete, allow
-    
-    # Catalog Entity Creation Permission
-    p, user:default/user9-rhdh, catalog.entity.create, create, allow
-    
-    # Permission Policy Management - Full CRUD
-    p, user:default/user9-rhdh, permission.policy, read, allow
-    p, user:default/user9-rhdh, permission.policy, create, allow
-    p, user:default/user9-rhdh, permission.policy, update, allow
-    p, user:default/user9-rhdh, permission.policy, delete, allow
-    
-    # Scaffolder Permissions - Full Access
-    p, user:default/user9-rhdh, scaffolder-template, read, allow
-    p, user:default/user9-rhdh, scaffolder-template, write, allow
-    p, user:default/user9-rhdh, scaffolder.task, read, allow
-    p, user:default/user9-rhdh, scaffolder.task, create, allow
-    p, user:default/user9-rhdh, scaffolder.task, update, allow
-    p, user:default/user9-rhdh, scaffolder.task, delete, allow
-    p, user:default/user9-rhdh, scaffolder.action.execute, use, allow
-    
-    # Lightspeed (AI Chat) Permissions - Full CRUD
-    p, user:default/user9-rhdh, lightspeed.chat, read, allow
-    p, user:default/user9-rhdh, lightspeed.chat, create, allow
-    p, user:default/user9-rhdh, lightspeed.chat, update, allow
-    p, user:default/user9-rhdh, lightspeed.chat, delete, allow
-    
-    # TechDocs Permissions - Full Access
-    p, user:default/user9-rhdh, techdocs.entity, read, allow
-    p, user:default/user9-rhdh, techdocs.entity, create, allow
-    p, user:default/user9-rhdh, techdocs.entity, update, allow
-    p, user:default/user9-rhdh, techdocs.entity, delete, allow
-    
-    # API Permissions - Full Access
-    p, user:default/user9-rhdh, api.entity, read, allow
-    p, user:default/user9-rhdh, api.entity, create, allow
-    p, user:default/user9-rhdh, api.entity, update, allow
-    p, user:default/user9-rhdh, api.entity, delete, allow
-    
-    # Resource Permissions - Full Access
-    p, user:default/user9-rhdh, resource.entity, read, allow
-    p, user:default/user9-rhdh, resource.entity, create, allow
-    p, user:default/user9-rhdh, resource.entity, update, allow
-    p, user:default/user9-rhdh, resource.entity, delete, allow
-    
-    # System Permissions - Full Access
-    p, user:default/user9-rhdh, system.entity, read, allow
-    p, user:default/user9-rhdh, system.entity, create, allow
-    p, user:default/user9-rhdh, system.entity, update, allow
-    p, user:default/user9-rhdh, system.entity, delete, allow
-    
-    # Domain Permissions - Full Access
-    p, user:default/user9-rhdh, domain.entity, read, allow
-    p, user:default/user9-rhdh, domain.entity, create, allow
-    p, user:default/user9-rhdh, domain.entity, update, allow
-    p, user:default/user9-rhdh, domain.entity, delete, allow
-    
-    # Group Permissions - Full Access
-    p, user:default/user9-rhdh, group.entity, read, allow
-    p, user:default/user9-rhdh, group.entity, create, allow
-    p, user:default/user9-rhdh, group.entity, update, allow
-    p, user:default/user9-rhdh, group.entity, delete, allow
-    
-    # User Permissions - Full Access
-    p, user:default/user9-rhdh, user.entity, read, allow
-    p, user:default/user9-rhdh, user.entity, create, allow
-    p, user:default/user9-rhdh, user.entity, update, allow
-    p, user:default/user9-rhdh, user.entity, delete, allow
-    
-    # Template Permissions - Full Access
-    p, user:default/user9-rhdh, template.entity, read, allow
-    p, user:default/user9-rhdh, template.entity, create, allow
-    p, user:default/user9-rhdh, template.entity, update, allow
-    p, user:default/user9-rhdh, template.entity, delete, allow
-    
-    # Dynamic Plugins Permissions - Full Access (Install, View, Configure)
-    p, user:default/user9-rhdh, plugin.dynamic, read, allow
-    p, user:default/user9-rhdh, plugin.dynamic, create, allow
-    p, user:default/user9-rhdh, plugin.dynamic, update, allow
-    p, user:default/user9-rhdh, plugin.dynamic, delete, allow
-    p, user:default/user9-rhdh, plugin.dynamic, install, allow
-    p, user:default/user9-rhdh, plugin.dynamic, uninstall, allow
-    
-    # Plugin Configuration Permissions - Full Access
-    p, user:default/user9-rhdh, plugin.config, read, allow
-    p, user:default/user9-rhdh, plugin.config, create, allow
-    p, user:default/user9-rhdh, plugin.config, update, allow
-    p, user:default/user9-rhdh, plugin.config, delete, allow
-    
-    # Assign user9-rhdh to platformengineer role
-    g, user:default/user9-rhdh, role:default/platformengineer
-    g, user:default/user9-rhdh, role:default/rhdhpai-users
-    g, user:default/user9-rhdh, role:default/template-executers
+    # Note: user9-rhdh inherits permissions from 'rhdh' group automatically
+    # No individual assignment needed - permissions come from group membership in Keycloak
     
     # ============================================
     # BASIC PERMISSIONS FOR ALL AUTHENTICATED USERS

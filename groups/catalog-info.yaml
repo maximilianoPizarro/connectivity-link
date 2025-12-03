@@ -107,12 +107,16 @@ spec:
   # Members are automatically synced from Keycloak by the keycloakOrg provider
 
 ---
-# Legacy groups (kept for backward compatibility)
+# Legacy groups - mapped to Keycloak groups for synchronization
+# platform-team maps to platformengineers group in Keycloak
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: platform-team
   description: Platform engineering team responsible for infrastructure, authentication, and developer tools
+  annotations:
+    # Map to platformengineers group in Keycloak for user synchronization
+    keycloak.org/group-path: /platformengineers
 spec:
   type: team
   profile:
@@ -120,13 +124,20 @@ spec:
     email: platform-team@developer-hub.local
   parent: backstage
   children: []
+  # Members are automatically synced from Keycloak platformengineers group
+  # Members: user7-platform, user8-platform
 
 ---
+# Legacy group - mapped to developers group in Keycloak
+# application-team maps to developers group in Keycloak
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: application-team
   description: Application development team responsible for business applications
+  annotations:
+    # Map to developers group in Keycloak for user synchronization
+    keycloak.org/group-path: /developers
 spec:
   type: team
   profile:
@@ -134,4 +145,6 @@ spec:
     email: application-team@developer-hub.local
   parent: backstage
   children: []
+  # Members are automatically synced from Keycloak developers group
+  # Members: user1-dev, user2-dev
 
