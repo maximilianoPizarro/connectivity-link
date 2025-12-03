@@ -62,7 +62,7 @@ librechat:
       OPENID_REQUIRED_ROLE_PARAMETER_PATH: realm_access.roles    
       PLUGIN_MODELS: >-
         gpt-4,gpt-4-turbo-preview,gpt-4-0125-preview,gpt-4-1106-preview,gpt-4-0613,gpt-3.5-turbo,gpt-3.5-turbo-0125,gpt-3.5-turbo-1106,gpt-3.5-turbo-0613,llama-3-1-8b-instruct
-    configYamlContent: |
+    configYamlContent: |-
       version: 1.0.3
       cache: true
       # fileStrategy: "firebase"  # If using Firebase CDN
@@ -75,7 +75,7 @@ librechat:
             description: "Servidor Público de Prueba MCP para operaciones básicas."
             headers:
               Authorization: "Bearer ${RHDH_MCP_TOKEN}"
-            startup: true        
+            startup: true
           assistants:
             fileLimit: 5
             fileSizeLimit: 10  # Maximum size for an individual file in MB
