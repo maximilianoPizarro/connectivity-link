@@ -1,0 +1,27 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  description: Platform engineering team responsible for infrastructure, authentication, and developer tools
+spec:
+  type: team
+  profile:
+    displayName: Platform Team
+    email: platform-team@developer-hub.local
+  parent: backstage
+  children: []
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: application-team
+  description: Application development team responsible for business applications
+spec:
+  type: team
+  profile:
+    displayName: Application Team
+    email: application-team@developer-hub.local
+  parent: backstage
+  children: []
+

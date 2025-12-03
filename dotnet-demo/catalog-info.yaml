@@ -1,0 +1,72 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dotnet-demo
+  namespace: default
+  description: .NET Demo Application - Sample application demonstrating CI/CD pipeline with Nexus artifact publishing
+  annotations:
+    # Nexus Repository Information
+    nexus.com/repository-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    nexus.com/repository-name: releases
+    nexus.com/group-id: com.example
+    nexus.com/artifact-id: dotnet-demo
+    nexus.com/artifact-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/repository/releases/com/example/dotnet-demo/
+    # Backstage Links
+    backstage.io/view-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#browse/browse:releases:com/example/dotnet-demo
+    backstage.io/source-location: url:https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
+    # ArgoCD Integration
+    argocd/app-name: dotnet-demo
+    argocd/app-namespace: openshift-gitops
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/dotnet-demo
+    # GitLab Integration
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+    gitlab.com/project-path: dotnet-demo
+  links:
+    - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+      title: Nexus Repository
+      icon: storage
+    - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#browse/browse:releases:com/example/dotnet-demo
+      title: View Artifacts in Nexus
+      icon: package
+    - url: https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
+      title: Source Code
+      icon: code
+  tags:
+    - dotnet
+    - csharp
+    - nexus
+    - cicd
+    - demo
+    - artifact-repository
+    - tekton
+spec:
+  type: service
+  lifecycle: production
+  owner: application-team
+  system: cicd-platform
+  dependsOn:
+    - component:workshop-pipelines/workshop-pipelines
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: dotnet-demo-api
+  description: .NET Demo API endpoints
+spec:
+  type: rest
+  lifecycle: production
+  owner: application-team
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: .NET Demo API
+      version: "1.0.0"
+    paths:
+      /api/health:
+        get:
+          summary: Health check endpoint
+      /api/version:
+        get:
+          summary: Get application version
+

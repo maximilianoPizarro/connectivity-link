@@ -37,6 +37,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: gateway
+  namespace: rhcl-operator
   description: Kubernetes Gateway API HTTPRoute resources for NeuralBank application routing
   annotations:
     argocd/app-name: rhcl-operator

@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: workshop-pipelines
+
+resources:
+  - tekton-pipeline.yaml
+  # Uncomment the line below if you want to use a static secret file
+  # - nexus-secret.yaml
+
+# Option 1: Use secretGenerator with literals (values in plain text - not recommended for production)
+# secretGenerator:
+#   - name: nexus-credentials
+#     namespace: workshop-pipelines
+#     literals:
+#       - username=admin
+#       - password=admin123
+#     type: Opaque
+
+# Option 2: Use secretGenerator with files (recommended - keep credentials in separate files)
+# Create nexus-credentials.env file with:
+#   username=admin
+#   password=YOUR_PASSWORD
+# Then uncomment:
+# secretGenerator:
+#   - name: nexus-credentials
+#     namespace: workshop-pipelines
+#     envs:
+#       - nexus-credentials.env
+#     type: Opaque
+
+# Option 3: Use secretGenerator with .gitignore file (best practice)
+# Create nexus-credentials.env file and add it to .gitignore
+# Then use:
+secretGenerator:
+  - name: nexus-credentials
+    namespace: workshop-pipelines
+    envs:
+      - nexus-credentials.env
+    type: Opaque
+    options:
+      disableNameSuffixHash: false
+
+# Note: Make sure to create nexus-credentials.env file with:
+#   username=admin
+#   password=YOUR_ACTUAL_PASSWORD
+# And add nexus-credentials.env to .gitignore
+

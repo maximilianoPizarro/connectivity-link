@@ -1,0 +1,336 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: dotnet-demo-pipeline
+  namespace: workshop-pipelines
+  labels:
+    app.kubernetes.io/name: dotnet-demo
+    app.kubernetes.io/component: pipeline
+spec:
+  params:
+    - name: git-url
+      description: Git repository URL
+      default: "https://gitlab.com/maximilianoPizarro/connectivity-link.git"
+    - name: git-revision
+      description: Git revision (branch, tag, or commit)
+      default: "main"
+    - name: nexus-url
+      description: Nexus repository URL
+      default: "http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    - name: nexus-repository
+      description: Nexus repository name
+      default: "releases"
+    - name: nexus-username
+      description: Nexus username
+      default: "admin"
+    - name: nexus-group-id
+      description: Maven group ID
+      default: "com.example"
+    - name: nexus-artifact-id
+      description: Maven artifact ID
+      default: "dotnet-demo"
+    - name: nexus-version
+      description: Artifact version
+      default: "1.0.0"
+  workspaces:
+    - name: source
+      description: Source code workspace
+    - name: cache
+      description: Build cache workspace
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: build-dotnet
+      runAfter:
+        - clone-repo
+      taskRef:
+        name: s2i-dotnet
+        kind: ClusterTask
+      params:
+        - name: VERSION
+          value: "8.0"
+        - name: OUTPUT_IMAGE
+          value: "image-registry.openshift-image-registry.svc:5000/workshop-pipelines/dotnet-demo:latest"
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-nuget-package
+      runAfter:
+        - build-dotnet
+      taskRef:
+        apiVersion: tekton.dev/v1beta1
+        kind: Task
+        name: dotnet-build-nuget
+      params:
+        - name: PROJECT_PATH
+          value: "dotnet-demo/src"
+        - name: VERSION
+          value: $(params.nexus-version)
+      workspaces:
+        - name: source
+          workspace: source
+        - name: cache
+          workspace: cache
+
+    - name: publish-to-nexus
+      runAfter:
+        - build-nuget-package
+      taskRef:
+        apiVersion: tekton.dev/v1beta1
+        kind: Task
+        name: nexus-upload
+      params:
+        - name: NEXUS_URL
+          value: $(params.nexus-url)
+        - name: NEXUS_REPOSITORY
+          value: $(params.nexus-repository)
+        - name: NEXUS_USERNAME
+          value: $(params.nexus-username)
+        - name: GROUP_ID
+          value: $(params.nexus-group-id)
+        - name: ARTIFACT_ID
+          value: $(params.nexus-artifact-id)
+        - name: VERSION
+          value: $(params.nexus-version)
+        - name: PACKAGING
+          value: "nupkg"
+        - name: FILE_PATH
+          value: "dotnet-demo/src/bin/Release/*.nupkg"
+      workspaces:
+        - name: source
+          workspace: source
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: dotnet-build-nuget
+  namespace: workshop-pipelines
+spec:
+  params:
+    - name: PROJECT_PATH
+      description: Path to .NET project directory
+      default: "."
+    - name: VERSION
+      description: Package version
+      default: "1.0.0"
+  workspaces:
+    - name: source
+      description: Source code workspace
+    - name: cache
+      description: NuGet cache workspace
+  steps:
+    - name: restore
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet restore
+      volumeMounts:
+        - name: cache
+          mountPath: /root/.nuget
+          subPath: nuget
+
+    - name: build
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet build --configuration Release
+
+    - name: pack
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet pack --configuration Release --no-build -p:Version=$(params.VERSION) -p:PackageVersion=$(params.VERSION) -o bin/Release
+      volumeMounts:
+        - name: cache
+          mountPath: /root/.nuget
+          subPath: nuget
+
+  volumes:
+    - name: cache
+      workspace: cache
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: nexus-upload
+  namespace: workshop-pipelines
+spec:
+  params:
+    - name: NEXUS_URL
+      description: Nexus repository URL
+    - name: NEXUS_REPOSITORY
+      description: Nexus repository name
+      default: "releases"
+    - name: NEXUS_USERNAME
+      description: Nexus username
+    - name: NEXUS_PASSWORD
+      description: Nexus password (from secret)
+    - name: GROUP_ID
+      description: Maven group ID
+    - name: ARTIFACT_ID
+      description: Artifact ID
+    - name: VERSION
+      description: Artifact version
+    - name: PACKAGING
+      description: Package type (nupkg, jar, etc.)
+      default: "nupkg"
+    - name: FILE_PATH
+      description: Path to artifact file(s) to upload
+  workspaces:
+    - name: source
+      description: Source workspace containing artifacts
+  steps:
+    - name: upload-to-nexus
+      image: curlimages/curl:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        
+        NEXUS_URL=$(params.NEXUS_URL)
+        REPO=$(params.NEXUS_REPOSITORY)
+        USERNAME=$(params.NEXUS_USERNAME)
+        PASSWORD=$(params.NEXUS_PASSWORD)
+        GROUP_ID=$(params.GROUP_ID)
+        ARTIFACT_ID=$(params.ARTIFACT_ID)
+        VERSION=$(params.VERSION)
+        PACKAGING=$(params.PACKAGING)
+        
+        # Find the artifact file
+        ARTIFACT_FILE=$(find $(params.FILE_PATH) -type f -name "*.${PACKAGING}" | head -n 1)
+        
+        if [ -z "$ARTIFACT_FILE" ]; then
+          echo "Error: No artifact file found matching $(params.FILE_PATH)"
+          exit 1
+        fi
+        
+        echo "Uploading artifact: $ARTIFACT_FILE"
+        echo "To Nexus: $NEXUS_URL/repository/$REPO/"
+        
+        # Upload to Nexus using REST API
+        # For Nexus 2.x, use the service/rest endpoint
+        # For Nexus 3.x, use the service/rest/v1/components endpoint
+        
+        # Try Nexus 3.x format first
+        RESPONSE=$(curl -s -w "\n%{http_code}" \
+          -u "$USERNAME:$PASSWORD" \
+          -X POST \
+          -H "Content-Type: multipart/form-data" \
+          -F "maven2.groupId=$GROUP_ID" \
+          -F "maven2.artifactId=$ARTIFACT_ID" \
+          -F "maven2.version=$VERSION" \
+          -F "maven2.packaging=$PACKAGING" \
+          -F "maven2.asset1=@$ARTIFACT_FILE" \
+          -F "maven2.asset1.extension=$PACKAGING" \
+          "$NEXUS_URL/service/rest/v1/components?repository=$REPO" 2>&1)
+        
+        HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+        BODY=$(echo "$RESPONSE" | head -n -1)
+        
+        if [ "$HTTP_CODE" -eq 201 ] || [ "$HTTP_CODE" -eq 204 ]; then
+          echo "Successfully uploaded artifact to Nexus"
+          echo "Artifact URL: $NEXUS_URL/repository/$REPO/$GROUP_ID/$ARTIFACT_ID/$VERSION/"
+        elif [ "$HTTP_CODE" -eq 401 ] || [ "$HTTP_CODE" -eq 403 ]; then
+          echo "Authentication failed. Trying Nexus 2.x format..."
+          # Try Nexus 2.x format
+          RESPONSE2=$(curl -s -w "\n%{http_code}" \
+            -u "$USERNAME:$PASSWORD" \
+            -X POST \
+            -F "r=$REPO" \
+            -F "hasPom=false" \
+            -F "e=$PACKAGING" \
+            -F "g=$GROUP_ID" \
+            -F "a=$ARTIFACT_ID" \
+            -F "v=$VERSION" \
+            -F "p=$PACKAGING" \
+            -F "file=@$ARTIFACT_FILE" \
+            "$NEXUS_URL/service/local/artifact/maven/content" 2>&1)
+          
+          HTTP_CODE2=$(echo "$RESPONSE2" | tail -n 1)
+          if [ "$HTTP_CODE2" -eq 201 ] || [ "$HTTP_CODE2" -eq 200 ]; then
+            echo "Successfully uploaded artifact to Nexus 2.x"
+            echo "Artifact URL: $NEXUS_URL/repository/$REPO/$GROUP_ID/$ARTIFACT_ID/$VERSION/"
+          else
+            echo "Error uploading to Nexus 2.x: HTTP $HTTP_CODE2"
+            echo "$RESPONSE2" | head -n -1
+            exit 1
+          fi
+        else
+          echo "Error uploading to Nexus: HTTP $HTTP_CODE"
+          echo "$BODY"
+          exit 1
+        fi
+      env:
+        - name: NEXUS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nexus-credentials
+              key: password
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: dotnet-demo-pipeline-run
+  namespace: workshop-pipelines
+spec:
+  pipelineRef:
+    name: dotnet-demo-pipeline
+  params:
+    - name: git-url
+      value: "https://gitlab.com/maximilianoPizarro/connectivity-link.git"
+    - name: git-revision
+      value: "main"
+    - name: nexus-url
+      value: "http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    - name: nexus-repository
+      value: "releases"
+    - name: nexus-username
+      value: "admin"
+    - name: nexus-group-id
+      value: "com.example"
+    - name: nexus-artifact-id
+      value: "dotnet-demo"
+    - name: nexus-version
+      value: "1.0.0"
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: cache
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 500Mi
+

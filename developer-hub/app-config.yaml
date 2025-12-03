@@ -175,6 +175,26 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 60 }
+          connectivity-link-groups:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /groups/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 65 }
+          connectivity-link-dotnet-demo:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /dotnet-demo/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 70 }
       locations:
         # GitLab catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
         - type: url
@@ -197,6 +217,10 @@ data:
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/openshift-gitops/catalog-info.yaml
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/namespaces/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API, System, Domain]
     lightspeed:

@@ -2,6 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: istio-gateway
+  namespace: servicemeshoperator3
   description: Istio Service Mesh Gateway - Kubernetes Gateway API implementation for traffic management and routing
   annotations:
     argocd/app-name: servicemeshoperator3
