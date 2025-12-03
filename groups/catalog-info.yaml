@@ -1,6 +1,94 @@
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
+  name: developers
+  description: General developers team
+  annotations:
+    # Keycloak group path - this helps the provider sync members
+    keycloak.org/group-path: /developers
+spec:
+  type: team
+  profile:
+    displayName: Developers
+    email: developers@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+  # Do not specify members manually here
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: devteam1
+  description: Development Team 1
+  annotations:
+    keycloak.org/group-path: /devteam1
+spec:
+  type: team
+  profile:
+    displayName: Dev Team 1
+    email: devteam1@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: infrastructure
+  description: Infrastructure team responsible for infrastructure management
+  annotations:
+    keycloak.org/group-path: /infrastructure
+spec:
+  type: team
+  profile:
+    displayName: Infrastructure Team
+    email: infrastructure@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platformengineers
+  description: Platform engineering team responsible for infrastructure, authentication, and developer tools
+  annotations:
+    keycloak.org/group-path: /platformengineers
+spec:
+  type: team
+  profile:
+    displayName: Platform Engineers
+    email: platformengineers@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: rhdh
+  description: Red Hat Developer Hub team
+  annotations:
+    keycloak.org/group-path: /rhdh
+spec:
+  type: team
+  profile:
+    displayName: RHDH Team
+    email: rhdh@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+# Legacy groups (kept for backward compatibility)
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
   name: platform-team
   description: Platform engineering team responsible for infrastructure, authentication, and developer tools
 spec:
