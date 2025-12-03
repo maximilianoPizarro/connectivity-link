@@ -1,4 +1,3 @@
-{{- if and (hasKey .Values.librechat "persistence") .Values.librechat.persistence (hasKey .Values.librechat.persistence "enabled") .Values.librechat.persistence.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -87,5 +86,3 @@ spec:
   {{- if and (hasKey .Values.librechat.persistence "storageClassName") .Values.librechat.persistence.storageClassName }}
   storageClassName: {{ .Values.librechat.persistence.storageClassName }}
   {{- end }}
-{{- end }}
-
