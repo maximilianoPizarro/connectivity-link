@@ -42,8 +42,17 @@ data:
             options:
               token: ${BACKEND_SECRET}
               subject: admin-curl-access
+          - type: static
+            options:
+              token: ${MCP_TOKEN}
+              subject: mcp-clients              
         keys:
           - secret: "${BACKEND_SECRET}"
+          - secret: "${MCP_TOKEN}"
+      actions:
+        pluginSources:
+          - software-catalog-mcp-tool
+          - techdocs-mcp-tool
       baseUrl: "${RHDH_BASE_URL}"
       cors:
         origin: "${RHDH_BASE_URL}"
@@ -237,6 +246,20 @@ data:
               skipMetricsLookup: false
               dashboardUrl: 'https://console-openshift-console.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
               # Service account token is automatically mounted
+      # Custom resources for Tekton plugin
+      customResources:
+        - group: 'tekton.dev'
+          apiVersion: 'v1'
+          plural: 'pipelineruns'
+        - group: 'tekton.dev'
+          apiVersion: 'v1'
+          plural: 'taskruns'
+        - group: 'tekton.dev'
+          apiVersion: 'v1'
+          plural: 'pipelines'
+        - group: 'tekton.dev'
+          apiVersion: 'v1'
+          plural: 'tasks'
     # Tekton/CI Pipeline Configuration
     # Configure Tekton integration for pipeline visualization
     tekton:
@@ -259,6 +282,11 @@ data:
         - id: "${LLM_SERVER_ID}"
           url: "${LLM_SERVER_URL}"
           token: "${LLM_SERVER_TOKEN}"
+        # MCP (Model Context Protocol) Configuration
+        - id: backstage-actions
+          url: "${RHDH_HOST}/api/mcp-actions/v1"
+          headers:
+            Authorization: "Bearer ${MCP_TOKEN}"
     permission:
       enabled: true
       rbac:
@@ -267,4 +295,15 @@ data:
         admin:
           users:
             - name: user:default/maximilianopizarro
+    # Nexus Repository Manager Plugin Configuration
+    nexusRepositoryManager:
+      # Nexus instance configuration
+      instances:
+        - name: nexus-instance
+          url: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+          # Optional: Authentication token if required
+          # token: ${NEXUS_TOKEN}
+          # Optional: Username and password for basic auth
+          # username: ${NEXUS_USERNAME}
+          # password: ${NEXUS_PASSWORD}
 

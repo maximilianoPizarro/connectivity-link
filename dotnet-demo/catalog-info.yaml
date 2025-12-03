@@ -16,7 +16,7 @@ metadata:
     backstage.io/kubernetes-id: dotnet-demo
     backstage.io/kubernetes-label-selector: 'app=dotnet-demo'
     # Tekton Pipeline Integration (Janus IDP format)
-    janus-idp.io/tekton: dotnet-demo-pipeline
+    janus-idp.io/tekton: dotnet-demo
     # ArgoCD Integration (using backstage.io prefix)
     backstage.io/argocd-app-name: dotnet-demo
     backstage.io/argocd-app-namespace: openshift-gitops

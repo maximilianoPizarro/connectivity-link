@@ -66,7 +66,19 @@ This demo includes:
 
 3. Note your Nexus admin credentials (default: admin/admin123)
 
-### 2. Create Nexus Credentials Secret
+### 2. Create Persistent Volume Claim for Cache
+
+The pipeline uses a persistent volume claim for the NuGet package cache to speed up builds. The PVC is automatically created by ArgoCD when you deploy the `dotnet-demo` application.
+
+**Manual creation (if not using ArgoCD):**
+
+```bash
+kubectl apply -f dotnet-demo/pvc-cache.yaml
+```
+
+The PVC `dotnet-demo-cache` will be created in the `workshop-pipelines` namespace with 500Mi of storage.
+
+### 3. Create Nexus Credentials Secret
 
 #### Option A: Using Kustomize (Recommended)
 
@@ -130,9 +142,11 @@ tkn pipeline start dotnet-demo-pipeline \
   -p nexus-artifact-id=dotnet-demo \
   -p nexus-version=1.0.0 \
   -w name=source,volumeClaimTemplateFile=source-pvc.yaml \
-  -w name=cache,volumeClaimTemplateFile=cache-pvc.yaml \
+  -w name=cache,claimName=dotnet-demo-cache \
   -n workshop-pipelines
 ```
+
+**Note:** The `source` workspace uses a dynamic PVC (created per run), while the `cache` workspace uses the static PVC `dotnet-demo-cache` for persistent NuGet package caching across pipeline runs.
 
 ### 5. Verify Artifact Upload
 

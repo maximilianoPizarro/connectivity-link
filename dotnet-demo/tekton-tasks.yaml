@@ -5,6 +5,8 @@ metadata:
   namespace: workshop-pipelines
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+  labels:
+    app: dotnet-demo
 spec:
   params:
     - name: PROJECT_PATH
@@ -65,6 +67,8 @@ metadata:
   namespace: workshop-pipelines
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+  labels:
+    app: dotnet-demo
 spec:
   params:
     - name: NEXUS_URL

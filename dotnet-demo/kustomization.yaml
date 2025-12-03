@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: workshop-pipelines
 
 resources:
+  # PVC for cache workspace (must be created first)
+  - pvc-cache.yaml
   # Tasks must be created before Pipeline (sync-wave: 0)
   - tekton-tasks.yaml
   # Pipeline depends on Tasks (sync-wave: 1)
