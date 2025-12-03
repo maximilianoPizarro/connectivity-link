@@ -21,7 +21,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: authentication-system
   providesApis:
     - keycloak-api
@@ -41,7 +41,7 @@ metadata:
 spec:
   type: database
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: authentication-system
 
 ---
@@ -53,7 +53,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
@@ -77,6 +77,6 @@ metadata:
   name: authentication-system
   description: Authentication and identity management system
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: security
 

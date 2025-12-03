@@ -20,7 +20,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: development-platform
   dependsOn:
     - component:operators/devspaces-operator
@@ -32,6 +32,6 @@ metadata:
   name: development-platform
   description: Development platform and tooling system
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: development
 

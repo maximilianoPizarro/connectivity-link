@@ -16,7 +16,7 @@ metadata:
     - infrastructure
 spec:
   type: infrastructure
-  owner: platform-team
+  owner: maximilianopizarro
   system: infrastructure-platform
 
 ---
@@ -26,6 +26,6 @@ metadata:
   name: infrastructure-platform
   description: Infrastructure and resource management platform
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: infrastructure
 

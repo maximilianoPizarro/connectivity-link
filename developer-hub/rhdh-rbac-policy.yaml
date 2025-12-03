@@ -275,5 +275,29 @@ data:
     p, role:default/authenticated, lightspeed.chat, read, allow
     p, role:default/authenticated, lightspeed.chat, create, allow
     
+    # Explicitly assign Lightspeed permissions to all existing users
+    # This ensures all users can access Lightspeed regardless of role assignment
+    p, user:default/user1-dev, lightspeed.chat, read, allow
+    p, user:default/user1-dev, lightspeed.chat, create, allow
+    p, user:default/user2-dev, lightspeed.chat, read, allow
+    p, user:default/user2-dev, lightspeed.chat, create, allow
+    p, user:default/user3-devteam1, lightspeed.chat, read, allow
+    p, user:default/user3-devteam1, lightspeed.chat, create, allow
+    p, user:default/user4-devteam1, lightspeed.chat, read, allow
+    p, user:default/user4-devteam1, lightspeed.chat, create, allow
+    p, user:default/user5-infra, lightspeed.chat, read, allow
+    p, user:default/user5-infra, lightspeed.chat, create, allow
+    p, user:default/user6-infra, lightspeed.chat, read, allow
+    p, user:default/user6-infra, lightspeed.chat, create, allow
+    p, user:default/user7-platform, lightspeed.chat, read, allow
+    p, user:default/user7-platform, lightspeed.chat, create, allow
+    p, user:default/user8-platform, lightspeed.chat, read, allow
+    p, user:default/user8-platform, lightspeed.chat, create, allow
+    p, user:default/user9-rhdh, lightspeed.chat, read, allow
+    p, user:default/user9-rhdh, lightspeed.chat, create, allow
+    p, user:default/user10-rhdh, lightspeed.chat, read, allow
+    p, user:default/user10-rhdh, lightspeed.chat, create, allow
+    
     # Assign all authenticated users to the authenticated role
     # This is automatically done by Backstage for logged-in users
+    # Additionally, we ensure all users have explicit Lightspeed permissions above

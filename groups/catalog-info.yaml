@@ -110,6 +110,7 @@ spec:
 ---
 # Legacy groups - mapped to Keycloak groups for synchronization
 # platform-team maps to platformengineers group in Keycloak
+# Note: Members must be manually specified since this is a legacy group name
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
@@ -125,12 +126,21 @@ spec:
     email: platform-team@developer-hub.local
   parent: backstage
   children: []
-  # Members are automatically synced from Keycloak platformengineers group
-  # Members: user7-platform, user8-platform
+  members:
+    # Members from platformengineers Keycloak group
+    - user7-platform
+    - user8-platform
+    # Members from infrastructure Keycloak group
+    - user5-infra
+    - user6-infra
+    # Members from rhdh Keycloak group
+    - user9-rhdh
+    - user10-rhdh
 
 ---
 # Legacy group - mapped to developers group in Keycloak
 # application-team maps to developers group in Keycloak
+# Note: Members must be manually specified since this is a legacy group name
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
@@ -146,8 +156,13 @@ spec:
     email: application-team@developer-hub.local
   parent: backstage
   children: []
-  # Members are automatically synced from Keycloak developers group
-  # Members: user1-dev, user2-dev
+  members:
+    # Members from developers Keycloak group
+    - user1-dev
+    - user2-dev
+    # Members from devteam1 Keycloak group
+    - user3-devteam1
+    - user4-devteam1
 
 ---
 # Janus IDP Authors Group - For templates and documentation authors

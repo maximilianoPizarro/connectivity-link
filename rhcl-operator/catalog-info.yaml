@@ -21,7 +21,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: connectivity-system
   providesApis:
     - kuadrant-api
@@ -45,7 +45,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: connectivity-system
 
 ---
@@ -57,7 +57,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
@@ -81,7 +81,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
@@ -103,6 +103,6 @@ metadata:
   name: connectivity-system
   description: Connectivity and API gateway system
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: networking
 

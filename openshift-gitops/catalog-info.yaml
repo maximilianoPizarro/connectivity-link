@@ -16,7 +16,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: gitops-platform
   providesApis:
     - argocd-api
@@ -30,7 +30,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
@@ -51,6 +51,6 @@ metadata:
   name: gitops-platform
   description: GitOps and continuous delivery platform
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: devops
 

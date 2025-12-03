@@ -22,7 +22,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: application-team
+  owner: maximilianopizarro
   system: neuralbank-system
   providesApis:
     - neuralbank-api
@@ -45,7 +45,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: application-team
+  owner: maximilianopizarro
   system: neuralbank-system
   providesApis:
     - neuralbank-api
@@ -62,7 +62,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: application-team
+  owner: maximilianopizarro
   system: neuralbank-system
 
 ---
@@ -77,7 +77,7 @@ metadata:
 spec:
   type: database
   lifecycle: production
-  owner: application-team
+  owner: maximilianopizarro
   system: neuralbank-system
 
 ---
@@ -89,7 +89,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: application-team
+  owner: maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
@@ -110,6 +110,6 @@ metadata:
   name: neuralbank-system
   description: NeuralBank application system
 spec:
-  owner: application-team
+  owner: maximilianopizarro
   domain: banking
 

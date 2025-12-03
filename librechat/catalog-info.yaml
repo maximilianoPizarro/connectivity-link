@@ -14,7 +14,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: cicd-platform
   dependsOn:
     - component:operators/pipelines-operator
@@ -26,6 +26,6 @@ metadata:
   name: cicd-platform
   description: CI/CD and pipeline automation platform
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: devops
 

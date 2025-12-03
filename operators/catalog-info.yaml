@@ -18,7 +18,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -33,7 +33,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -48,7 +48,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -63,7 +63,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -78,7 +78,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -93,7 +93,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: platform-team
+  owner: maximilianopizarro
   system: operator-platform
 
 ---
@@ -103,6 +103,6 @@ metadata:
   name: operator-platform
   description: Operator management and lifecycle platform
 spec:
-  owner: platform-team
+  owner: maximilianopizarro
   domain: platform
 
