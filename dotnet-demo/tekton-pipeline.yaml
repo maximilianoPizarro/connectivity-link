@@ -40,8 +40,9 @@ spec:
   tasks:
     - name: clone-repo
       taskRef:
-        name: git-clone
+        apiVersion: tekton.dev/v1beta1
         kind: ClusterTask
+        name: git-clone
       params:
         - name: url
           value: $(params.git-url)
@@ -55,8 +56,9 @@ spec:
       runAfter:
         - clone-repo
       taskRef:
-        name: s2i-dotnet
+        apiVersion: tekton.dev/v1beta1
         kind: ClusterTask
+        name: s2i-dotnet
       params:
         - name: VERSION
           value: "8.0"
