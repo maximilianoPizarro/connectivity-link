@@ -96,6 +96,20 @@ data:
     p, user:default/maximilianopizarro, template.entity, update, allow
     p, user:default/maximilianopizarro, template.entity, delete, allow
     
+    # Dynamic Plugins Permissions - Full Access (Install, View, Configure)
+    p, user:default/maximilianopizarro, plugin.dynamic, read, allow
+    p, user:default/maximilianopizarro, plugin.dynamic, create, allow
+    p, user:default/maximilianopizarro, plugin.dynamic, update, allow
+    p, user:default/maximilianopizarro, plugin.dynamic, delete, allow
+    p, user:default/maximilianopizarro, plugin.dynamic, install, allow
+    p, user:default/maximilianopizarro, plugin.dynamic, uninstall, allow
+    
+    # Plugin Configuration Permissions - Full Access
+    p, user:default/maximilianopizarro, plugin.config, read, allow
+    p, user:default/maximilianopizarro, plugin.config, create, allow
+    p, user:default/maximilianopizarro, plugin.config, update, allow
+    p, user:default/maximilianopizarro, plugin.config, delete, allow
+    
     # ============================================
     # ROLE DEFINITIONS FOR OTHER USERS (Optional)
     # ============================================
@@ -119,6 +133,9 @@ data:
     p, role:default/platformengineer, scaffolder.task, delete, allow
     p, role:default/platformengineer, scaffolder.action.execute, use, allow
     p, role:default/platformengineer, permission.policy, read, allow
+    p, role:default/platformengineer, plugin.dynamic, read, allow
+    p, role:default/platformengineer, plugin.dynamic, install, allow
+    p, role:default/platformengineer, plugin.config, read, allow
     
     # Assign maximilianopizarro to platformengineer role (additional role assignment)
     g, user:default/maximilianopizarro, role:default/platformengineer
