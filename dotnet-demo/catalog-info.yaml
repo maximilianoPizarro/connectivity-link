@@ -34,10 +34,10 @@ metadata:
     - url: https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
       title: Source Code
       icon: code
-    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/workshop-pipelines/pipelines/dotnet-demo-pipeline
+    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/dotnet-demo-pipeline/pipelines/dotnet-demo-pipeline
       title: View Pipeline
       icon: build
-    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/workshop-pipelines/pipelineruns
+    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/dotnet-demo-pipeline/pipelineruns
       title: Pipeline Runs
       icon: history
   tags:

@@ -66,6 +66,14 @@ data:
       reading:
         allow:
           - host: gitlab.com
+      # Proxy configuration for Nexus Repository Manager
+      proxy:
+        '/nexus-repository-manager':
+          target: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+          headers:
+            X-Requested-With: 'XMLHttpRequest'
+          changeOrigin: true
+          secure: false
     signInPage: oidc
     catalog:
       providers:
