@@ -29,11 +29,66 @@ data:
     p, role:default/authenticated, scaffolder.task, create, allow
 
     # ==========================================================
-    # 2. ADMIN ROLE DEFINITION (Platform Engineers)
+    # 2. TEAM ROLES WITH FULL LIGHTSPEED PERMISSIONS
+    # ==========================================================
+    # Each team gets a role with full Lightspeed permissions (read, create, update, delete)
+    
+    # Developers Team Role
+    p, role:default/developers, lightspeed.chat, read, allow
+    p, role:default/developers, lightspeed.chat, create, allow
+    p, role:default/developers, lightspeed.chat, update, allow
+    p, role:default/developers, lightspeed.chat, delete, allow
+    
+    # Dev Team 1 Role
+    p, role:default/devteam1, lightspeed.chat, read, allow
+    p, role:default/devteam1, lightspeed.chat, create, allow
+    p, role:default/devteam1, lightspeed.chat, update, allow
+    p, role:default/devteam1, lightspeed.chat, delete, allow
+    
+    # Infrastructure Team Role
+    p, role:default/infrastructure, lightspeed.chat, read, allow
+    p, role:default/infrastructure, lightspeed.chat, create, allow
+    p, role:default/infrastructure, lightspeed.chat, update, allow
+    p, role:default/infrastructure, lightspeed.chat, delete, allow
+    
+    # Platform Engineers Team Role
+    p, role:default/platformengineers, lightspeed.chat, read, allow
+    p, role:default/platformengineers, lightspeed.chat, create, allow
+    p, role:default/platformengineers, lightspeed.chat, update, allow
+    p, role:default/platformengineers, lightspeed.chat, delete, allow
+    
+    # RHDH Team Role
+    p, role:default/rhdh, lightspeed.chat, read, allow
+    p, role:default/rhdh, lightspeed.chat, create, allow
+    p, role:default/rhdh, lightspeed.chat, update, allow
+    p, role:default/rhdh, lightspeed.chat, delete, allow
+    
+    # Platform Team Role (Legacy)
+    p, role:default/platform-team, lightspeed.chat, read, allow
+    p, role:default/platform-team, lightspeed.chat, create, allow
+    p, role:default/platform-team, lightspeed.chat, update, allow
+    p, role:default/platform-team, lightspeed.chat, delete, allow
+    
+    # Application Team Role (Legacy)
+    p, role:default/application-team, lightspeed.chat, read, allow
+    p, role:default/application-team, lightspeed.chat, create, allow
+    p, role:default/application-team, lightspeed.chat, update, allow
+    p, role:default/application-team, lightspeed.chat, delete, allow
+    
+    # Janus Authors Team Role
+    p, role:default/janus-authors, lightspeed.chat, read, allow
+    p, role:default/janus-authors, lightspeed.chat, create, allow
+    p, role:default/janus-authors, lightspeed.chat, update, allow
+    p, role:default/janus-authors, lightspeed.chat, delete, allow
+
+    # ==========================================================
+    # 3. ADMIN ROLE DEFINITION (Platform Engineers)
     # ==========================================================
     # This role has full control (CRUD) over the entire system
     
-    # Full control over Lightspeed (includes deleting conversations)
+    # Full control over Lightspeed (already covered by team role, but kept for clarity)
+    p, role:default/platform-admin, lightspeed.chat, read, allow
+    p, role:default/platform-admin, lightspeed.chat, create, allow
     p, role:default/platform-admin, lightspeed.chat, update, allow
     p, role:default/platform-admin, lightspeed.chat, delete, allow
     
@@ -64,23 +119,33 @@ data:
     p, role:default/platform-admin, plugin.dynamic, uninstall, allow
 
     # ==========================================================
-    # 3. GROUP AND USER ROLE ASSIGNMENTS
+    # 4. GROUP AND USER ROLE ASSIGNMENTS
     # ==========================================================
     # Groups must match EXACTLY with the names in Keycloak
     # Keycloak groups: developers, devteam1, infrastructure, platformengineers, rhdh
     
-    # Assign your user to Admin role
-    g, user:default/maximilianopizarro, role:default/platform-admin
+    # Assign groups to their team roles (full Lightspeed permissions)
+    g, group:default/developers, role:default/developers
+    g, group:default/devteam1, role:default/devteam1
+    g, group:default/infrastructure, role:default/infrastructure
+    g, group:default/platformengineers, role:default/platformengineers
+    g, group:default/rhdh, role:default/rhdh
+    g, group:default/platform-team, role:default/platform-team
+    g, group:default/application-team, role:default/application-team
+    g, group:default/janus-authors, role:default/janus-authors
     
-    # Assign Keycloak technical groups to Admin role
-    # These groups exist in Keycloak and are automatically synchronized
+    # Assign your user to Admin role and team roles
+    g, user:default/maximilianopizarro, role:default/platform-admin
+    g, user:default/maximilianopizarro, role:default/platformengineers
+    g, user:default/maximilianopizarro, role:default/platform-team
+    g, user:default/maximilianopizarro, role:default/rhdh
+    
+    # Assign Keycloak technical groups to Admin role (for full system control)
+    # These groups also have team roles above for Lightspeed permissions
     g, group:default/platformengineers, role:default/platform-admin
     g, group:default/infrastructure, role:default/platform-admin
     g, group:default/rhdh, role:default/platform-admin
-    
-    # Legacy groups (optional, only if needed for compatibility)
-    # platform-team and application-team are aliases pointing to real groups
     g, group:default/platform-team, role:default/platform-admin
 
-    # NOTE: Normal users (developers, devteam1) do not need explicit assignment
-    # because they already inherit permissions from section 1 (role:default/authenticated).
+    # NOTE: All users now have full Lightspeed permissions through their team roles
+    # Platform teams also have full system control through platform-admin role

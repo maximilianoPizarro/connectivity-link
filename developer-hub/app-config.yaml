@@ -298,14 +298,8 @@ data:
         # Optional: Configure authentication if needed
         # auth:
         #   token: ${TEKTON_TOKEN}
-    lightspeed:
-      servers:
-        #- id: ollama
-        #  url: "http://librechat-ollama.librechat.svc.cluster.local:11434/v1" # Change this to your Ollama URL if it's different
-        #  token: "EMPTY"      
-        - id: "${LLM_SERVER_ID}"
-          url: "${LLM_SERVER_URL}"
-          token: "${LLM_SERVER_TOKEN}"
+    # Lightspeed server configuration is now in dynamic-plugins.yaml
+    # under pluginConfig.lightspeed.servers for the backend plugin
     # MCP (Model Context Protocol) Configuration
     # Note: MCP configuration is separate from Lightspeed servers
     mcp:
@@ -320,9 +314,15 @@ data:
         policies-csv-file: ./rbac-policy.csv
         policyFileReload: true
         admin:
+          # RBAC Admin groups - members of these groups can manage RBAC policies
+          # This is more scalable than listing individual users
+          groups:
+            - name: group:default/platformengineers
+            - name: group:default/infrastructure
+            - name: group:default/rhdh
+          # You can also add individual users if needed
           users:
             - name: user:default/maximilianopizarro
-            - name: user:default/user9-rhdh
     # Nexus Repository Manager Plugin Configuration
     nexusRepositoryManager:
       # Nexus instance configuration
