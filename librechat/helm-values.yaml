@@ -25,6 +25,18 @@ librechat:
             pathType: ImplementationSpecific
     tls: []
   librechat:
+    namespace: librechat
+    persistence:
+      enabled: true
+      storageClassName: gp3-csi  # Storage class liviana para volúmenes pequeños
+      uploads:
+        size: 1Gi
+      data:
+        size: 1Gi
+      logs:
+        size: 1Gi
+      apiLogs:
+        size: 1Gi
     configEnv:
       SEARCH: 'true'
       MEILI_NO_ANALYTICS: 'true'
@@ -32,6 +44,8 @@ librechat:
       EMBEDDINGS_PROVIDER: ollama
       OLLAMA_BASE_URL: http://librechat-ollama:11434/v1
       EMBEDDINGS_MODEL: nomic-embed-text
+      DEBUG_MCP: 'true'
+      DEBUG_CONSOLE: 'true'
       RHDH_HOST: https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
       RHDH_MCP_TOKEN: backstage
       LLM_SERVER_ID: llama-3-2-3b
@@ -225,10 +239,14 @@ librechat:
       mountPath: /app/api/logs
   volumes:
     - name: librechat-uploads-volume
-      emptyDir: {} 
+      persistentVolumeClaim:
+        claimName: librechat-uploads
     - name: librechat-data-volume
-      emptyDir: {} 
+      persistentVolumeClaim:
+        claimName: librechat-data
     - name: librechat-logs-volume
-      emptyDir: {}
+      persistentVolumeClaim:
+        claimName: librechat-logs
     - name: librechat-api-logs-volume
-      emptyDir: {}
+      persistentVolumeClaim:
+        claimName: librechat-api-logs

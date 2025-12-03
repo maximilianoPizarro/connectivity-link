@@ -1,0 +1,79 @@
+{{- if .Values.librechat.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-uploads
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/name: uploads
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.librechat.persistence.uploads.size | default "1Gi" }}
+  {{- if .Values.librechat.persistence.storageClassName }}
+  storageClassName: {{ .Values.librechat.persistence.storageClassName }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-data
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/name: data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.librechat.persistence.data.size | default "1Gi" }}
+  {{- if .Values.librechat.persistence.storageClassName }}
+  storageClassName: {{ .Values.librechat.persistence.storageClassName }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-logs
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/name: logs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.librechat.persistence.logs.size | default "1Gi" }}
+  {{- if .Values.librechat.persistence.storageClassName }}
+  storageClassName: {{ .Values.librechat.persistence.storageClassName }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-api-logs
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/name: api-logs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.librechat.persistence.apiLogs.size | default "1Gi" }}
+  {{- if .Values.librechat.persistence.storageClassName }}
+  storageClassName: {{ .Values.librechat.persistence.storageClassName }}
+  {{- end }}
+{{- end }}
+
