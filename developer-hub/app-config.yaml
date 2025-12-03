@@ -298,8 +298,13 @@ data:
         # Optional: Configure authentication if needed
         # auth:
         #   token: ${TEKTON_TOKEN}
-    # Lightspeed server configuration is now in dynamic-plugins.yaml
-    # under pluginConfig.lightspeed.servers for the backend plugin
+    # Lightspeed server configuration
+    # Required by OLS (Road Core Service) backend for Lightspeed plugin
+    lightspeed:
+      servers:
+        - id: "${LLM_SERVER_ID}"
+          url: "${LLM_SERVER_URL}"
+          token: "${LLM_SERVER_TOKEN}"
     # MCP (Model Context Protocol) Configuration
     # Note: MCP configuration is separate from Lightspeed servers
     mcp:
