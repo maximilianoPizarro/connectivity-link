@@ -1,0 +1,181 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: dotnet-build-nuget
+  namespace: workshop-pipelines
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  params:
+    - name: PROJECT_PATH
+      description: Path to .NET project directory
+      default: "."
+    - name: VERSION
+      description: Package version
+      default: "1.0.0"
+  workspaces:
+    - name: source
+      description: Source code workspace
+    - name: cache
+      description: NuGet cache workspace
+  steps:
+    - name: restore
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet restore
+      volumeMounts:
+        - name: cache
+          mountPath: /root/.nuget
+          subPath: nuget
+
+    - name: build
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet build --configuration Release
+
+    - name: pack
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(params.PROJECT_PATH)
+        dotnet pack --configuration Release --no-build -p:Version=$(params.VERSION) -p:PackageVersion=$(params.VERSION) -o bin/Release
+      volumeMounts:
+        - name: cache
+          mountPath: /root/.nuget
+          subPath: nuget
+
+  volumes:
+    - name: cache
+      workspace: cache
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: nexus-upload
+  namespace: workshop-pipelines
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  params:
+    - name: NEXUS_URL
+      description: Nexus repository URL
+    - name: NEXUS_REPOSITORY
+      description: Nexus repository name
+      default: "releases"
+    - name: NEXUS_USERNAME
+      description: Nexus username
+    - name: NEXUS_PASSWORD
+      description: Nexus password (from secret)
+    - name: GROUP_ID
+      description: Maven group ID
+    - name: ARTIFACT_ID
+      description: Artifact ID
+    - name: VERSION
+      description: Artifact version
+    - name: PACKAGING
+      description: Package type (nupkg, jar, etc.)
+      default: "nupkg"
+    - name: FILE_PATH
+      description: Path to artifact file(s) to upload
+  workspaces:
+    - name: source
+      description: Source workspace containing artifacts
+  steps:
+    - name: upload-to-nexus
+      image: curlimages/curl:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        
+        NEXUS_URL=$(params.NEXUS_URL)
+        REPO=$(params.NEXUS_REPOSITORY)
+        USERNAME=$(params.NEXUS_USERNAME)
+        PASSWORD=$(params.NEXUS_PASSWORD)
+        GROUP_ID=$(params.GROUP_ID)
+        ARTIFACT_ID=$(params.ARTIFACT_ID)
+        VERSION=$(params.VERSION)
+        PACKAGING=$(params.PACKAGING)
+        
+        # Find the artifact file
+        ARTIFACT_FILE=$(find $(params.FILE_PATH) -type f -name "*.${PACKAGING}" | head -n 1)
+        
+        if [ -z "$ARTIFACT_FILE" ]; then
+          echo "Error: No artifact file found matching $(params.FILE_PATH)"
+          exit 1
+        fi
+        
+        echo "Uploading artifact: $ARTIFACT_FILE"
+        echo "To Nexus: $NEXUS_URL/repository/$REPO/"
+        
+        # Upload to Nexus using REST API
+        # For Nexus 2.x, use the service/rest endpoint
+        # For Nexus 3.x, use the service/rest/v1/components endpoint
+        
+        # Try Nexus 3.x format first
+        RESPONSE=$(curl -s -w "\n%{http_code}" \
+          -u "$USERNAME:$PASSWORD" \
+          -X POST \
+          -H "Content-Type: multipart/form-data" \
+          -F "maven2.groupId=$GROUP_ID" \
+          -F "maven2.artifactId=$ARTIFACT_ID" \
+          -F "maven2.version=$VERSION" \
+          -F "maven2.packaging=$PACKAGING" \
+          -F "maven2.asset1=@$ARTIFACT_FILE" \
+          -F "maven2.asset1.extension=$PACKAGING" \
+          "$NEXUS_URL/service/rest/v1/components?repository=$REPO" 2>&1)
+        
+        HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+        BODY=$(echo "$RESPONSE" | head -n -1)
+        
+        if [ "$HTTP_CODE" -eq 201 ] || [ "$HTTP_CODE" -eq 204 ]; then
+          echo "Successfully uploaded artifact to Nexus"
+          echo "Artifact URL: $NEXUS_URL/repository/$REPO/$GROUP_ID/$ARTIFACT_ID/$VERSION/"
+        elif [ "$HTTP_CODE" -eq 401 ] || [ "$HTTP_CODE" -eq 403 ]; then
+          echo "Authentication failed. Trying Nexus 2.x format..."
+          # Try Nexus 2.x format
+          RESPONSE2=$(curl -s -w "\n%{http_code}" \
+            -u "$USERNAME:$PASSWORD" \
+            -X POST \
+            -F "r=$REPO" \
+            -F "hasPom=false" \
+            -F "e=$PACKAGING" \
+            -F "g=$GROUP_ID" \
+            -F "a=$ARTIFACT_ID" \
+            -F "v=$VERSION" \
+            -F "p=$PACKAGING" \
+            -F "file=@$ARTIFACT_FILE" \
+            "$NEXUS_URL/service/local/artifact/maven/content" 2>&1)
+          
+          HTTP_CODE2=$(echo "$RESPONSE2" | tail -n 1)
+          if [ "$HTTP_CODE2" -eq 201 ] || [ "$HTTP_CODE2" -eq 200 ]; then
+            echo "Successfully uploaded artifact to Nexus 2.x"
+            echo "Artifact URL: $NEXUS_URL/repository/$REPO/$GROUP_ID/$ARTIFACT_ID/$VERSION/"
+          else
+            echo "Error uploading to Nexus 2.x: HTTP $HTTP_CODE2"
+            echo "$RESPONSE2" | head -n -1
+            exit 1
+          fi
+        else
+          echo "Error uploading to Nexus: HTTP $HTTP_CODE"
+          echo "$BODY"
+          exit 1
+        fi
+      env:
+        - name: NEXUS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nexus-credentials
+              key: password
+

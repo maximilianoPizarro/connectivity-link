@@ -4,6 +4,9 @@ kind: Kustomization
 namespace: workshop-pipelines
 
 resources:
+  # Tasks must be created before Pipeline (sync-wave: 0)
+  - tekton-tasks.yaml
+  # Pipeline depends on Tasks (sync-wave: 1)
   - tekton-pipeline.yaml
   # Uncomment the line below if you want to use a static secret file
   # - nexus-secret.yaml
