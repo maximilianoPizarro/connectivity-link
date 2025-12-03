@@ -34,13 +34,8 @@ spec:
       value: "1.0.0"
   workspaces:
     - name: source
-      volumeClaimTemplate:
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 1Gi
+      persistentVolumeClaim:
+        claimName: dotnet-demo-source
     - name: cache
       persistentVolumeClaim:
         claimName: dotnet-demo-cache

@@ -2,7 +2,6 @@ apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: dotnet-demo-pipeline
-  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:

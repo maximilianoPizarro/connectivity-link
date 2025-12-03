@@ -1,20 +1,19 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dotnet-demo-cache
+  name: dotnet-demo-source
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:
     app: dotnet-demo
     app.kubernetes.io/name: dotnet-demo
-    app.kubernetes.io/component: cache
+    app.kubernetes.io/component: source
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 2Gi
   # Optional: Specify storage class if needed
   # storageClassName: gp3-csi
-
 

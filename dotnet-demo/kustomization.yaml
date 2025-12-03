@@ -4,12 +4,13 @@ kind: Kustomization
 namespace: dotnet-demo
 
 resources:
-  # PVC for cache workspace (must be created first)
+  # PVCs for workspaces (must be created first)
+  - pvc-source.yaml
   - pvc-cache.yaml
   # Tasks must be created before Pipeline (sync-wave: 0)
   - tekton-tasks.yaml
-  # Pipeline depends on Tasks (sync-wave: 1)
+  # Pipeline depends on Tasks (sync-wave: 0)
   - tekton-pipeline.yaml
   # Uncomment the line below if you want to use a static secret file
-  # - nexus-secret.yaml
+   - nexus-secret.yaml
 
