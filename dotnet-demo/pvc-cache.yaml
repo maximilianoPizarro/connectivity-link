@@ -4,7 +4,7 @@ metadata:
   name: dotnet-demo-cache
   namespace: dotnet-demo
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "1"
   labels:
     app: dotnet-demo
     app.kubernetes.io/name: dotnet-demo
