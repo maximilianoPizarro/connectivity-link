@@ -61,6 +61,12 @@ spec:
             app_type: helm-internal
             keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
             app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+          # DotNet Demo Application
+          - name: dotnet-demo
+            namespace: workshop-pipelines
+            path: dotnet-demo
+            sync_wave: "6"
+            app_type: plain
   template:
     metadata:
       name: '{{.name}}'

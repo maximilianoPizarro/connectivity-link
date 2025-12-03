@@ -2,3 +2,8 @@
 **/catalog-info.yaml
 all.yaml
 
+# Ignore credential files that are not in repository
+**/nexus-credentials.env
+**/*.env
+**/*secret*.yaml
+

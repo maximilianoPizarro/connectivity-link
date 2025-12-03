@@ -31,18 +31,25 @@ resources:
 
 # Option 3: Use secretGenerator with .gitignore file (best practice)
 # Create nexus-credentials.env file and add it to .gitignore
-# Then use:
-secretGenerator:
-  - name: nexus-credentials
-    namespace: workshop-pipelines
-    envs:
-      - nexus-credentials.env
-    type: Opaque
-    options:
-      disableNameSuffixHash: false
+# Then uncomment the secretGenerator section below:
+# secretGenerator:
+#   - name: nexus-credentials
+#     namespace: workshop-pipelines
+#     envs:
+#       - nexus-credentials.env
+#     type: Opaque
+#     options:
+#       disableNameSuffixHash: false
 
-# Note: Make sure to create nexus-credentials.env file with:
-#   username=admin
-#   password=YOUR_ACTUAL_PASSWORD
-# And add nexus-credentials.env to .gitignore
+# Note: 
+# - The secretGenerator is commented out by default because nexus-credentials.env is in .gitignore
+# - To use it: 
+#   1. Create nexus-credentials.env file locally with your credentials
+#   2. Uncomment the secretGenerator section above
+#   3. The secret will be created automatically when applying with kubectl apply -k
+# - For ArgoCD: Create the secret manually or use External Secrets Operator
+#   kubectl create secret generic nexus-credentials \
+#     --from-literal=username=admin \
+#     --from-literal=password=YOUR_PASSWORD \
+#     -n workshop-pipelines
 
