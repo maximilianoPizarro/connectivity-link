@@ -12,5 +12,5 @@ resources:
   # Pipeline depends on Tasks (sync-wave: 0)
   - tekton-pipeline.yaml
   # Uncomment the line below if you want to use a static secret file
-   - nexus-secret.yaml
+  - nexus-secret.yaml
 
