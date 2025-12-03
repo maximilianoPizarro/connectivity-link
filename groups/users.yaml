@@ -105,6 +105,7 @@ spec:
     displayName: User Five
     email: user5@developer-hub.local
   memberOf:
+    - platform-team
     - infrastructure
 
 ---
@@ -119,6 +120,7 @@ spec:
     displayName: User Six
     email: user6@developer-hub.local
   memberOf:
+    - platform-team
     - infrastructure
 
 ---
@@ -133,6 +135,7 @@ spec:
     displayName: User Seven
     email: user7@developer-hub.local
   memberOf:
+    - platform-team
     - platformengineers
 
 ---
@@ -147,6 +150,7 @@ spec:
     displayName: User Eight
     email: user8@developer-hub.local
   memberOf:
+    - platform-team
     - platformengineers
 
 ---
@@ -161,6 +165,7 @@ spec:
     displayName: User Nine
     email: user9@developer-hub.local
   memberOf:
+    - platform-team
     - rhdh
 
 ---
@@ -175,5 +180,6 @@ spec:
     displayName: User Ten
     email: user10@developer-hub.local
   memberOf:
+    - platform-team
     - rhdh
 
