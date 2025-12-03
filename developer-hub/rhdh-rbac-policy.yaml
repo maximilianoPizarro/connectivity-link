@@ -16,6 +16,8 @@ data:
     # Allow ALL users to use Lightspeed (AI Chat)
     p, role:default/authenticated, lightspeed.chat, read, allow
     p, role:default/authenticated, lightspeed.chat, create, allow
+    # Allow ALL users to list available models
+    p, role:default/authenticated, lightspeed.models, read, allow
     
     # Allow ALL users to view catalog and basic documentation
     p, role:default/authenticated, catalog-entity, read, allow
@@ -38,48 +40,56 @@ data:
     p, role:default/developers, lightspeed.chat, create, allow
     p, role:default/developers, lightspeed.chat, update, allow
     p, role:default/developers, lightspeed.chat, delete, allow
+    p, role:default/developers, lightspeed.models, read, allow
     
     # Dev Team 1 Role
     p, role:default/devteam1, lightspeed.chat, read, allow
     p, role:default/devteam1, lightspeed.chat, create, allow
     p, role:default/devteam1, lightspeed.chat, update, allow
     p, role:default/devteam1, lightspeed.chat, delete, allow
+    p, role:default/devteam1, lightspeed.models, read, allow
     
     # Infrastructure Team Role
     p, role:default/infrastructure, lightspeed.chat, read, allow
     p, role:default/infrastructure, lightspeed.chat, create, allow
     p, role:default/infrastructure, lightspeed.chat, update, allow
     p, role:default/infrastructure, lightspeed.chat, delete, allow
+    p, role:default/infrastructure, lightspeed.models, read, allow
     
     # Platform Engineers Team Role
     p, role:default/platformengineers, lightspeed.chat, read, allow
     p, role:default/platformengineers, lightspeed.chat, create, allow
     p, role:default/platformengineers, lightspeed.chat, update, allow
     p, role:default/platformengineers, lightspeed.chat, delete, allow
+    p, role:default/platformengineers, lightspeed.models, read, allow
     
     # RHDH Team Role
     p, role:default/rhdh, lightspeed.chat, read, allow
     p, role:default/rhdh, lightspeed.chat, create, allow
     p, role:default/rhdh, lightspeed.chat, update, allow
     p, role:default/rhdh, lightspeed.chat, delete, allow
+    p, role:default/rhdh, lightspeed.models, read, allow
     
     # Platform Team Role (Legacy)
     p, role:default/platform-team, lightspeed.chat, read, allow
     p, role:default/platform-team, lightspeed.chat, create, allow
     p, role:default/platform-team, lightspeed.chat, update, allow
     p, role:default/platform-team, lightspeed.chat, delete, allow
+    p, role:default/platform-team, lightspeed.models, read, allow
     
     # Application Team Role (Legacy)
     p, role:default/application-team, lightspeed.chat, read, allow
     p, role:default/application-team, lightspeed.chat, create, allow
     p, role:default/application-team, lightspeed.chat, update, allow
     p, role:default/application-team, lightspeed.chat, delete, allow
+    p, role:default/application-team, lightspeed.models, read, allow
     
     # Janus Authors Team Role
     p, role:default/janus-authors, lightspeed.chat, read, allow
     p, role:default/janus-authors, lightspeed.chat, create, allow
     p, role:default/janus-authors, lightspeed.chat, update, allow
     p, role:default/janus-authors, lightspeed.chat, delete, allow
+    p, role:default/janus-authors, lightspeed.models, read, allow
 
     # ==========================================================
     # 3. ADMIN ROLE DEFINITION (Platform Engineers)
@@ -91,6 +101,7 @@ data:
     p, role:default/platform-admin, lightspeed.chat, create, allow
     p, role:default/platform-admin, lightspeed.chat, update, allow
     p, role:default/platform-admin, lightspeed.chat, delete, allow
+    p, role:default/platform-admin, lightspeed.models, read, allow
     
     # Full control over Catalog
     p, role:default/platform-admin, catalog-entity, create, allow
