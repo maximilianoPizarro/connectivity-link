@@ -319,15 +319,9 @@ data:
         policies-csv-file: ./rbac-policy.csv
         policyFileReload: true
         admin:
-          # RBAC Admin groups - members of these groups can manage RBAC policies
-          # This is more scalable than listing individual users
-          groups:
-            - name: group:default/platformengineers
-            - name: group:default/infrastructure
-            - name: group:default/rhdh
-          # You can also add individual users if needed
           users:
             - name: user:default/maximilianopizarro
+
     # Nexus Repository Manager Plugin Configuration
     nexusRepositoryManager:
       # Nexus instance configuration
