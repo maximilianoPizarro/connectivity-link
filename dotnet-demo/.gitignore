@@ -46,8 +46,4 @@ artifacts/
 # macOS
 .DS_Store
 
-# Secrets and credentials
-nexus-credentials.env
-nexus-secret.yaml
-*.secret.yaml
 
