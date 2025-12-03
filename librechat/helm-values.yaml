@@ -131,7 +131,6 @@ librechat:
             titleModel: "${LLM_SERVER_ID}"
             summarize: false
             summaryModel: "${LLM_SERVER_ID}"
-
     existingConfigYaml: ''
     existingSecretName: librechat-librechat-secretenv
     serviceAccountName: librechat-sa
