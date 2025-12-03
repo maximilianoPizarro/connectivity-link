@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: dotnet-build-nuget
@@ -27,6 +27,8 @@ spec:
         set -e
         cd $(params.PROJECT_PATH)
         dotnet restore
+      # Mount cache workspace for NuGet packages
+      # Workspaces are automatically available as volumes with name matching workspace name
       volumeMounts:
         - name: cache
           mountPath: /root/.nuget
@@ -49,17 +51,14 @@ spec:
         set -e
         cd $(params.PROJECT_PATH)
         dotnet pack --configuration Release --no-build -p:Version=$(params.VERSION) -p:PackageVersion=$(params.VERSION) -o bin/Release
+      # Mount cache workspace for NuGet packages
       volumeMounts:
         - name: cache
           mountPath: /root/.nuget
           subPath: nuget
 
-  volumes:
-    - name: cache
-      workspace: cache
-
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: nexus-upload

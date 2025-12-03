@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: dotnet-demo-pipeline
@@ -53,7 +53,6 @@ spec:
       workspaces:
         - name: output
           workspace: source
-          # Note: workspace field maps pipeline workspace to task workspace
 
     - name: build-dotnet
       runAfter:
