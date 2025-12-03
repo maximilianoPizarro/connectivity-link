@@ -1,4 +1,4 @@
-{{- if .Values.librechat.persistence.enabled }}
+{{- if and (hasKey .Values.librechat "persistence") .Values.librechat.persistence (hasKey .Values.librechat.persistence "enabled") .Values.librechat.persistence.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -6,16 +6,19 @@ metadata:
   name: {{ .Release.Name }}-uploads
   namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: storage
-    app.kubernetes.io/name: uploads
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/storage-type: uploads
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.uploads.size | default "1Gi" }}
-  {{- if .Values.librechat.persistence.storageClassName }}
+      storage: {{ (.Values.librechat.persistence.uploads.size | default "1Gi") }}
+  {{- if and (hasKey .Values.librechat.persistence "storageClassName") .Values.librechat.persistence.storageClassName }}
   storageClassName: {{ .Values.librechat.persistence.storageClassName }}
   {{- end }}
 ---
@@ -25,16 +28,19 @@ metadata:
   name: {{ .Release.Name }}-data
   namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: storage
-    app.kubernetes.io/name: data
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/storage-type: data
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.data.size | default "1Gi" }}
-  {{- if .Values.librechat.persistence.storageClassName }}
+      storage: {{ (.Values.librechat.persistence.data.size | default "1Gi") }}
+  {{- if and (hasKey .Values.librechat.persistence "storageClassName") .Values.librechat.persistence.storageClassName }}
   storageClassName: {{ .Values.librechat.persistence.storageClassName }}
   {{- end }}
 ---
@@ -44,16 +50,19 @@ metadata:
   name: {{ .Release.Name }}-logs
   namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: storage
-    app.kubernetes.io/name: logs
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/storage-type: logs
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.logs.size | default "1Gi" }}
-  {{- if .Values.librechat.persistence.storageClassName }}
+      storage: {{ (.Values.librechat.persistence.logs.size | default "1Gi") }}
+  {{- if and (hasKey .Values.librechat.persistence "storageClassName") .Values.librechat.persistence.storageClassName }}
   storageClassName: {{ .Values.librechat.persistence.storageClassName }}
   {{- end }}
 ---
@@ -63,16 +72,19 @@ metadata:
   name: {{ .Release.Name }}-api-logs
   namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: storage
-    app.kubernetes.io/name: api-logs
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/storage-type: api-logs
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.apiLogs.size | default "1Gi" }}
-  {{- if .Values.librechat.persistence.storageClassName }}
+      storage: {{ (.Values.librechat.persistence.apiLogs.size | default "1Gi") }}
+  {{- if and (hasKey .Values.librechat.persistence "storageClassName") .Values.librechat.persistence.storageClassName }}
   storageClassName: {{ .Values.librechat.persistence.storageClassName }}
   {{- end }}
 {{- end }}
