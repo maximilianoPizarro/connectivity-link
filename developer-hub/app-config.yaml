@@ -274,7 +274,8 @@ data:
       # Base URL for Tekton Dashboard (if available)
       dashboardUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
       # Namespace where pipelines are located
-      namespace: workshop-pipelines
+      # Note: dotnet-demo pipelines are in dotnet-demo namespace
+      namespace: dotnet-demo
     # CI/CD Integration
     ci:
       - name: tekton

@@ -12,12 +12,12 @@ metadata:
     backstage.io/source-location: url:https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
     backstage.io/techdocs-ref: dir:.
     # Kubernetes Integration
-    backstage.io/kubernetes-namespace: workshop-pipelines
+    backstage.io/kubernetes-namespace: dotnet-demo
     backstage.io/kubernetes-id: dotnet-demo
     backstage.io/kubernetes-label-selector: 'app=dotnet-demo'
     # Tekton Pipeline Integration
     # Format: namespace/pipeline-name (required for multi-tenant)
-    tekton.dev/pipeline: workshop-pipelines/dotnet-demo-pipeline
+    tekton.dev/pipeline: dotnet-demo/dotnet-demo-pipeline
     # Alternative Janus IDP format (if using Janus IDP plugin)
     janus-idp.io/tekton: dotnet-demo-pipeline
     # ArgoCD Integration (using backstage.io prefix)

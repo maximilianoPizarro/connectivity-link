@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: workshop-pipelines
+namespace: dotnet-demo
 
 resources:
   # PVC for cache workspace (must be created first)
@@ -16,7 +16,7 @@ resources:
 # Option 1: Use secretGenerator with literals (values in plain text - not recommended for production)
 # secretGenerator:
 #   - name: nexus-credentials
-#     namespace: workshop-pipelines
+#     namespace: dotnet-demo
 #     literals:
 #       - username=admin
 #       - password=admin123
@@ -29,7 +29,7 @@ resources:
 # Then uncomment:
 # secretGenerator:
 #   - name: nexus-credentials
-#     namespace: workshop-pipelines
+#     namespace: dotnet-demo
 #     envs:
 #       - nexus-credentials.env
 #     type: Opaque
@@ -39,7 +39,7 @@ resources:
 # Then uncomment the secretGenerator section below:
 # secretGenerator:
 #   - name: nexus-credentials
-#     namespace: workshop-pipelines
+#     namespace: dotnet-demo
 #     envs:
 #       - nexus-credentials.env
 #     type: Opaque
@@ -56,5 +56,5 @@ resources:
 #   kubectl create secret generic nexus-credentials \
 #     --from-literal=username=admin \
 #     --from-literal=password=YOUR_PASSWORD \
-#     -n workshop-pipelines
+#     -n dotnet-demo
 

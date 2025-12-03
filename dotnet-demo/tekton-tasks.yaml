@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: git-clone
-  namespace: workshop-pipelines
+  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:
@@ -128,7 +128,7 @@ apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: s2i-dotnet
-  namespace: workshop-pipelines
+  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:
@@ -169,7 +169,7 @@ apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: dotnet-build-nuget
-  namespace: workshop-pipelines
+  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:
@@ -231,7 +231,7 @@ apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: nexus-upload
-  namespace: workshop-pipelines
+  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:

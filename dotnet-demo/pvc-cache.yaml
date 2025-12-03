@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: dotnet-demo-cache
-  namespace: workshop-pipelines
+  namespace: dotnet-demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   labels:
