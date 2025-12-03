@@ -223,6 +223,34 @@ data:
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
       rules:
           - allow: [Component, Group, User, Resource, Location, Template, API, System, Domain]
+    # Kubernetes Integration for Tekton Pipeline visualization
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: 'https://kubernetes.default.svc'
+              name: 'local'
+              authProvider: 'serviceAccount'
+              skipTLSVerify: false
+              skipMetricsLookup: false
+              dashboardUrl: 'https://console-openshift-console.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+              # Service account token is automatically mounted
+    # Tekton/CI Pipeline Configuration
+    # Configure Tekton integration for pipeline visualization
+    tekton:
+      # Base URL for Tekton Dashboard (if available)
+      dashboardUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+      # Namespace where pipelines are located
+      namespace: workshop-pipelines
+    # CI/CD Integration
+    ci:
+      - name: tekton
+        baseUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+        # Optional: Configure authentication if needed
+        # auth:
+        #   token: ${TEKTON_TOKEN}
     lightspeed:
       servers:
         #- id: ollama
