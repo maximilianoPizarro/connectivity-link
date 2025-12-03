@@ -237,6 +237,10 @@ librechat:
       mountPath: /app/logs
     - name: librechat-api-logs-volume
       mountPath: /app/api/logs
+    - name: keycloak-auth-config
+      mountPath: /app/api/data/auth.json
+      subPath: auth.json
+      readOnly: true
   volumes:
     - name: librechat-uploads-volume
       persistentVolumeClaim:
@@ -250,3 +254,6 @@ librechat:
     - name: librechat-api-logs-volume
       persistentVolumeClaim:
         claimName: librechat-api-logs
+    - name: keycloak-auth-config
+      configMap:
+        name: librechat-keycloak-auth
