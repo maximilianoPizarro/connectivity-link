@@ -13,27 +13,35 @@ spec:
   params:
     - name: git-url
       description: Git repository URL
+      type: string
       default: "https://gitlab.com/maximilianoPizarro/connectivity-link.git"
     - name: git-revision
       description: Git revision (branch, tag, or commit)
+      type: string
       default: "main"
     - name: nexus-url
       description: Nexus repository URL
+      type: string
       default: "http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
     - name: nexus-repository
       description: Nexus repository name
+      type: string
       default: "releases"
     - name: nexus-username
       description: Nexus username
+      type: string
       default: "admin"
     - name: nexus-group-id
       description: Maven group ID
+      type: string
       default: "com.example"
     - name: nexus-artifact-id
       description: Maven artifact ID
+      type: string
       default: "dotnet-demo"
     - name: nexus-version
       description: Artifact version
+      type: string
       default: "1.0.0"
   workspaces:
     - name: source
@@ -43,7 +51,6 @@ spec:
   tasks:
     - name: clone-repo
       taskRef:
-        apiVersion: tekton.dev/v1beta1
         kind: ClusterTask
         name: git-clone
       params:
@@ -59,7 +66,6 @@ spec:
       runAfter:
         - clone-repo
       taskRef:
-        apiVersion: tekton.dev/v1beta1
         kind: ClusterTask
         name: s2i-dotnet
       params:
@@ -75,7 +81,6 @@ spec:
       runAfter:
         - build-dotnet
       taskRef:
-        apiVersion: tekton.dev/v1beta1
         kind: Task
         name: dotnet-build-nuget
       params:
@@ -93,7 +98,6 @@ spec:
       runAfter:
         - build-nuget-package
       taskRef:
-        apiVersion: tekton.dev/v1beta1
         kind: Task
         name: nexus-upload
       params:
