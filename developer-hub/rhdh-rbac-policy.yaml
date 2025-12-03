@@ -151,6 +151,13 @@ data:
     g, user:default/maximilianopizarro, role:default/platform-team
     g, user:default/maximilianopizarro, role:default/rhdh
     
+    # Direct permissions for your user (fallback, though already covered by roles above)
+    p, user:default/maximilianopizarro, lightspeed.chat, read, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, create, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, update, allow
+    p, user:default/maximilianopizarro, lightspeed.chat, delete, allow
+    p, user:default/maximilianopizarro, lightspeed.models, read, allow
+    
     # Assign Keycloak technical groups to Admin role (for full system control)
     # These groups also have team roles above for Lightspeed permissions
     g, group:default/platformengineers, role:default/platform-admin
