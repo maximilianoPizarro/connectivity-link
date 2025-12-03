@@ -3,7 +3,7 @@ kind: Pipeline
 metadata:
   name: dotnet-demo-pipeline
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "4"
   labels:
     app: dotnet-demo
     app.kubernetes.io/name: dotnet-demo
@@ -52,7 +52,7 @@ spec:
       taskRef:
         apiVersion: tekton.dev/v1
         kind: Task
-        name: git-clone
+        name: dotnet-demo-git-clone
       params:
         - name: url
           value: $(params.git-url)
@@ -80,7 +80,7 @@ spec:
 
     - name: build-nuget-package
       runAfter:
-        - build-dotnet
+        - clone-repo
       taskRef:
         apiVersion: tekton.dev/v1
         kind: Task

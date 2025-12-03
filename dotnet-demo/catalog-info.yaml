@@ -53,8 +53,9 @@ spec:
   lifecycle: production
   owner: application-team
   system: cicd-platform
-  dependsOn:
-    - component:default/workshop-pipelines
+  # No dependencies - standalone component
+  # dependsOn:
+  #   - component:default/dotnet-demo
 
 ---
 apiVersion: backstage.io/v1alpha1

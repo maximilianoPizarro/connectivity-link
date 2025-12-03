@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: dotnet-demo
 
 resources:
+  # RBAC for Backstage to read Tekton resources (must be created first)
+  - backstage-rbac.yaml
   # PVCs for workspaces (must be created first)
   - pvc-source.yaml
   - pvc-cache.yaml
