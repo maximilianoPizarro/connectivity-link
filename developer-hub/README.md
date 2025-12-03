@@ -66,6 +66,93 @@ This application is managed by ArgoCD:
 - **Developer Hub URL**: `https://developer-hub.apps.<cluster-domain>`
 - **ArgoCD Application**: Available in OpenShift GitOps console
 
+## RBAC and Permissions
+
+The Developer Hub uses a role-based access control (RBAC) system defined in `rhdh-rbac-policy.yaml`. Permissions are organized hierarchically with role inheritance.
+
+### Permission Structure
+
+#### Platform Team Role (Full Access)
+
+The `platform-team` role provides full access to all Developer Hub components and features. The following groups inherit this role:
+
+- **`infrastructure`** - Infrastructure management team
+- **`platformengineers`** - Platform engineering team
+- **`platform-team`** - Platform team (legacy group)
+- **`rhdh`** - Red Hat Developer Hub team
+
+**Full Access Permissions Include:**
+- **Catalog**: Full CRUD operations on catalog entities, locations, and entity creation
+- **TechDocs**: Full CRUD operations on technical documentation
+- **Scaffolder**: Full access to templates, tasks, and action execution (read, write, create, update, delete)
+- **Lightspeed**: Full CRUD operations on AI chat conversations
+- **APIs, Resources, Systems, Domains**: Full CRUD operations
+- **Groups and Users**: Full CRUD operations
+- **Templates**: Full CRUD operations
+- **Dynamic Plugins**: Full access including install/uninstall capabilities
+- **Permission Policies**: Full CRUD operations on RBAC policies
+- **Plugin Configuration**: Full CRUD operations
+
+#### Application Team Role (Limited Access)
+
+The `application-team` role provides limited access focused on development workflows. The following groups inherit this role:
+
+- **`application-team`** - Application development team (legacy group)
+- **`developers`** - General developers team
+- **`devteam1`** - Development Team 1
+
+**Limited Access Permissions Include:**
+- **TechDocs**: Read-only access to view technical documentation
+- **Scaffolder**: Read templates and execute actions (launch templates)
+- **Lightspeed**: Read and create AI chat conversations
+
+**Note**: Application Team members cannot create, update, or delete catalog entities, manage plugins, or modify RBAC policies.
+
+#### Authenticated Users (Basic Access)
+
+All authenticated users (logged-in users) have basic read-only permissions:
+
+- **Catalog**: Read-only access to view catalog entities and locations
+- **TechDocs**: Read-only access to view technical documentation
+- **Scaffolder**: Read templates and execute actions (launch templates)
+- **Lightspeed**: Read and create AI chat conversations
+- **APIs, Resources, Systems, Domains, Groups, Users**: Read-only access
+
+### Role Inheritance
+
+Permissions are assigned through role inheritance:
+
+```
+platform-team (full access)
+  ├── infrastructure
+  ├── platformengineers
+  ├── platform-team
+  └── rhdh
+
+application-team (limited access)
+  ├── application-team
+  ├── developers
+  └── devteam1
+```
+
+### User Group Synchronization
+
+User group membership is automatically synchronized from Keycloak using the `keycloakOrg` provider. Users inherit permissions based on their Keycloak group membership:
+
+- Users in Keycloak groups (`/infrastructure`, `/platformengineers`, `/rhdh`) automatically get `platform-team` permissions
+- Users in Keycloak groups (`/developers`, `/devteam1`) automatically get `application-team` permissions
+- All authenticated users get basic read-only permissions
+
+### Configuration
+
+RBAC policies are defined in `rhdh-rbac-policy.yaml` using the Casbin policy format. The policy file is loaded as a ConfigMap and applied to the Developer Hub instance.
+
+**Key Policy Sections:**
+- Individual user permissions (e.g., `maximilianopizarro` - full admin)
+- Group-based role definitions
+- Role inheritance assignments
+- Basic permissions for authenticated users
+
 ## Troubleshooting
 
 ### Common Issues

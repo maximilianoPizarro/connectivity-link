@@ -18,6 +18,7 @@ spec:
     - rhdh
     - platform-team
     - application-team
+    - janus-authors
 
 ---
 apiVersion: backstage.io/v1alpha1
@@ -148,3 +149,19 @@ spec:
   # Members are automatically synced from Keycloak developers group
   # Members: user1-dev, user2-dev
 
+---
+# Janus IDP Authors Group - For templates and documentation authors
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: janus-authors
+  description: Janus IDP authors and contributors
+spec:
+  type: team
+  profile:
+    displayName: Janus Authors
+    email: janus-authors@developer-hub.local
+  parent: backstage
+  children: []
+  # This group is referenced by templates and documentation
+  # Members can be added manually or synced from Keycloak if needed

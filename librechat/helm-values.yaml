@@ -67,11 +67,11 @@ librechat:
       cache: true
       # fileStrategy: "firebase"  # If using Firebase CDN
       fileConfig:
-        endpoints:
+        endpoints: {}
         mcpServers:
           backstage-actions:
             type: streamable-http
-            url: "${RHDH_HOST}"/api/mcp-actions/v1
+            url: "${RHDH_HOST}/api/mcp-actions/v1"
             description: "Servidor Público de Prueba MCP para operaciones básicas."
             headers:
               Authorization: "Bearer ${RHDH_MCP_TOKEN}"
