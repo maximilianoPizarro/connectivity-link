@@ -316,7 +316,7 @@ data:
     permission:
       enabled: true
       rbac:
-        policies-csv-file: ./rbac-policy.csv
+        policies-csv-file: /opt/app-root/src/rbac-policy.csv
         policyFileReload: true
         admin:
           users:
