@@ -8,6 +8,31 @@ metadata:
     rhdh.redhat.com/backstage-name: developer-hub
 data:
   rbac-policy.csv: |
+    # ==========================================================
+    # 1. BASE PERMISSIONS FOR ALL AUTHENTICATED USERS
+    # ==========================================================
+    # The 'role:default/authenticated' role is automatically assigned to any logged-in user.
+    # These permissions apply to ALL users
+    
+    # Lightspeed permissions for ALL users
+    p, role:default/authenticated, lightspeed.chat, read, allow
+    p, role:default/authenticated, lightspeed.chat, create, allow
+    p, role:default/authenticated, lightspeed.chat, update, allow
+    p, role:default/authenticated, lightspeed.chat, delete, allow
+    
+    # Catalog permissions for ALL users
+    p, role:default/authenticated, catalog-entity, read, allow
+    p, role:default/authenticated, catalog.location, read, allow
+    
+    # Scaffolder permissions for ALL users
+    p, role:default/authenticated, scaffolder-template, read, allow
+    p, role:default/authenticated, scaffolder.task, read, allow
+    p, role:default/authenticated, scaffolder.task, create, allow
+    p, role:default/authenticated, scaffolder.action.execute, use, allow
+
+    # ==========================================================
+    # 2. PLATFORM ENGINEER ROLE (Full Admin Permissions)
+    # ==========================================================
     # Define a comprehensive 'admin' role
     p, role:default/platformengineer, lightspeed.chat, read, allow
     p, role:default/platformengineer, lightspeed.chat, create, allow
