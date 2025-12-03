@@ -48,9 +48,9 @@ data:
           lightspeed:
             # REQUIRED: Configure LLM servers with OpenAI API compatibility
             servers:
-              - id: ${LLM_SERVER_ID}
-                url: ${LLM_SERVER_URL}
-                token: ${LLM_SERVER_TOKEN}
+              - id: "${LLM_SERVER_ID}"
+                url: "${LLM_SERVER_URL}"
+                token: "${LLM_SERVER_TOKEN}"
     
             # OPTIONAL: Port for lightspeed service (default: 8080)
             # servicePort: ${LIGHTSPEED_SERVICE_PORT}

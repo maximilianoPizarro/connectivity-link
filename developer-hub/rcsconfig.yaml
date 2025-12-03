@@ -17,11 +17,13 @@ data:
         models:
           - name: dummymodel
         # End: Do not remove this block
-      - name: mistral-small
+      - name: llama-3-2-3b
         type: openai
-        url: https://mistral-small-24b-w8a8-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1
+        url: https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1
+        credentials:
+          api_key: 0d730b5c1bc2bc24fd657bf4ded0ba72
         models:
-          - name: mistral-small-24b-w8a8        
+          - name: llama-3-2-3b        
     ols_config:
       user_data_collection:
         log_level: "DEBUG"
