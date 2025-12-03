@@ -5,28 +5,22 @@ metadata:
   namespace: default
   description: .NET Demo Application - Sample application demonstrating CI/CD pipeline with Nexus artifact publishing
   annotations:
-    # Nexus Repository Information
-    nexus.com/repository-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
-    nexus.com/repository-name: releases
-    nexus.com/group-id: com.example
-    nexus.com/artifact-id: dotnet-demo
-    nexus.com/artifact-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/repository/releases/com/example/dotnet-demo/
-    # Backstage Links
+    # GitLab Integration (standard format)
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+    # Backstage Standard Annotations
     backstage.io/view-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#browse/browse:releases:com/example/dotnet-demo
     backstage.io/source-location: url:https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
-    # ArgoCD Integration
-    argocd/app-name: dotnet-demo
-    argocd/app-namespace: openshift-gitops
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/dotnet-demo
-    # GitLab Integration
-    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
-    gitlab.com/project-path: dotnet-demo
-    # Tekton Pipeline Integration
-    tekton.dev/pipeline: dotnet-demo-pipeline
-    tekton.dev/pipeline-namespace: workshop-pipelines
-    # CI/CD Integration (for pipeline visualization)
-    jenkins.io/job-full-name: dotnet-demo/dotnet-demo-pipeline
-    jenkins.io/github-folder: maximilianoPizarro/connectivity-link/dotnet-demo
+    backstage.io/techdocs-ref: dir:.
+    # Kubernetes Integration
+    backstage.io/kubernetes-namespace: workshop-pipelines
+    backstage.io/kubernetes-id: dotnet-demo
+    backstage.io/kubernetes-label-selector: 'app=dotnet-demo'
+    # Tekton Pipeline Integration (Janus IDP format)
+    janus-idp.io/tekton: dotnet-demo-pipeline
+    # ArgoCD Integration (using backstage.io prefix)
+    backstage.io/argocd-app-name: dotnet-demo
+    backstage.io/argocd-app-namespace: openshift-gitops
+    backstage.io/argocd-app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/dotnet-demo
   links:
     - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
       title: Nexus Repository
