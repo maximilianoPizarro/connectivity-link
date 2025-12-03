@@ -71,10 +71,10 @@ librechat:
         mcpServers:
           backstage-actions:
             type: streamable-http
-            url: "${RHDH_HOST}/api/mcp-actions/v1"
+            url: "https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/api/mcp-actions/v1"
             description: "Servidor Público de Prueba MCP para operaciones básicas."
             headers:
-              Authorization: "Bearer ${RHDH_MCP_TOKEN}"
+              Authorization: "Bearer backstage"
             startup: true
           assistants:
             fileLimit: 5
@@ -113,7 +113,7 @@ librechat:
           # excludedIds: ["asst_excludedAssistantId"]
         custom:
           - name: "Ollama"
-            apiKey: "${OPENAI_API_KEY}"
+            apiKey: "IiI="
             baseURL: "http://librechat-ollama:11434/v1" # Adjust if Ollama is on a different host
             models:
               default: ["llama2"] # Example models, fetch from your Ollama instance
@@ -122,15 +122,15 @@ librechat:
             titleModel: "llama2"
             summarize: false
             summaryModel: "llama2"
-          - name: "${LLM_SERVER_ID}"
-            apiKey: "${LLM_SERVER_TOKEN}"
-            baseURL: "${LLM_SERVER_URL}"
+          - name: "llama-3-2-3b"
+            apiKey: "0d730b5c1bc2bc24fd657bf4ded0ba72"
+            baseURL: "https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1"
             models:
-              default: ["${LLM_SERVER_ID}"]
+              default: ["llama-3-2-3b"]
             titleConvo: true
-            titleModel: "${LLM_SERVER_ID}"
+            titleModel: "llama-3-2-3b"
             summarize: false
-            summaryModel: "${LLM_SERVER_ID}"
+            summaryModel: "llama-3-2-3b"
     existingConfigYaml: ''
     existingSecretName: librechat-librechat-secretenv
     serviceAccountName: librechat-sa
