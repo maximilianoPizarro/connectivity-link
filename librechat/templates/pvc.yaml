@@ -16,8 +16,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.uploads.size | default "1Gi" }}
-  storageClassName: {{ .Values.librechat.persistence.storageClassName | default "gp3-csi" }}
+      storage: {{ include "librechat.persistence.size" (dict "path" "uploads" "default" "1Gi" "root" .) }}
+  storageClassName: {{ include "librechat.persistence.storageClass" . }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -36,8 +36,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.data.size | default "1Gi" }}
-  storageClassName: {{ .Values.librechat.persistence.storageClassName | default "gp3-csi" }}
+      storage: {{ include "librechat.persistence.size" (dict "path" "data" "default" "1Gi" "root" .) }}
+  storageClassName: {{ include "librechat.persistence.storageClass" . }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -56,8 +56,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.logs.size | default "1Gi" }}
-  storageClassName: {{ .Values.librechat.persistence.storageClassName | default "gp3-csi" }}
+      storage: {{ include "librechat.persistence.size" (dict "path" "logs" "default" "1Gi" "root" .) }}
+  storageClassName: {{ include "librechat.persistence.storageClass" . }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -76,5 +76,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.librechat.persistence.apiLogs.size | default "1Gi" }}
-  storageClassName: {{ .Values.librechat.persistence.storageClassName | default "gp3-csi" }}
+      storage: {{ include "librechat.persistence.size" (dict "path" "apiLogs" "default" "1Gi" "root" .) }}
+  storageClassName: {{ include "librechat.persistence.storageClass" . }}

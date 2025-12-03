@@ -48,3 +48,28 @@ app.kubernetes.io/name: {{ include "librechat.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{/*
+Get persistence size with default
+*/}}
+{{- define "librechat.persistence.size" -}}
+{{- $root := .root -}}
+{{- $path := .path -}}
+{{- $default := .default -}}
+{{- if and (hasKey $root.Values.librechat "persistence") (hasKey $root.Values.librechat.persistence $path) (hasKey (index $root.Values.librechat.persistence $path) "size") -}}
+{{- index (index $root.Values.librechat.persistence $path) "size" -}}
+{{- else -}}
+{{- $default -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get storage class with default
+*/}}
+{{- define "librechat.persistence.storageClass" -}}
+{{- if and (hasKey .Values.librechat "persistence") (hasKey .Values.librechat.persistence "storageClassName") -}}
+{{- .Values.librechat.persistence.storageClassName -}}
+{{- else -}}
+{{- "gp3-csi" -}}
+{{- end -}}
+{{- end -}}
+
