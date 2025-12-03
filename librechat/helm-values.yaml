@@ -81,22 +81,21 @@ librechat:
       cache: true
       # fileStrategy: "firebase"  # If using Firebase CDN
       fileConfig:
-        endpoints: {}
-        mcpServers:
-          backstage-actions:
-            type: streamable-http
-            url: "https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/api/mcp-actions/v1"
-            description: "MCP agent based on the Backstage MCP Actions plugin. This agent enables interaction with your Red Hat Developer Hub (Backstage) instance, allowing you to query catalog entities, manage components, view Kubernetes resources, check Tekton pipeline status, and perform various Backstage operations. Example prompts: 'List all components in the catalog', 'Show me the status of the dotnet-demo pipeline', 'What Kubernetes resources are deployed for the dotnet-demo application?', 'Create a new component in Backstage', 'Show me all services owned by the platform-team'."
-            headers:
-              Authorization: "Bearer backstage"
-            startup: true
+        endpoints:
           assistants:
             fileLimit: 5
             fileSizeLimit: 10  # Maximum size for an individual file in MB
             totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
             supportedMimeTypes:
               - "image/.*"
-              - "application/pdf"
+              - "application/pdf"        
+          mcpServers:
+            backstage-actions:
+              type: streamable-http
+              url: "https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/api/mcp-actions/v1"
+              headers:
+                Authorization: "Bearer backstage"
+              startup: true
           openAI:
             disabled: true  # Disables file uploading to the OpenAI endpoint
           default:
@@ -119,12 +118,12 @@ librechat:
       #    - ".apps.cluster-26wbn.26wbn.sandbox691.opentlc.com"
       endpoints:
         assistants:
-          disableBuilder: false # Disable Assistants Builder Interface by setting to `true`
-          pollIntervalMs: 750  # Polling interval for checking assistant updates
-          timeoutMs: 180000  # Timeout for assistant operations
-          # Should only be one or the other, either `supportedIds` or `excludedIds`
-          supportedIds: ["asst_supportedAssistantId1", "asst_supportedAssistantId2"]
-          # excludedIds: ["asst_excludedAssistantId"]
+          fileLimit: 5
+          fileSizeLimit: 10   # Maximum size for an individual file in MB
+          totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
+          supportedMimeTypes:
+            - "image/.*"
+            - "application/pdf"
         custom:
           - name: "Ollama"
             apiKey: "IiI="
