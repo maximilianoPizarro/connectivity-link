@@ -8,296 +8,72 @@ metadata:
     rhdh.redhat.com/backstage-name: developer-hub
 data:
   rbac-policy.csv: |
-    # ============================================
-    # FULL ADMIN PERMISSIONS FOR maximilianopizarro
-    # ============================================
+    # ==========================================================
+    # 1. PERMISOS BASE PARA TODOS (Soluciona el error de Lightspeed)
+    # ==========================================================
+    # El rol 'role:default/authenticated' se asigna automáticamente a cualquier usuario logueado.
     
-    # Note: user9-rhdh admin permissions are defined below
-    
-    # Catalog Entity Permissions - Full CRUD
-    p, user:default/maximilianopizarro, catalog-entity, read, allow
-    p, user:default/maximilianopizarro, catalog-entity, create, allow
-    p, user:default/maximilianopizarro, catalog-entity, update, allow
-    p, user:default/maximilianopizarro, catalog-entity, delete, allow
-    
-    # Catalog Location Permissions - Full CRUD
-    p, user:default/maximilianopizarro, catalog.location, read, allow
-    p, user:default/maximilianopizarro, catalog.location, create, allow
-    p, user:default/maximilianopizarro, catalog.location, update, allow
-    p, user:default/maximilianopizarro, catalog.location, delete, allow
-    
-    # Catalog Entity Creation Permission
-    p, user:default/maximilianopizarro, catalog.entity.create, create, allow
-    
-    # Permission Policy Management - Full CRUD
-    p, user:default/maximilianopizarro, permission.policy, read, allow
-    p, user:default/maximilianopizarro, permission.policy, create, allow
-    p, user:default/maximilianopizarro, permission.policy, update, allow
-    p, user:default/maximilianopizarro, permission.policy, delete, allow
-    
-    # Scaffolder Permissions - Full Access
-    p, user:default/maximilianopizarro, scaffolder-template, read, allow
-    p, user:default/maximilianopizarro, scaffolder-template, write, allow
-    p, user:default/maximilianopizarro, scaffolder.task, read, allow
-    p, user:default/maximilianopizarro, scaffolder.task, create, allow
-    p, user:default/maximilianopizarro, scaffolder.task, update, allow
-    p, user:default/maximilianopizarro, scaffolder.task, delete, allow
-    p, user:default/maximilianopizarro, scaffolder.action.execute, use, allow
-    
-    # Lightspeed (AI Chat) Permissions - Full CRUD
-    p, user:default/maximilianopizarro, lightspeed.chat, read, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, create, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, update, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, delete, allow
-    
-    # TechDocs Permissions - Full Access
-    p, user:default/maximilianopizarro, techdocs.entity, read, allow
-    p, user:default/maximilianopizarro, techdocs.entity, create, allow
-    p, user:default/maximilianopizarro, techdocs.entity, update, allow
-    p, user:default/maximilianopizarro, techdocs.entity, delete, allow
-    
-    # API Permissions - Full Access
-    p, user:default/maximilianopizarro, api.entity, read, allow
-    p, user:default/maximilianopizarro, api.entity, create, allow
-    p, user:default/maximilianopizarro, api.entity, update, allow
-    p, user:default/maximilianopizarro, api.entity, delete, allow
-    
-    # Resource Permissions - Full Access
-    p, user:default/maximilianopizarro, resource.entity, read, allow
-    p, user:default/maximilianopizarro, resource.entity, create, allow
-    p, user:default/maximilianopizarro, resource.entity, update, allow
-    p, user:default/maximilianopizarro, resource.entity, delete, allow
-    
-    # System Permissions - Full Access
-    p, user:default/maximilianopizarro, system.entity, read, allow
-    p, user:default/maximilianopizarro, system.entity, create, allow
-    p, user:default/maximilianopizarro, system.entity, update, allow
-    p, user:default/maximilianopizarro, system.entity, delete, allow
-    
-    # Domain Permissions - Full Access
-    p, user:default/maximilianopizarro, domain.entity, read, allow
-    p, user:default/maximilianopizarro, domain.entity, create, allow
-    p, user:default/maximilianopizarro, domain.entity, update, allow
-    p, user:default/maximilianopizarro, domain.entity, delete, allow
-    
-    # Group Permissions - Full Access
-    p, user:default/maximilianopizarro, group.entity, read, allow
-    p, user:default/maximilianopizarro, group.entity, create, allow
-    p, user:default/maximilianopizarro, group.entity, update, allow
-    p, user:default/maximilianopizarro, group.entity, delete, allow
-    
-    # User Permissions - Full Access
-    p, user:default/maximilianopizarro, user.entity, read, allow
-    p, user:default/maximilianopizarro, user.entity, create, allow
-    p, user:default/maximilianopizarro, user.entity, update, allow
-    p, user:default/maximilianopizarro, user.entity, delete, allow
-    
-    # Template Permissions - Full Access
-    p, user:default/maximilianopizarro, template.entity, read, allow
-    p, user:default/maximilianopizarro, template.entity, create, allow
-    p, user:default/maximilianopizarro, template.entity, update, allow
-    p, user:default/maximilianopizarro, template.entity, delete, allow
-    
-    # Dynamic Plugins Permissions - Full Access (Install, View, Configure)
-    p, user:default/maximilianopizarro, plugin.dynamic, read, allow
-    p, user:default/maximilianopizarro, plugin.dynamic, create, allow
-    p, user:default/maximilianopizarro, plugin.dynamic, update, allow
-    p, user:default/maximilianopizarro, plugin.dynamic, delete, allow
-    p, user:default/maximilianopizarro, plugin.dynamic, install, allow
-    p, user:default/maximilianopizarro, plugin.dynamic, uninstall, allow
-    
-    # Plugin Configuration Permissions - Full Access
-    p, user:default/maximilianopizarro, plugin.config, read, allow
-    p, user:default/maximilianopizarro, plugin.config, create, allow
-    p, user:default/maximilianopizarro, plugin.config, update, allow
-    p, user:default/maximilianopizarro, plugin.config, delete, allow
-    
-    # ============================================
-    # GROUP-BASED ROLE DEFINITIONS
-    # Permissions are assigned to groups, not individual users
-    # Users inherit permissions from their group membership in Keycloak
-    # ============================================
-    
-    # Platform Team Role - Full access to all Developer Hub components
-    # This role is inherited by: infrastructure, platformengineers, platform-team, rhdh
-    p, role:default/platform-team, lightspeed.chat, read, allow
-    p, role:default/platform-team, lightspeed.chat, create, allow
-    p, role:default/platform-team, lightspeed.chat, update, allow
-    p, role:default/platform-team, lightspeed.chat, delete, allow
-    p, role:default/platform-team, catalog-entity, read, allow
-    p, role:default/platform-team, catalog-entity, create, allow
-    p, role:default/platform-team, catalog-entity, update, allow
-    p, role:default/platform-team, catalog-entity, delete, allow
-    p, role:default/platform-team, catalog.location, read, allow
-    p, role:default/platform-team, catalog.location, create, allow
-    p, role:default/platform-team, catalog.location, update, allow
-    p, role:default/platform-team, catalog.location, delete, allow
-    p, role:default/platform-team, catalog.entity.create, create, allow
-    p, role:default/platform-team, scaffolder-template, read, allow
-    p, role:default/platform-team, scaffolder-template, write, allow
-    p, role:default/platform-team, scaffolder.task, read, allow
-    p, role:default/platform-team, scaffolder.task, create, allow
-    p, role:default/platform-team, scaffolder.task, update, allow
-    p, role:default/platform-team, scaffolder.task, delete, allow
-    p, role:default/platform-team, scaffolder.action.execute, use, allow
-    p, role:default/platform-team, techdocs.entity, read, allow
-    p, role:default/platform-team, techdocs.entity, create, allow
-    p, role:default/platform-team, techdocs.entity, update, allow
-    p, role:default/platform-team, techdocs.entity, delete, allow
-    p, role:default/platform-team, api.entity, read, allow
-    p, role:default/platform-team, api.entity, create, allow
-    p, role:default/platform-team, api.entity, update, allow
-    p, role:default/platform-team, api.entity, delete, allow
-    p, role:default/platform-team, resource.entity, read, allow
-    p, role:default/platform-team, resource.entity, create, allow
-    p, role:default/platform-team, resource.entity, update, allow
-    p, role:default/platform-team, resource.entity, delete, allow
-    p, role:default/platform-team, system.entity, read, allow
-    p, role:default/platform-team, system.entity, create, allow
-    p, role:default/platform-team, system.entity, update, allow
-    p, role:default/platform-team, system.entity, delete, allow
-    p, role:default/platform-team, domain.entity, read, allow
-    p, role:default/platform-team, domain.entity, create, allow
-    p, role:default/platform-team, domain.entity, update, allow
-    p, role:default/platform-team, domain.entity, delete, allow
-    p, role:default/platform-team, group.entity, read, allow
-    p, role:default/platform-team, group.entity, create, allow
-    p, role:default/platform-team, group.entity, update, allow
-    p, role:default/platform-team, group.entity, delete, allow
-    p, role:default/platform-team, user.entity, read, allow
-    p, role:default/platform-team, user.entity, create, allow
-    p, role:default/platform-team, user.entity, update, allow
-    p, role:default/platform-team, user.entity, delete, allow
-    p, role:default/platform-team, template.entity, read, allow
-    p, role:default/platform-team, template.entity, create, allow
-    p, role:default/platform-team, template.entity, update, allow
-    p, role:default/platform-team, template.entity, delete, allow
-    p, role:default/platform-team, permission.policy, read, allow
-    p, role:default/platform-team, permission.policy, create, allow
-    p, role:default/platform-team, permission.policy, update, allow
-    p, role:default/platform-team, permission.policy, delete, allow
-    p, role:default/platform-team, plugin.dynamic, read, allow
-    p, role:default/platform-team, plugin.dynamic, create, allow
-    p, role:default/platform-team, plugin.dynamic, update, allow
-    p, role:default/platform-team, plugin.dynamic, delete, allow
-    p, role:default/platform-team, plugin.dynamic, install, allow
-    p, role:default/platform-team, plugin.dynamic, uninstall, allow
-    p, role:default/platform-team, plugin.config, read, allow
-    p, role:default/platform-team, plugin.config, create, allow
-    p, role:default/platform-team, plugin.config, update, allow
-    p, role:default/platform-team, plugin.config, delete, allow
-    
-    # Application Team Role - Limited access: TechDocs, Scaffolder templates, Lightspeed
-    # Members: application-team group (mapped to developers in Keycloak)
-    p, role:default/application-team, lightspeed.chat, read, allow
-    p, role:default/application-team, lightspeed.chat, create, allow
-    p, role:default/application-team, techdocs.entity, read, allow
-    p, role:default/application-team, scaffolder-template, read, allow
-    p, role:default/application-team, scaffolder.task, read, allow
-    p, role:default/application-team, scaffolder.action.execute, use, allow
-    
-    # Assign groups to their roles (users inherit permissions from their group)
-    # Platform groups inherit full access from platform-team role
-    g, group:default/infrastructure, role:default/platform-team
-    g, group:default/platformengineers, role:default/platform-team
-    g, group:default/platform-team, role:default/platform-team
-    g, group:default/rhdh, role:default/platform-team
-    
-    # Application team gets limited access
-    g, group:default/application-team, role:default/application-team
-    
-    # Developers and devteam1 groups inherit from application-team (limited access)
-    g, group:default/developers, role:default/application-team
-    g, group:default/devteam1, role:default/application-team
-    
-    # ============================================
-    # INDIVIDUAL USER ROLE ASSIGNMENTS
-    # Only for users who need special permissions beyond their group
-    # ============================================
-    
-    # maximilianopizarro - Full admin (also in admin list in app-config.yaml)
-    g, user:default/maximilianopizarro, role:default/platform-team
-    
-    # Note: user9-rhdh inherits permissions from 'rhdh' group automatically
-    # No individual assignment needed - permissions come from group membership in Keycloak
-    
-    # ============================================
-    # BASIC PERMISSIONS FOR ALL AUTHENTICATED USERS
-    # ============================================
-    # These permissions allow any authenticated user to:
-    # - Sign in and access the application
-    # - View catalog entities (read-only)
-    # - View catalog locations (read-only)
-    # - View TechDocs
-    # - View APIs
-    # - View Resources
-    # - View Systems
-    # - View Domains
-    # - View Groups
-    # - View Users (their own profile)
-    
-    # Catalog Entity Permissions - Read Only
-    p, role:default/authenticated, catalog-entity, read, allow
-    
-    # Catalog Location Permissions - Read Only
-    p, role:default/authenticated, catalog.location, read, allow
-    
-    # TechDocs Permissions - Read Only
-    p, role:default/authenticated, techdocs.entity, read, allow
-    
-    # API Permissions - Read Only
-    p, role:default/authenticated, api.entity, read, allow
-    
-    # Resource Permissions - Read Only
-    p, role:default/authenticated, resource.entity, read, allow
-    
-    # System Permissions - Read Only
-    p, role:default/authenticated, system.entity, read, allow
-    
-    # Domain Permissions - Read Only
-    p, role:default/authenticated, domain.entity, read, allow
-    
-    # Group Permissions - Read Only
-    p, role:default/authenticated, group.entity, read, allow
-    
-    # User Permissions - Read Only (users can view their own profile)
-    p, role:default/authenticated, user.entity, read, allow
-    
-    # Scaffolder Template Permissions - Read and Execute for all authenticated users
-    p, role:default/authenticated, scaffolder-template, read, allow
-    p, role:default/authenticated, scaffolder.task, read, allow
-    p, role:default/authenticated, scaffolder.action.execute, use, allow
-    
-    # TechDocs Permissions - Additional permissions for viewing documentation
-    p, role:default/authenticated, techdocs.entity, read, allow
-    
-    # Lightspeed Plugin Permissions - Read and Create for all authenticated users
+    # Permitir a TODOS usar Lightspeed (Chat AI)
     p, role:default/authenticated, lightspeed.chat, read, allow
     p, role:default/authenticated, lightspeed.chat, create, allow
     
-    # Explicitly assign Lightspeed permissions to all existing users
-    # This ensures all users can access Lightspeed regardless of role assignment
-    p, user:default/user1-dev, lightspeed.chat, read, allow
-    p, user:default/user1-dev, lightspeed.chat, create, allow
-    p, user:default/user2-dev, lightspeed.chat, read, allow
-    p, user:default/user2-dev, lightspeed.chat, create, allow
-    p, user:default/user3-devteam1, lightspeed.chat, read, allow
-    p, user:default/user3-devteam1, lightspeed.chat, create, allow
-    p, user:default/user4-devteam1, lightspeed.chat, read, allow
-    p, user:default/user4-devteam1, lightspeed.chat, create, allow
-    p, user:default/user5-infra, lightspeed.chat, read, allow
-    p, user:default/user5-infra, lightspeed.chat, create, allow
-    p, user:default/user6-infra, lightspeed.chat, read, allow
-    p, user:default/user6-infra, lightspeed.chat, create, allow
-    p, user:default/user7-platform, lightspeed.chat, read, allow
-    p, user:default/user7-platform, lightspeed.chat, create, allow
-    p, user:default/user8-platform, lightspeed.chat, read, allow
-    p, user:default/user8-platform, lightspeed.chat, create, allow
-    p, user:default/user9-rhdh, lightspeed.chat, read, allow
-    p, user:default/user9-rhdh, lightspeed.chat, create, allow
-    p, user:default/user10-rhdh, lightspeed.chat, read, allow
-    p, user:default/user10-rhdh, lightspeed.chat, create, allow
+    # Permitir a TODOS ver el catálogo y documentación básica
+    p, role:default/authenticated, catalog-entity, read, allow
+    p, role:default/authenticated, catalog.location, read, allow
+    p, role:default/authenticated, techdocs.entity, read, allow
     
-    # Assign all authenticated users to the authenticated role
-    # This is automatically done by Backstage for logged-in users
-    # Additionally, we ensure all users have explicit Lightspeed permissions above
+    # Permitir a TODOS ejecutar templates (Scaffolder)
+    p, role:default/authenticated, scaffolder-template, read, allow
+    p, role:default/authenticated, scaffolder.action.execute, use, allow
+    p, role:default/authenticated, scaffolder.task, read, allow
+    p, role:default/authenticated, scaffolder.task, create, allow
+
+    # ==========================================================
+    # 2. DEFINICIÓN DEL ROL ADMIN (Platform Engineers)
+    # ==========================================================
+    # Este rol tiene control total (CRUD) sobre todo el sistema
+    
+    # Control total sobre Lightspeed (incluye borrar conversaciones)
+    p, role:default/platform-admin, lightspeed.chat, update, allow
+    p, role:default/platform-admin, lightspeed.chat, delete, allow
+    
+    # Control total del Catálogo
+    p, role:default/platform-admin, catalog-entity, create, allow
+    p, role:default/platform-admin, catalog-entity, update, allow
+    p, role:default/platform-admin, catalog-entity, delete, allow
+    p, role:default/platform-admin, catalog.location, create, allow
+    p, role:default/platform-admin, catalog.location, delete, allow
+    p, role:default/platform-admin, catalog.entity.create, create, allow
+    
+    # Control total de Templates y Tareas
+    p, role:default/platform-admin, scaffolder-template, write, allow
+    p, role:default/platform-admin, scaffolder.task, delete, allow
+    
+    # Gestión de Permisos y Políticas (Muy importante para admins)
+    p, role:default/platform-admin, permission.policy, read, allow
+    p, role:default/platform-admin, permission.policy, create, allow
+    p, role:default/platform-admin, permission.policy, update, allow
+    p, role:default/platform-admin, permission.policy, delete, allow
+
+    # Gestión de Plugins Dinámicos
+    p, role:default/platform-admin, plugin.dynamic, read, allow
+    p, role:default/platform-admin, plugin.dynamic, create, allow
+    p, role:default/platform-admin, plugin.dynamic, update, allow
+    p, role:default/platform-admin, plugin.dynamic, delete, allow
+    p, role:default/platform-admin, plugin.dynamic, install, allow
+    p, role:default/platform-admin, plugin.dynamic, uninstall, allow
+
+    # ==========================================================
+    # 3. ASIGNACIÓN DE GRUPOS Y USUARIOS A ROLES
+    # ==========================================================
+    
+    # Asignar tu usuario al rol de Admin
+    g, user:default/maximilianopizarro, role:default/platform-admin
+    
+    # Asignar grupos técnicos al rol de Admin (si vienen de Keycloak u otro proveedor)
+    g, group:default/platform-team, role:default/platform-admin
+    g, group:default/infrastructure, role:default/platform-admin
+    g, group:default/rhdh, role:default/platform-admin
+
+    # NOTA: Los usuarios normales (developers) no necesitan asignación explícita
+    # porque ya heredan los permisos de la sección 1 (role:default/authenticated).
