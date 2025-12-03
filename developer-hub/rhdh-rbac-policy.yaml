@@ -9,35 +9,35 @@ metadata:
 data:
   rbac-policy.csv: |
     # ==========================================================
-    # 1. PERMISOS BASE PARA TODOS (Soluciona el error de Lightspeed)
+    # 1. BASE PERMISSIONS FOR ALL USERS (Fixes Lightspeed error)
     # ==========================================================
-    # El rol 'role:default/authenticated' se asigna automáticamente a cualquier usuario logueado.
+    # The 'role:default/authenticated' role is automatically assigned to any logged-in user.
     
-    # Permitir a TODOS usar Lightspeed (Chat AI)
+    # Allow ALL users to use Lightspeed (AI Chat)
     p, role:default/authenticated, lightspeed.chat, read, allow
     p, role:default/authenticated, lightspeed.chat, create, allow
     
-    # Permitir a TODOS ver el catálogo y documentación básica
+    # Allow ALL users to view catalog and basic documentation
     p, role:default/authenticated, catalog-entity, read, allow
     p, role:default/authenticated, catalog.location, read, allow
     p, role:default/authenticated, techdocs.entity, read, allow
     
-    # Permitir a TODOS ejecutar templates (Scaffolder)
+    # Allow ALL users to execute templates (Scaffolder)
     p, role:default/authenticated, scaffolder-template, read, allow
     p, role:default/authenticated, scaffolder.action.execute, use, allow
     p, role:default/authenticated, scaffolder.task, read, allow
     p, role:default/authenticated, scaffolder.task, create, allow
 
     # ==========================================================
-    # 2. DEFINICIÓN DEL ROL ADMIN (Platform Engineers)
+    # 2. ADMIN ROLE DEFINITION (Platform Engineers)
     # ==========================================================
-    # Este rol tiene control total (CRUD) sobre todo el sistema
+    # This role has full control (CRUD) over the entire system
     
-    # Control total sobre Lightspeed (incluye borrar conversaciones)
+    # Full control over Lightspeed (includes deleting conversations)
     p, role:default/platform-admin, lightspeed.chat, update, allow
     p, role:default/platform-admin, lightspeed.chat, delete, allow
     
-    # Control total del Catálogo
+    # Full control over Catalog
     p, role:default/platform-admin, catalog-entity, create, allow
     p, role:default/platform-admin, catalog-entity, update, allow
     p, role:default/platform-admin, catalog-entity, delete, allow
@@ -45,17 +45,17 @@ data:
     p, role:default/platform-admin, catalog.location, delete, allow
     p, role:default/platform-admin, catalog.entity.create, create, allow
     
-    # Control total de Templates y Tareas
+    # Full control over Templates and Tasks
     p, role:default/platform-admin, scaffolder-template, write, allow
     p, role:default/platform-admin, scaffolder.task, delete, allow
     
-    # Gestión de Permisos y Políticas (Muy importante para admins)
+    # Permission and Policy Management (Very important for admins)
     p, role:default/platform-admin, permission.policy, read, allow
     p, role:default/platform-admin, permission.policy, create, allow
     p, role:default/platform-admin, permission.policy, update, allow
     p, role:default/platform-admin, permission.policy, delete, allow
 
-    # Gestión de Plugins Dinámicos
+    # Dynamic Plugins Management
     p, role:default/platform-admin, plugin.dynamic, read, allow
     p, role:default/platform-admin, plugin.dynamic, create, allow
     p, role:default/platform-admin, plugin.dynamic, update, allow
@@ -64,16 +64,23 @@ data:
     p, role:default/platform-admin, plugin.dynamic, uninstall, allow
 
     # ==========================================================
-    # 3. ASIGNACIÓN DE GRUPOS Y USUARIOS A ROLES
+    # 3. GROUP AND USER ROLE ASSIGNMENTS
     # ==========================================================
+    # Groups must match EXACTLY with the names in Keycloak
+    # Keycloak groups: developers, devteam1, infrastructure, platformengineers, rhdh
     
-    # Asignar tu usuario al rol de Admin
+    # Assign your user to Admin role
     g, user:default/maximilianopizarro, role:default/platform-admin
     
-    # Asignar grupos técnicos al rol de Admin (si vienen de Keycloak u otro proveedor)
-    g, group:default/platform-team, role:default/platform-admin
+    # Assign Keycloak technical groups to Admin role
+    # These groups exist in Keycloak and are automatically synchronized
+    g, group:default/platformengineers, role:default/platform-admin
     g, group:default/infrastructure, role:default/platform-admin
     g, group:default/rhdh, role:default/platform-admin
+    
+    # Legacy groups (optional, only if needed for compatibility)
+    # platform-team and application-team are aliases pointing to real groups
+    g, group:default/platform-team, role:default/platform-admin
 
-    # NOTA: Los usuarios normales (developers) no necesitan asignación explícita
-    # porque ya heredan los permisos de la sección 1 (role:default/authenticated).
+    # NOTE: Normal users (developers, devteam1) do not need explicit assignment
+    # because they already inherit permissions from section 1 (role:default/authenticated).

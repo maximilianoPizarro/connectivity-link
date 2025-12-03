@@ -244,6 +244,8 @@ data:
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/domains.yaml
+        # User entities are now included in groups/catalog-info.yaml
+        # Keeping this location for backward compatibility
         - type: url
           target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/users.yaml
         - type: url

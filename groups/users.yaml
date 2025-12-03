@@ -1,12 +1,31 @@
 ---
 # User entities for Backstage catalog
-# Users are typically created automatically when they first authenticate,
-# but explicit definitions ensure they appear in the catalog and can be referenced
+# Users are typically created automatically when they first authenticate via Keycloak,
+# but explicit definitions ensure they appear in the catalog and can be referenced as owners
+#
+# IMPORTANT: If you want to use a user as an owner in components/systems/domains,
+# you MUST define them here as a User entity. Otherwise, Backstage will try to resolve
+# them as a Group and show "Entities not found" errors.
+#
+# Example: If you want to use user1-dev as an owner, add:
+# ---
+# apiVersion: backstage.io/v1alpha1
+# kind: User
+# metadata:
+#   name: user1-dev
+#   namespace: default
+# spec:
+#   profile:
+#     displayName: User One
+#     email: user1@developer-hub.local
+#   memberOf:
+#     - developers
 
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
   name: maximilianopizarro
+  namespace: default
   description: Maximiliano Pizarro - Platform Engineer and Administrator
 spec:
   profile:
