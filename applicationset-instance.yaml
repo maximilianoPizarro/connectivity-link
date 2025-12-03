@@ -135,7 +135,7 @@ spec:
         elements:
           - name: librechat-pvc
             namespace: librechat
-            path: librechat/pvc.yaml
+            path: librechat/pvc
             sync_wave: "6"
   template:
     metadata:
