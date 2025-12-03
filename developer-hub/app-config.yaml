@@ -290,8 +290,11 @@ data:
         - id: "${LLM_SERVER_ID}"
           url: "${LLM_SERVER_URL}"
           token: "${LLM_SERVER_TOKEN}"
-        # MCP (Model Context Protocol) Configuration
-        - id: backstage-actions
+    # MCP (Model Context Protocol) Configuration
+    # Note: MCP configuration is separate from Lightspeed servers
+    mcp:
+      mcpServers:
+        backstage-actions:
           url: "${RHDH_HOST}/api/mcp-actions/v1"
           headers:
             Authorization: "Bearer ${MCP_TOKEN}"
