@@ -21,6 +21,12 @@ metadata:
     # GitLab Integration
     gitlab.com/project-slug: maximilianoPizarro/connectivity-link
     gitlab.com/project-path: dotnet-demo
+    # Tekton Pipeline Integration
+    tekton.dev/pipeline: dotnet-demo-pipeline
+    tekton.dev/pipeline-namespace: workshop-pipelines
+    # CI/CD Integration (for pipeline visualization)
+    jenkins.io/job-full-name: dotnet-demo/dotnet-demo-pipeline
+    jenkins.io/github-folder: maximilianoPizarro/connectivity-link/dotnet-demo
   links:
     - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
       title: Nexus Repository
@@ -31,6 +37,12 @@ metadata:
     - url: https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
       title: Source Code
       icon: code
+    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/workshop-pipelines/pipelines/dotnet-demo-pipeline
+      title: View Pipeline
+      icon: build
+    - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/workshop-pipelines/pipelineruns
+      title: Pipeline Runs
+      icon: history
   tags:
     - dotnet
     - csharp
