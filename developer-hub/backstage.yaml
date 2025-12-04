@@ -73,6 +73,12 @@ spec:
                   - mountPath: /app-root/config/app-config-rhdh.yaml
                     name: app-config-rhdh
                     subPath: app-config-rhdh.yaml
+                  - mountPath: /app-root/embeddings_model
+                    name: rag-data-volume
+                    subPath: embeddings_model
+                  - mountPath: /app-root/vector_db/rhdh_product_docs
+                    name: rag-data-volume
+                    subPath: vector_db/rhdh_product_docs
                 resources:
                   requests:
                     cpu: "500m"
