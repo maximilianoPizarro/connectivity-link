@@ -20,22 +20,13 @@ data:
     
     llama_stack:
       url: "http://llama-stack:8080"
-      enabled: true
     
     user_data_collection:
-      log_level: "DEBUG"
-      feedback_disabled: false
       feedback_storage: "/tmp/data/feedback"
       transcripts_storage: "/tmp/data/transcripts"
-      conversations_storage: "/tmp/data/conversations"
     
     conversation_cache:
       type: sqlite
       sqlite:
         db_path: "/tmp/data/conversations/lcs_cache.db"
-    
-    reference_content:
-      product_docs_index_path: "./vector_db/rhdh_product_docs/1.8"
-      product_docs_index_id: rhdh-product-docs-1_8
-      embeddings_model_path: "./embeddings_model"
 
