@@ -10,5 +10,6 @@ resources:
   - rcsconfig.yaml
   - llama-stack-secrets.yaml
   - lightspeed-secrets.yaml
+  - lightspeed-stack.yaml
 
 namespace: developer-hub
