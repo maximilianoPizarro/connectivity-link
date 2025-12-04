@@ -29,4 +29,11 @@ data:
       type: sqlite
       sqlite:
         db_path: "/tmp/data/conversations/lcs_cache.db"
+    
+    mcp_servers:
+      - name: backstage-actions
+        url: "http://localhost:7007/api/mcp-actions/v1"
+        headers:
+          Authorization: "Bearer backstage"
+        description: "MCP agent based on the Backstage MCP Actions plugin. This agent enables interaction with your Red Hat Developer Hub (Backstage) instance, allowing you to query catalog entities, manage components, view Kubernetes resources, check Tekton pipeline status, and perform various Backstage operations."
 
