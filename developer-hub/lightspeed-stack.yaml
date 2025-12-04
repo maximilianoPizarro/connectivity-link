@@ -12,38 +12,30 @@ data:
     # Lightspeed Stack Configuration
     # This configuration is used by the lightspeed-core container
     
-    # LLM Provider Configuration
-    llm_providers:
-      - name: llama-3-2-3b
-        type: openai
-        url: https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1
-        credentials:
-          api_key: 0d730b5c1bc2bc24fd657bf4ded0ba72
-        models:
-          - name: llama-3-2-3b
+    name: lightspeed-stack
     
-    # Lightspeed Stack Configuration
-    lightspeed_config:
-      # Conversation cache configuration
-      conversation_cache:
-        type: sqlite
-        sqlite:
-          db_path: "/tmp/data/conversations/lcs_cache.db"
-      
-      # Data storage paths
-      data_paths:
-        feedback: "/tmp/data/feedback"
-        transcripts: "/tmp/data/transcripts"
-        conversations: "/tmp/data/conversations"
-      
-      # Default provider and model
-      default_provider: llama-3-2-3b
-      default_model: llama-3-2-3b
-      
-      # RAG Configuration
-      rag:
-        embeddings_model_path: "./embeddings_model"
-        vector_db_path: "./vector_db/rhdh_product_docs"
-        product_docs_index_path: "./vector_db/rhdh_product_docs/1.8"
-        product_docs_index_id: rhdh-product-docs-1_8
+    service:
+      host: "0.0.0.0"
+      port: 8080
+    
+    llama_stack:
+      url: "http://llama-stack:8080"
+      enabled: true
+    
+    user_data_collection:
+      log_level: "DEBUG"
+      feedback_disabled: false
+      feedback_storage: "/tmp/data/feedback"
+      transcripts_storage: "/tmp/data/transcripts"
+      conversations_storage: "/tmp/data/conversations"
+    
+    conversation_cache:
+      type: sqlite
+      sqlite:
+        db_path: "/tmp/data/conversations/lcs_cache.db"
+    
+    reference_content:
+      product_docs_index_path: "./vector_db/rhdh_product_docs/1.8"
+      product_docs_index_id: rhdh-product-docs-1_8
+      embeddings_model_path: "./embeddings_model"
 
