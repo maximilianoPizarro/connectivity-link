@@ -74,7 +74,7 @@ spec:
                   - mountPath: /app-root/vector_db/rhdh_product_docs
                     name: rag-data-volume
                     subPath: rhdh_product_docs
-              - image: 'quay.io/lightspeed-core/lightspeed-stack:dev-20251021-ee9f08f'
+              - image: 'quay.io/lightspeed-core/lightspeed-stack:latest'
                 name: lightspeed-core
                 ports:
                   - containerPort: 8082
