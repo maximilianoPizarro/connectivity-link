@@ -48,14 +48,15 @@ data:
         disabled: false
         pluginConfig:
           lightspeed:
-            # REQUIRED: Configure LLM servers with OpenAI API compatibility
+            # Connect to lightspeed-core service running as sidecar
+            # lightspeed-core handles communication with LLM servers
             servers:
               - id: ${LLM_SERVER_ID}
-                url: ${LLM_SERVER_URL}
-                token: ${LLM_SERVER_TOKEN}
+                url: "http://localhost:8082"
+                token: ""
     
-            # OPTIONAL: Port for lightspeed service (default: 8080)
-            # servicePort: ${LIGHTSPEED_SERVICE_PORT}
+            # Port for lightspeed-core service (running as sidecar)
+            servicePort: 8082
       - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
         disabled: false
       # Kubernetes Backend Plugin
