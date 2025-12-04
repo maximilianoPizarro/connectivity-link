@@ -40,7 +40,7 @@ data:
         # Proxy para /api/mcp-actions/v1 hacia Backstage
         # Maneja requests POST (STREAMABLE_HTTP) principalmente
         location ~ ^/api/mcp-actions/v1(/.*)?$ {
-            proxy_pass http://developer-hub.developer-hub.svc.cluster.local:7007$request_uri;
+            proxy_pass http://developer-hub.developer-hub.svc.cluster.local:80$request_uri;
             proxy_http_version 1.1;
             
             # Headers estándar para Proxy

@@ -76,6 +76,9 @@ spec:
                     subPath: rhdh_product_docs
               - image: 'quay.io/lightspeed-core/lightspeed-stack:latest'
                 name: lightspeed-core
+                env:
+                  - name: MCP_HEADERS
+                    value: '{"backstage-actions": {"Authorization": "Bearer backstage"}}'
                 ports:
                   - containerPort: 8082
                     name: lightspeed-api
