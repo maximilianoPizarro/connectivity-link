@@ -38,7 +38,7 @@ data:
         error_log /dev/stderr;
 
         # Proxy para /api/mcp-actions/v1 hacia Backstage
-        # Maneja tanto requests normales como SSE (Server-Sent Events)
+        # Maneja requests POST (STREAMABLE_HTTP) principalmente
         location /api/mcp-actions/v1 {
             proxy_pass http://backstage-developer-hub:80;
             proxy_http_version 1.1;
@@ -52,20 +52,19 @@ data:
             # Header de autenticación para MCP (debe estar dentro del location)
             proxy_set_header Authorization "Bearer backstage";
             
-            # Headers para SSE (Server-Sent Events) - GET requests
-            proxy_set_header Cache-Control "no-cache";
-            proxy_buffering off;
-            proxy_read_timeout 24h;
-            proxy_send_timeout 24h;
-            
-            # Preservar content-type solo si está presente (no forzar para GET/SSE)
-            # Si no hay content-type en la request, no lo agregamos (para GET requests)
-            # Para POST requests, usar application/json; para otros métodos, preservar el original
+            # Headers para requests POST (STREAMABLE_HTTP)
+            # Forzar application/json para POST, preservar para otros métodos
             set $content_type_header $http_content_type;
             if ($request_method = POST) {
                 set $content_type_header "application/json";
             }
             proxy_set_header Content-Type $content_type_header;
+            
+            # Configuración para streaming
+            proxy_buffering off;
+            proxy_read_timeout 24h;
+            proxy_send_timeout 24h;
+            proxy_set_header Cache-Control "no-cache";
         }
     }
 
