@@ -52,6 +52,9 @@ data:
             # Header de autenticación para MCP (debe estar dentro del location)
             proxy_set_header Authorization "Bearer backstage";
             
+            # Header MCP-HEADERS para compatibilidad con lightspeed-stack
+            proxy_set_header MCP-HEADERS '{"backstage-actions": {"Authorization": "Bearer backstage"}}';
+            
             # Headers para requests POST (STREAMABLE_HTTP)
             # Forzar application/json para POST, preservar para otros métodos
             set $content_type_header $http_content_type;
