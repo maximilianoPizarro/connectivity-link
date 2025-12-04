@@ -60,14 +60,12 @@ data:
             
             # Preservar content-type solo si está presente (no forzar para GET/SSE)
             # Si no hay content-type en la request, no lo agregamos (para GET requests)
-            proxy_set_header Content-Type $http_content_type;
-            
-            # Asegurar que los métodos HTTP se preserven correctamente
-            # Nginx preserva automáticamente el método HTTP, pero necesitamos asegurar
-            # que POST requests tengan el content-type correcto
+            # Para POST requests, usar application/json; para otros métodos, preservar el original
+            set $content_type_header $http_content_type;
             if ($request_method = POST) {
-                proxy_set_header Content-Type "application/json";
+                set $content_type_header "application/json";
             }
+            proxy_set_header Content-Type $content_type_header;
         }
     }
 
