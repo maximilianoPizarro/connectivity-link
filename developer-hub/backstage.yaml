@@ -40,22 +40,19 @@ spec:
                   - mountPath: /data
                     name: rag-data-volume
             containers:
-              - env:
-                  - name: PORT
-                    value: "8080"
-                envFrom:
+              - envFrom:
                   - secretRef:
                       name: llama-stack-secrets
                 image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
                 name: llama-stack
                 ports:
-                  - containerPort: 8080
+                  - containerPort: 8321
                     name: llama-stack-api
                     protocol: TCP
                 readinessProbe:
                   httpGet:
                     path: /health
-                    port: 8080
+                    port: 8321
                     scheme: HTTP
                   initialDelaySeconds: 15
                   periodSeconds: 5
@@ -65,7 +62,7 @@ spec:
                 startupProbe:
                   httpGet:
                     path: /health
-                    port: 8080
+                    port: 8321
                     scheme: HTTP
                   initialDelaySeconds: 10
                   periodSeconds: 5
