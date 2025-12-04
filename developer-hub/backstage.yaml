@@ -82,7 +82,7 @@ spec:
                 name: lightspeed-core
                 ports:
                   - containerPort: 8082
-                    name: lightspeed-core
+                    name: lightspeed-api
                     protocol: TCP
                 startupProbe:
                   httpGet:
