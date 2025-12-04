@@ -38,8 +38,9 @@ data:
         error_log /dev/stderr;
 
         # Proxy para /api/mcp-actions/v1 hacia Backstage
+        # Maneja tanto requests normales como SSE (Server-Sent Events)
         location / {
-            proxy_pass http://backstage-developer-hub:80/api/mcp-actions/v1/;
+            proxy_pass http://backstage-developer-hub:80/api/mcp-actions/v1;
             proxy_http_version 1.1;
             
             # Headers estándar para Proxy
@@ -51,11 +52,22 @@ data:
             # Header de autenticación para MCP (debe estar dentro del location)
             proxy_set_header Authorization "Bearer backstage";
             
-            # Preservar content-type para JSON-RPC
-            proxy_set_header Content-Type "application/json";
+            # Headers para SSE (Server-Sent Events) - GET requests
+            proxy_set_header Cache-Control "no-cache";
+            proxy_buffering off;
+            proxy_read_timeout 24h;
+            proxy_send_timeout 24h;
             
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
+            # Preservar content-type solo si está presente (no forzar para GET/SSE)
+            # Si no hay content-type en la request, no lo agregamos (para GET requests)
+            proxy_set_header Content-Type $http_content_type;
+            
+            # Asegurar que los métodos HTTP se preserven correctamente
+            # Nginx preserva automáticamente el método HTTP, pero necesitamos asegurar
+            # que POST requests tengan el content-type correcto
+            if ($request_method = POST) {
+                proxy_set_header Content-Type "application/json";
+            }
         }
     }
 
