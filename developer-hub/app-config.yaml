@@ -305,6 +305,10 @@ data:
         - id: "${LLM_SERVER_ID}"
           url: "${LLM_SERVER_URL}"
           token: "${LLM_SERVER_TOKEN}"
+      conversation_cache:
+        type: "sqlite"
+        sqlite:
+          db_path: "/tmp/data/conversations/lcs_cache.db"
     # MCP (Model Context Protocol) Configuration
     # Note: MCP configuration is separate from Lightspeed servers
     mcp:

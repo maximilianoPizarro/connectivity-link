@@ -14,6 +14,7 @@ spec:
     extraEnvs:
       secrets:
         - name: secrets-rhdh
+        - name: lightspeed-secrets
     extraFiles:
       configMaps:
         - name: rhdh-rbac-policy
@@ -28,6 +29,16 @@ spec:
       spec:
         template:
           spec:
+            initContainers:
+              - name: init-rag-data
+                image: 'quay.io/redhat-ai-dev/rag-content:release-1.8-lcs'
+                command:
+                  - "sh"
+                  - "-c"
+                  - "echo 'Copying RAG data...'; cp -r /rag/vector_db/rhdh_product_docs /data/ && cp -r /rag/embeddings_model /data/ && echo 'Copy complete.'"
+                volumeMounts:
+                  - mountPath: /data
+                    name: rag-data-volume
             containers:
               - env:
                   - name: PROJECT
@@ -68,8 +79,41 @@ spec:
                     memory: "3Gi"
                   limits:
                     cpu: "1000m"
-                    memory: "6Gi" 
+                    memory: "6Gi"
+              - envFrom:
+                  - secretRef:
+                      name: llama-stack-secrets
+                image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
+                name: llama-stack
+                volumeMounts:
+                  - mountPath: /app-root/.llama
+                    name: shared-storage
+                  - mountPath: /app-root/embeddings_model
+                    name: rag-data-volume
+                    subPath: embeddings_model
+                  - mountPath: /app-root/vector_db/rhdh_product_docs
+                    name: rag-data-volume
+                    subPath: rhdh_product_docs
+              - image: 'quay.io/lightspeed-core/lightspeed-stack:dev-20251021-ee9f08f'
+                name: lightspeed-core
+                volumeMounts:
+                  - mountPath: /app-root/lightspeed-stack.yaml
+                    name: lightspeed-stack
+                    subPath: lightspeed-stack.yaml
+                  - mountPath: /tmp/data/feedback
+                    name: shared-storage
+                  - mountPath: /tmp/data/transcripts
+                    name: shared-storage
+                  - mountPath: /tmp/data/conversations
+                    name: shared-storage
             volumes:
               - configMap:
                   name: rcsconfig
                 name: rcsconfig
+              - configMap:
+                  name: lightspeed-stack
+                name: lightspeed-stack
+              - emptyDir: {}
+                name: shared-storage
+              - emptyDir: {}
+                name: rag-data-volume

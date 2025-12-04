@@ -15,10 +15,9 @@ data:
     # These permissions apply to ALL users
     
     # Lightspeed permissions for ALL users
-    p, role:default/authenticated, lightspeed.chat, read, allow
-    p, role:default/authenticated, lightspeed.chat, create, allow
-    p, role:default/authenticated, lightspeed.chat, update, allow
-    p, role:default/authenticated, lightspeed.chat, delete, allow
+    p, role:default/authenticated, lightspeed.chat.read, read, allow
+    p, role:default/authenticated, lightspeed.chat.create, create, allow
+    p, role:default/authenticated, lightspeed.chat.delete, delete, allow
     
     # Catalog permissions for ALL users
     p, role:default/authenticated, catalog-entity, read, allow
@@ -34,10 +33,9 @@ data:
     # 2. PLATFORM ENGINEER ROLE (Full Admin Permissions)
     # ==========================================================
     # Define a comprehensive 'admin' role
-    p, role:default/platformengineer, lightspeed.chat, read, allow
-    p, role:default/platformengineer, lightspeed.chat, create, allow
-    p, role:default/platformengineer, lightspeed.chat, update, allow
-    p, role:default/platformengineer, lightspeed.chat, delete, allow
+    p, role:default/platformengineer, lightspeed.chat.read, read, allow
+    p, role:default/platformengineer, lightspeed.chat.create, create, allow
+    p, role:default/platformengineer, lightspeed.chat.delete, delete, allow
 
     p, role:default/platformengineer, catalog-entity, read, allow
     p, role:default/platformengineer, catalog-entity, create, allow
@@ -58,67 +56,10 @@ data:
     p, role:default/platformengineer, permission.policy, read, allow
 
     # ==========================================================
-    # 3. DIRECT USER PERMISSIONS (Applied First)
-    # ==========================================================
-    # Direct Lightspeed permissions for all users (fallback)
-    # This ensures permissions work even if role resolution has issues
-    # These are applied BEFORE role assignments
-    
-    # Platform Engineers - Direct permissions
-    p, user:default/maximilianopizarro, lightspeed.chat, read, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, create, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, update, allow
-    p, user:default/maximilianopizarro, lightspeed.chat, delete, allow
-    p, user:default/user5-infra, lightspeed.chat, read, allow
-    p, user:default/user5-infra, lightspeed.chat, create, allow
-    p, user:default/user5-infra, lightspeed.chat, update, allow
-    p, user:default/user5-infra, lightspeed.chat, delete, allow
-    p, user:default/user6-infra, lightspeed.chat, read, allow
-    p, user:default/user6-infra, lightspeed.chat, create, allow
-    p, user:default/user6-infra, lightspeed.chat, update, allow
-    p, user:default/user6-infra, lightspeed.chat, delete, allow
-    p, user:default/user7-platform, lightspeed.chat, read, allow
-    p, user:default/user7-platform, lightspeed.chat, create, allow
-    p, user:default/user7-platform, lightspeed.chat, update, allow
-    p, user:default/user7-platform, lightspeed.chat, delete, allow
-    p, user:default/user8-platform, lightspeed.chat, read, allow
-    p, user:default/user8-platform, lightspeed.chat, create, allow
-    p, user:default/user8-platform, lightspeed.chat, update, allow
-    p, user:default/user8-platform, lightspeed.chat, delete, allow
-    p, user:default/user9-rhdh, lightspeed.chat, read, allow
-    p, user:default/user9-rhdh, lightspeed.chat, create, allow
-    p, user:default/user9-rhdh, lightspeed.chat, update, allow
-    p, user:default/user9-rhdh, lightspeed.chat, delete, allow
-    p, user:default/user10-rhdh, lightspeed.chat, read, allow
-    p, user:default/user10-rhdh, lightspeed.chat, create, allow
-    p, user:default/user10-rhdh, lightspeed.chat, update, allow
-    p, user:default/user10-rhdh, lightspeed.chat, delete, allow
-    
-    # Developers - Direct permissions
-    p, user:default/user1-dev, lightspeed.chat, read, allow
-    p, user:default/user1-dev, lightspeed.chat, create, allow
-    p, user:default/user1-dev, lightspeed.chat, update, allow
-    p, user:default/user1-dev, lightspeed.chat, delete, allow
-    p, user:default/user2-dev, lightspeed.chat, read, allow
-    p, user:default/user2-dev, lightspeed.chat, create, allow
-    p, user:default/user2-dev, lightspeed.chat, update, allow
-    p, user:default/user2-dev, lightspeed.chat, delete, allow
-    
-    # Dev Team 1 - Direct permissions
-    p, user:default/user3-devteam1, lightspeed.chat, read, allow
-    p, user:default/user3-devteam1, lightspeed.chat, create, allow
-    p, user:default/user3-devteam1, lightspeed.chat, update, allow
-    p, user:default/user3-devteam1, lightspeed.chat, delete, allow
-    p, user:default/user4-devteam1, lightspeed.chat, read, allow
-    p, user:default/user4-devteam1, lightspeed.chat, create, allow
-    p, user:default/user4-devteam1, lightspeed.chat, update, allow
-    p, user:default/user4-devteam1, lightspeed.chat, delete, allow
-
-    # ==========================================================
-    # 4. USER ROLE ASSIGNMENTS
+    # 3. USER ROLE ASSIGNMENTS
     # ==========================================================
     # Assign users to roles based on their groups
-    # These are applied AFTER direct permissions
+    # Following the pattern: g, user:default/<username>, role:default/<rolename>
     
     # Platform Engineers (Full Admin Permissions)
     # Users in infrastructure, platformengineers, and rhdh groups get admin role
@@ -143,7 +84,7 @@ data:
     g, user:default/user4-devteam1, role:default/authenticated
 
     # ==========================================================
-    # 5. LEGACY ROLES (Optional - for backward compatibility)
+    # 4. LEGACY ROLES (Optional - for backward compatibility)
     # ==========================================================
     # If you still want the 'rhdhpai-users' role for other users, keep its definition:
     p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow
