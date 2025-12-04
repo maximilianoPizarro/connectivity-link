@@ -32,4 +32,4 @@ data:
     
     mcp_servers:
       - name: backstage-actions
-        url: "http://backstage-mcp-proxy:80"
+        url: "http://backstage-mcp-proxy:80/api/mcp-actions/v1"

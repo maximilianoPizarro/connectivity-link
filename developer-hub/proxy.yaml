@@ -39,8 +39,8 @@ data:
 
         # Proxy para /api/mcp-actions/v1 hacia Backstage
         # Maneja tanto requests normales como SSE (Server-Sent Events)
-        location / {
-            proxy_pass http://backstage-developer-hub:80/api/mcp-actions/v1;
+        location /api/mcp-actions/v1 {
+            proxy_pass http://backstage-developer-hub:80;
             proxy_http_version 1.1;
             
             # Headers estándar para Proxy
