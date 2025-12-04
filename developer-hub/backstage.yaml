@@ -40,11 +40,18 @@ spec:
                   - mountPath: /data
                     name: rag-data-volume
             containers:
-              - envFrom:
+              - env:
+                  - name: PORT
+                    value: "8081"
+                envFrom:
                   - secretRef:
                       name: llama-stack-secrets
                 image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
                 name: llama-stack
+                ports:
+                  - containerPort: 8081
+                    name: llama-stack-api
+                    protocol: TCP
                 volumeMounts:
                   - mountPath: /app-root/.llama
                     name: shared-storage
