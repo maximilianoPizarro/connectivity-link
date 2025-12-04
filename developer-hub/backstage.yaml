@@ -40,18 +40,35 @@ spec:
                   - mountPath: /data
                     name: rag-data-volume
             containers:
-              - env:
-                  - name: PORT
-                    value: "8081"
-                envFrom:
+              - envFrom:
                   - secretRef:
                       name: llama-stack-secrets
                 image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
                 name: llama-stack
                 ports:
-                  - containerPort: 8081
+                  - containerPort: 8080
                     name: llama-stack-api
                     protocol: TCP
+                readinessProbe:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                    scheme: HTTP
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  successThreshold: 1
+                  failureThreshold: 3
+                startupProbe:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                    scheme: HTTP
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  successThreshold: 1
+                  failureThreshold: 10
                 volumeMounts:
                   - mountPath: /app-root/.llama
                     name: shared-storage
@@ -63,6 +80,20 @@ spec:
                     subPath: rhdh_product_docs
               - image: 'quay.io/lightspeed-core/lightspeed-stack:dev-20251021-ee9f08f'
                 name: lightspeed-core
+                ports:
+                  - containerPort: 8082
+                    name: lightspeed-core-api
+                    protocol: TCP
+                startupProbe:
+                  httpGet:
+                    path: /health
+                    port: 8082
+                    scheme: HTTP
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 10
                 volumeMounts:
                   - mountPath: /app-root/lightspeed-stack.yaml
                     name: lightspeed-stack
