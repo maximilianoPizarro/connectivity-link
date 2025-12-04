@@ -9,5 +9,6 @@ resources:
   - rhdh-rbac-policy.yaml
   - rcsconfig.yaml
   - llama-stack-secrets.yaml
+  - lightspeed-secrets.yaml
 
 namespace: developer-hub
