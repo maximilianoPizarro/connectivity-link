@@ -7,7 +7,6 @@ resources:
   - app-config.yaml
   - dynamic-plugins.yaml
   - rhdh-rbac-policy.yaml
-  - rcsconfig.yaml
   - llama-stack-secrets.yaml
   - lightspeed-secrets.yaml
   - lightspeed-stack.yaml
