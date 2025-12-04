@@ -32,7 +32,4 @@ data:
     
     mcp_servers:
       - name: backstage-actions
-        url: "http://localhost:7007/api/mcp-actions/v1"
-        headers:
-          Authorization: "Bearer backstage"
-
+        url: "http://backstage-mcp-proxy:80"
