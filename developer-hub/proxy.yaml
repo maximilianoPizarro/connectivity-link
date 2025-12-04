@@ -47,9 +47,10 @@ data:
         # Proxy para /api/mcp-actions/v1 hacia Backstage
         # Maneja requests POST (STREAMABLE_HTTP) principalmente
         # Usar nombre del servicio de Backstage (mismo namespace)
+        # Backstage escucha en el puerto 7007
         # Necesitamos usar una variable para que nginx use el resolver
         location ~ ^/api/mcp-actions/v1(/.*)?$ {
-            set $backend "http://backstage-developer-hub:80";
+            set $backend "http://backstage-developer-hub:7007";
             proxy_pass $backend$request_uri;
             proxy_http_version 1.1;
             
