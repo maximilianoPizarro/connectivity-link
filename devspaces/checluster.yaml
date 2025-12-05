@@ -21,6 +21,12 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "2000m"
+    pluginRegistry:
+      openVSXURL: "https://open-vsx.org"
+    devfileRegistry:
+      disableInternalRegistry: false
+      externalDevfileRegistries:
+        - url: "https://registry.devfile.io"
   devEnvironments:
     defaultNamespace:
       autoProvision: true
