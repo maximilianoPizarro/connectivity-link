@@ -17,7 +17,7 @@ data:
         disabled: false
       - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
         disabled: false
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed:bs_1.39.1__0.5.7!red-hat-developer-hub-backstage-plugin-lightspeed
         disabled: false
         pluginConfig:
           lightspeed:
@@ -44,7 +44,7 @@ data:
                     menuItem:
                       icon: LightspeedIcon
                       text: Lightspeed
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed-backend:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed-backend
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed-backend:bs_1.39.1__0.5.7!red-hat-developer-hub-backstage-plugin-lightspeed-backend
         disabled: false
         pluginConfig:
           lightspeed:
@@ -57,13 +57,28 @@ data:
     
             # Port for lightspeed-core service (running as sidecar)
             servicePort: 8082
+            # OPTIONAL: Enable/disable question validation (default: true)
+            # When enabled, restricts questions to RHDH-related topics for better security
+            questionValidation: true
+            
+            # OPTIONAL: Custom user prompts displayed to users
+            # If not provided, the plugin uses built-in default user prompts
+            prompts:
+              - title: "Quick Start"
+                message: "How do I enable a dynamic plugin?"
+            
+            # OPTIONAL: Port for lightspeed service (default: 8080)
+            # servicePort: 8080
+            
+            # OPTIONAL: Override default RHDH system prompt
+            systemPrompt: "You are a helpful assistant focused on Red Hat Developer Hub development."            
       - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
         disabled: false
       # Kubernetes Backend Plugin
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-kubernetes-backend:bs_1.42.5__0.20.1!backstage-plugin-kubernetes-backend
         disabled: false
       # MCP server backend plugin (Latest version)
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:next__0.1.2!backstage-plugin-mcp-actions-backend
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:bs_1.42.5__0.1.2!backstage-plugin-mcp-actions-backend
         disabled: false
       # MCP tools plugins (Latest versions)
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool:next__0.4.0!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool

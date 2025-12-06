@@ -30,6 +30,10 @@ data:
       sqlite:
         db_path: "/tmp/data/conversations/lcs_cache.db"
     
-#    mcp_servers:
-#      - name: backstage-actions
-#        url: "http://localhost:7007/api/mcp-actions/v1"
+    mcp_servers:
+      - name: backstage-actions
+        type: sse
+        url: "http://localhost:7007/api/mcp-actions/v1"
+        requestOptions:
+          headers:
+            Authorization: "Bearer backstage"
