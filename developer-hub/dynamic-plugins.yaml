@@ -61,11 +61,8 @@ data:
             # When enabled, restricts questions to RHDH-related topics for better security
             questionValidation: true
             
-            # OPTIONAL: Custom user prompts displayed to users
-            # If not provided, the plugin uses built-in default user prompts
-            prompts:
-              - title: "Quick Start"
-                message: "How do I enable a dynamic plugin?"
+            # NOTE: Prompts are configured in the frontend plugin, not here
+            # to avoid configuration conflicts
             
             # OPTIONAL: Port for lightspeed service (default: 8080)
             # servicePort: 8080
