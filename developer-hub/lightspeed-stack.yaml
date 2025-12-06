@@ -32,8 +32,6 @@ data:
     
     mcp_servers:
       - name: backstage-actions
-        type: sse
         url: "http://localhost:7007/api/mcp-actions/v1"
-        requestOptions:
-          headers:
-            Authorization: "Bearer backstage"
+        headers:
+          Authorization: "Bearer backstage"
