@@ -76,6 +76,9 @@ spec:
                     subPath: rhdh_product_docs
               - image: 'quay.io/lightspeed-core/lightspeed-stack:latest'
                 name: lightspeed-core
+                envFrom:
+                  - secretRef:
+                      name: lightspeed-secrets
                 env:
                   - name: MCP_HEADERS
                     value: '{"backstage-actions": {"Authorization": "Bearer backstage"}}'

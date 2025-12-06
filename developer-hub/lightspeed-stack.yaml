@@ -21,6 +21,10 @@ data:
     llama_stack:
       url: "http://localhost:8321"
     
+    inference:
+      default_provider: llama-3-2-3b
+      default_model: llama-3-2-3b
+    
     user_data_collection:
       feedback_storage: "/tmp/data/feedback"
       transcripts_storage: "/tmp/data/transcripts"
