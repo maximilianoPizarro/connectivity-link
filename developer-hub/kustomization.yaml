@@ -5,7 +5,7 @@ resources:
   #- ols-embeddings.yaml
   - lightspeed-postgres-secret.yaml
   - lightspeed-postgres.yaml
-  - lightspeed-postgres-init-job.yaml
+  #- lightspeed-postgres-init-job.yaml  # Deshabilitado - usando una sola base de datos
   - backstage.yaml
   - app-config.yaml
   - dynamic-plugins.yaml
