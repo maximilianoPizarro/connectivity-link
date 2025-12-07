@@ -40,4 +40,4 @@ data:
     
     mcp_servers:
       - name: backstage-actions
-        url: "http://localhost:7007/api/mcp-actions/v1"
+        url: "http://localhost:7007/api/mcp-actions/v1/sse"
