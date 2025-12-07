@@ -128,12 +128,12 @@ librechat:
     podSecurityContext:
       fsGroup: 1001
       seLinuxOptions:
-        level: s0:c28,c17
+        level: s0:c28,c27
     containerSecurityContext:
       runAsUser: 1001
       runAsNonRoot: true
       seLinuxOptions:
-        level: s0:c28,c17
+        level: s0:c28,c27
     # Disable seccomp annotations (not allowed in OpenShift)
     podAnnotations:
       container.seccomp.security.alpha.kubernetes.io/postgresql: ""
@@ -172,19 +172,19 @@ librechat:
     podSecurityContext:
       fsGroup: 1001
       seLinuxOptions:
-        level: s0:c28,c17
+        level: s0:c28,c27
     containerSecurityContext:
       runAsUser: 1001
       runAsNonRoot: true
       seLinuxOptions:
-        level: s0:c28,c17
+        level: s0:c28,c27
     # Configure initContainers security context (required for OpenShift)
     # Note: The podSecurityContext should apply to initContainers as well,
     # but we explicitly configure it here to ensure compatibility
     initContainersSecurityContext:
       runAsUser: 1001
       seLinuxOptions:
-        level: s0:c28,c17
+        level: s0:c28,c27
     extraVolumeMounts:
       - name: datadir
         mountPath: /data/db
