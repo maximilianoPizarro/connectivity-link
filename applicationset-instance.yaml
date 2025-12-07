@@ -208,6 +208,8 @@ spec:
           name: librechat-postgresql
           jsonPointers:
             - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1postgresql
+            - /spec/template/spec/containers/0/securityContext/seLinuxOptions
+            - /spec/template/spec/securityContext/seLinuxOptions
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet

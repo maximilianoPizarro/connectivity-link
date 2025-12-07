@@ -123,12 +123,10 @@ librechat:
       create: true
       name: librechat-postgresql
       automountServiceAccountToken: true
-    # Disable securityContext to let OpenShift SCC handle it
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
     primary:
+      # Disable securityContext to let OpenShift SCC handle it
+      podSecurityContext: {}
+      containerSecurityContext: {}
       initdb:
         scripts:
           create-librechat-db.sql: |
