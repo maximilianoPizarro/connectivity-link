@@ -124,9 +124,25 @@ librechat:
       name: librechat-postgresql
       automountServiceAccountToken: true
     primary:
-      # Disable securityContext to let OpenShift SCC handle it
-      podSecurityContext: {}
-      containerSecurityContext: {}
+      # Override securityContext completely - remove all problematic fields
+      # Bitnami chart will use these values instead of defaults
+      podSecurityContext:
+        # Leave empty to let OpenShift SCC anyuid handle it
+        fsGroup: null
+        fsGroupChangePolicy: null
+        supplementalGroups: null
+        sysctls: null
+      containerSecurityContext:
+        # Leave empty to let OpenShift SCC anyuid handle it  
+        runAsUser: null
+        runAsGroup: null
+        runAsNonRoot: null
+        seccompProfile: null
+        seLinuxOptions: null
+        allowPrivilegeEscalation: null
+        capabilities: null
+        privileged: null
+        readOnlyRootFilesystem: null
       initdb:
         scripts:
           create-librechat-db.sql: |
