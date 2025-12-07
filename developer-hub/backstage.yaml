@@ -74,7 +74,7 @@ spec:
                   - mountPath: /app-root/vector_db/rhdh_product_docs
                     name: rag-data-volume
                     subPath: rhdh_product_docs
-                  - mountPath: /app-root/config/run.yaml
+                  - mountPath: /app-root/run.yaml
                     name: llama-stack-config
                     subPath: run.yaml
               - image: 'quay.io/lightspeed-core/lightspeed-stack:latest'
