@@ -124,16 +124,17 @@ librechat:
       name: librechat-postgresql
       automountServiceAccountToken: true
     primary:
-      # Override securityContext completely - remove all problematic fields
-      # Bitnami chart will use these values instead of defaults
+      # Override securityContext - keep fsGroup for volume permissions
+      # Bitnami PostgreSQL needs fsGroup: 1001 for /bitnami/postgresql/data
       podSecurityContext:
-        # Leave empty to let OpenShift SCC anyuid handle it
-        fsGroup: null
-        fsGroupChangePolicy: null
+        # fsGroup is needed for volume permissions with SCC anyuid
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        # Remove other fields to let OpenShift SCC anyuid handle them
         supplementalGroups: null
         sysctls: null
       containerSecurityContext:
-        # Leave empty to let OpenShift SCC anyuid handle it  
+        # Remove problematic fields to let OpenShift SCC anyuid handle them
         runAsUser: null
         runAsGroup: null
         runAsNonRoot: null
