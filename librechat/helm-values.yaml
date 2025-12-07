@@ -89,6 +89,14 @@ librechat:
     configYamlContent: ''
     existingConfigYaml: ''
     existingSecretName: librechat-secretenv
+    # ServiceAccount configuration for LibreChat deployment
+    # The chart creates librechat-sa with Role and RoleBinding automatically
+    # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
+    serviceAccount:
+      create: true
+      name: librechat-sa
+      automountServiceAccountToken: true
+    # Also set serviceAccountName directly for the deployment
     serviceAccountName: librechat-sa
     imageVolume:
       accessModes: ReadWriteOnce
@@ -194,10 +202,7 @@ librechat:
   # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
   podSecurityContext: {}
   # ServiceAccount for LibreChat deployment - must match RoleBinding in librechat-rbac
-  serviceAccount:
-    create: true
-    name: librechat-sa
-    automountServiceAccountToken: true
+  serviceAccountName: librechat-sa
   replicaCount: 1
   resources:
     requests:
