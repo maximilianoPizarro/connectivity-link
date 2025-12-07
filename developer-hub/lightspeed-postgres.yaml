@@ -20,8 +20,8 @@ spec:
         - name: postgresql-db
           image: registry.redhat.io/rhel8/postgresql-15:latest
           volumeMounts:
-            - mountPath: /var/lib/pgsql/data
-              name: postgresql-data
+            - name: postgresql-data
+              mountPath: /var/lib/pgsql/data
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -47,14 +47,14 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-      volumeClaimTemplates:
-        - metadata:
-            name: postgresql-data
-          spec:
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 5Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
 ---
 apiVersion: v1
 kind: Service
