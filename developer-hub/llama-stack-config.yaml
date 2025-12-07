@@ -196,6 +196,8 @@ data:
       - provider_id: model-context-protocol
         provider_type: remote::model-context-protocol
         config:
+          headers:
+            Authorization: "Bearer backstage"
           mcp_headers:
             "http://localhost:7007/api/mcp-actions/v1":
               Authorization: "Bearer backstage"
