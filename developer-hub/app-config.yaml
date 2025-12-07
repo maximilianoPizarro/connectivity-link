@@ -305,15 +305,13 @@ data:
     # Required by OLS (Road Core Service) backend for Lightspeed plugin
     # Note: This configuration connects to lightspeed-core (sidecar) at localhost:8082
     # lightspeed-core handles communication with llama-stack, which connects to external LLM service
+    # NOTE: conversation_cache is managed by lightspeed-core (configured in lightspeed-stack.yaml)
+    # This configuration is for the plugin backend only
     lightspeed:
       servers:
         - id: "${LLM_SERVER_ID}"
           url: "${LLM_SERVER_URL}"  # Should be http://localhost:8082 (lightspeed-core)
           token: "${LLM_SERVER_TOKEN}"  # Empty string for local connection
-      conversation_cache:
-        type: "sqlite"
-        sqlite:
-          db_path: "/tmp/data/conversations/lcs_cache.db"
     # MCP (Model Context Protocol) Configuration
     # Note: MCP configuration is separate from Lightspeed servers
     mcp:
