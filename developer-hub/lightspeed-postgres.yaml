@@ -35,6 +35,11 @@ spec:
                   key: password
             - name: POSTGRESQL_DATABASE
               value: lightspeed_conversations
+            - name: POSTGRESQL_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: admin_password
             - name: POSTGRESQL_INITDB_ARGS
               value: "--auth-host=md5 --auth-local=trust"
             - name: POSTGRESQL_PGCTLTIMEOUT

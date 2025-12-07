@@ -19,14 +19,28 @@ spec:
             - |
               set -e
               echo "Waiting for PostgreSQL to be ready..."
-              until PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d $POSTGRESQL_DATABASE -c '\q' 2>/dev/null; do
+              # Esperar a que PostgreSQL esté listo usando el usuario postgres (superusuario)
+              until PGPASSWORD=$POSTGRESQL_ADMIN_PASSWORD psql -h $POSTGRESQL_HOST -U postgres -d postgres -c '\q' 2>/dev/null; do
                 echo "PostgreSQL is not ready yet. Waiting..."
                 sleep 2
               done
-              echo "PostgreSQL is ready. Creating additional database..."
-              PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d $POSTGRESQL_DATABASE -c "CREATE DATABASE lightspeed_db;" || echo "Database may already exist"
-              PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d lightspeed_db -c "GRANT ALL PRIVILEGES ON DATABASE lightspeed_db TO $POSTGRESQL_USER;"
-              echo "Database lightspeed_db created successfully!"
+              echo "PostgreSQL is ready. Creating additional database as superuser..."
+              # Verificar si la base de datos ya existe
+              DB_EXISTS=$(PGPASSWORD=$POSTGRESQL_ADMIN_PASSWORD psql -h $POSTGRESQL_HOST -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='lightspeed_db'")
+              
+              if [ "$DB_EXISTS" != "1" ]; then
+                echo "Creating database lightspeed_db..."
+                # Crear la base de datos usando el usuario postgres (superusuario)
+                PGPASSWORD=$POSTGRESQL_ADMIN_PASSWORD psql -h $POSTGRESQL_HOST -U postgres -d postgres -c "CREATE DATABASE lightspeed_db;"
+              else
+                echo "Database lightspeed_db already exists."
+              fi
+              
+              # Otorgar permisos al usuario lightspeed_user
+              echo "Granting permissions to $POSTGRESQL_USER..."
+              PGPASSWORD=$POSTGRESQL_ADMIN_PASSWORD psql -h $POSTGRESQL_HOST -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE lightspeed_db TO $POSTGRESQL_USER;"
+              PGPASSWORD=$POSTGRESQL_ADMIN_PASSWORD psql -h $POSTGRESQL_HOST -U postgres -d lightspeed_db -c "GRANT ALL ON SCHEMA public TO $POSTGRESQL_USER;"
+              echo "Database lightspeed_db created successfully with permissions granted!"
           env:
             - name: POSTGRESQL_USER
               valueFrom:
@@ -38,6 +52,11 @@ spec:
                 secretKeyRef:
                   name: lightspeed-postgres-secret
                   key: password
+            - name: POSTGRESQL_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: admin_password
             - name: POSTGRESQL_DATABASE
               value: lightspeed_conversations
             - name: POSTGRESQL_HOST
