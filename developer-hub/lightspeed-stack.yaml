@@ -23,7 +23,7 @@ data:
     
     inference:
       default_provider: vllm
-      default_model: vllm/llama-3-2-3b
+      default_model: llama-3-2-3b
     
     user_data_collection:
       feedback_storage: "/tmp/data/feedback"
