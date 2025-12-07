@@ -11,6 +11,7 @@ resources:
   - dynamic-plugins.yaml
   - rhdh-rbac-policy.yaml
   - llama-stack-secrets.yaml
+  - llama-stack-config.yaml
   - lightspeed-secrets.yaml
   - lightspeed-stack.yaml
   - proxy.yaml
