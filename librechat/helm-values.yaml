@@ -117,7 +117,19 @@ librechat:
       registry: ghcr.io
       repository: bat-bs/bitnami-pgvector
       tag: pg16
-
+    # ServiceAccount configuration for OpenShift SCC anyuid
+    # The ServiceAccount name must match: {{ .Release.Name }}-postgresql (i.e., librechat-postgresql)
+    serviceAccount:
+      create: true
+      name: librechat-postgresql
+      automountServiceAccountToken: true
+    # Security context for PostgreSQL (compatible with anyuid SCC)
+    # With anyuid SCC, we can use any UID including 1001
+    podSecurityContext:
+      fsGroup: 1001
+    containerSecurityContext:
+      runAsUser: 1001
+      runAsNonRoot: true
     primary:
       initdb:
         scripts:
