@@ -5,6 +5,7 @@ resources:
   #- ols-embeddings.yaml
   - lightspeed-postgres-secret.yaml
   - lightspeed-postgres.yaml
+  - lightspeed-postgres-init-job.yaml
   - backstage.yaml
   - app-config.yaml
   - dynamic-plugins.yaml

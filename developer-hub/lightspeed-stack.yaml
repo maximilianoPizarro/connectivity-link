@@ -29,6 +29,15 @@ data:
       feedback_storage: "/tmp/data/feedback"
       transcripts_storage: "/tmp/data/transcripts"
     
+    database:
+      type: postgres
+      postgres:
+        host: lightspeed-postgresql-db-service
+        port: 5432
+        db: lightspeed_db
+        user: lightspeed_user
+        password: lightspeed_password_123
+    
     conversation_cache:
       type: postgres
       postgres:

@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lightspeed-postgres-init-db
+  namespace: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-database
+          image: registry.redhat.io/rhel8/postgresql-15:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Waiting for PostgreSQL to be ready..."
+              until PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d $POSTGRESQL_DATABASE -c '\q' 2>/dev/null; do
+                echo "PostgreSQL is not ready yet. Waiting..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready. Creating additional database..."
+              PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d $POSTGRESQL_DATABASE -c "CREATE DATABASE lightspeed_db;" || echo "Database may already exist"
+              PGPASSWORD=$POSTGRESQL_PASSWORD psql -h $POSTGRESQL_HOST -U $POSTGRESQL_USER -d lightspeed_db -c "GRANT ALL PRIVILEGES ON DATABASE lightspeed_db TO $POSTGRESQL_USER;"
+              echo "Database lightspeed_db created successfully!"
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: username
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: password
+            - name: POSTGRESQL_DATABASE
+              value: lightspeed_conversations
+            - name: POSTGRESQL_HOST
+              value: lightspeed-postgresql-db-service
+      backoffLimit: 3
+
