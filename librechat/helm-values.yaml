@@ -35,17 +35,16 @@ librechat:
   librechat:
     namespace: librechat
     persistence:
-      enabled: true
-      storageClassName: gp3-csi  # Storage class liviana para volúmenes pequeños
+      enabled: false  # All volumes configured as ephemeral (emptyDir)
+      storageClassName: gp3-csi
       uploads:
-        size: 1Gi
+        enabled: false  # Ephemeral volume
       data:
-        size: 1Gi
-      # Logs volumes configured as ephemeral (emptyDir) - see volumes section
+        enabled: false  # Ephemeral volume
       logs:
-        enabled: false  # Disable persistent storage for logs
+        enabled: false  # Ephemeral volume
       apiLogs:
-        enabled: false  # Disable persistent storage for API logs
+        enabled: false  # Ephemeral volume
     configEnv:
       SEARCH: 'true'
       MEILI_NO_ANALYTICS: 'true'
@@ -152,16 +151,8 @@ librechat:
         supplementalGroups: null
         sysctls: null
       containerSecurityContext:
-        # Remove problematic fields to let OpenShift SCC anyuid handle them
-        runAsUser: null
-        runAsGroup: null
-        runAsNonRoot: null
-        seccompProfile: null
-        seLinuxOptions: null
-        allowPrivilegeEscalation: null
-        capabilities: null
-        privileged: null
-        readOnlyRootFilesystem: null
+        # Disable containerSecurityContext to let OpenShift SCC anyuid handle it
+        enabled: false
       initdb:
         scripts:
           create-librechat-db.sql: |
@@ -247,15 +238,13 @@ librechat:
       readOnly: true
   volumes:
     - name: librechat-uploads-volume
-      persistentVolumeClaim:
-        claimName: librechat-uploads
+      emptyDir: {}  # Ephemeral volume
     - name: librechat-data-volume
-      persistentVolumeClaim:
-        claimName: librechat-data
+      emptyDir: {}  # Ephemeral volume
     - name: librechat-logs-volume
-      emptyDir: {}  # Ephemeral volume for logs
+      emptyDir: {}  # Ephemeral volume
     - name: librechat-api-logs-volume
-      emptyDir: {}  # Ephemeral volume for API logs
+      emptyDir: {}  # Ephemeral volume
     - name: keycloak-auth-config
       configMap:
         name: librechat-keycloak-auth
