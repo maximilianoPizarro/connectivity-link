@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lightspeed-postgresql-db
+  namespace: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  serviceName: lightspeed-postgresql-db-service
+  selector:
+    matchLabels:
+      app: lightspeed-postgresql-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lightspeed-postgresql-db
+    spec:
+      containers:
+        - name: postgresql-db
+          image: registry.redhat.io/rhel8/postgresql-15:latest
+          volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: postgresql-data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-postgres-secret
+                  key: password
+            - name: PGDATA
+              value: /var/lib/pgsql/data/pgdata
+            - name: POSTGRES_DB
+              value: lightspeed_conversations
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumeClaimTemplates:
+        - metadata:
+            name: postgresql-data
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lightspeed-postgresql-db-service
+  namespace: developer-hub
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  selector:
+    app: lightspeed-postgresql-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgresql
+  type: ClusterIP
+

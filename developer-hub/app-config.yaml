@@ -63,6 +63,9 @@ data:
           - "data:"
           - https://img.freepik.com
           - https://cdn.dribbble.com
+          - https://github.com
+          - https://*.github.com
+          - https://*.githubusercontent.com
       reading:
         allow:
           - host: gitlab.com

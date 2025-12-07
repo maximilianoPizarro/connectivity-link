@@ -30,9 +30,13 @@ data:
       transcripts_storage: "/tmp/data/transcripts"
     
     conversation_cache:
-      type: sqlite
-      sqlite:
-        db_path: "/tmp/data/conversations/lcs_cache.db"
+      type: postgres
+      postgres:
+        host: lightspeed-postgresql-db-service
+        port: 5432
+        database: lightspeed_conversations
+        user: lightspeed_user
+        password: lightspeed_password_123
     
     mcp_servers:
       - name: backstage-actions

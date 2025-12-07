@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
   - rolebinding.yaml
   #- ols-embeddings.yaml
+  - lightspeed-postgres-secret.yaml
+  - lightspeed-postgres.yaml
   - backstage.yaml
   - app-config.yaml
   - dynamic-plugins.yaml
