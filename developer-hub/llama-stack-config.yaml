@@ -199,8 +199,6 @@ data:
           headers:
             Authorization: "Bearer backstage"
           mcp_headers:
-            "http://localhost:7007/api/mcp-actions/v1/sse":
-              Authorization: "Bearer backstage"
             "http://localhost:7007/api/mcp-actions/v1":
               Authorization: "Bearer backstage"
       - provider_id: rag-runtime 
