@@ -162,6 +162,17 @@ spec:
           - CreateNamespace=true
           - SkipDryRunOnMissingResource=true
           - RespectIgnoreDifferences=true
+      ignoreDifferences:
+        - group: apps
+          kind: StatefulSet
+          jsonPointers:
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1log-dir
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1mongodb
+        - group: apps
+          kind: StatefulSet
+          name: librechat-postgresql
+          jsonPointers:
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1postgresql
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
