@@ -34,7 +34,7 @@ data:
       postgres:
         host: lightspeed-postgresql-db-service
         port: 5432
-        database: lightspeed_conversations
+        db: lightspeed_conversations
         user: lightspeed_user
         password: lightspeed_password_123
     
