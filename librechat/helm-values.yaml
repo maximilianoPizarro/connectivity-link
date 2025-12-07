@@ -191,6 +191,7 @@ librechat:
   nodeSelector: {}
   podAnnotations: {}
   podLabels: {}
+  # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
   podSecurityContext: {}
   replicaCount: 1
   resources:
