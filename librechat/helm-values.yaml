@@ -51,7 +51,8 @@ librechat:
       LLM_SERVER_ID: llama-3-2-3b
       LLM_SERVER_TOKEN: 0d730b5c1bc2bc24fd657bf4ded0ba72
       LLM_SERVER_URL: https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1
-      OPENAI_API_KEY: IiI=
+      # OPENAI_API_KEY is loaded from secret librechat-librechat-secretenv via global.existingSecretApiKey
+      # Do not set it here in configEnv to avoid conflicts
       NODE_TLS_REJECT_UNAUTHORIZED: '0'
       CREDS_IV: 118a16ffe26a8712d0adb5b3cf8229ca
       CREDS_KEY: 99f12ba0ea72257aa78df8e99c9be801716a7e16fe77e7510a914112528aa05c
