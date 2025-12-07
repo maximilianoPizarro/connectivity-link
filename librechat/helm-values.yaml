@@ -193,6 +193,11 @@ librechat:
   podLabels: {}
   # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
   podSecurityContext: {}
+  # ServiceAccount for LibreChat deployment - must match RoleBinding in librechat-rbac
+  serviceAccount:
+    create: true
+    name: librechat-sa
+    automountServiceAccountToken: true
   replicaCount: 1
   resources:
     requests:
