@@ -73,7 +73,14 @@ librechat:
       SOCIAL_LOGIN_ENABLED: 'true'
       OPENID_SCOPE: openid profile email
       OPENID_REQUIRED_ROLE_TOKEN_KIND: access
-      OPENID_REQUIRED_ROLE_PARAMETER_PATH: realm_access.roles    
+      OPENID_REQUIRED_ROLE_PARAMETER_PATH: realm_access.roles
+      # User profile picture configuration
+      # LibreChat will automatically use the 'picture' claim from the OIDC token
+      # Make sure Keycloak is configured to include the 'picture' claim in the token
+      OPENID_USERNAME_CLAIM: preferred_username
+      OPENID_NAME_CLAIM: name
+      OPENID_EMAIL_CLAIM: email
+      OPENID_PICTURE_CLAIM: picture    
       PLUGIN_MODELS: >-
         gpt-4,gpt-4-turbo-preview,gpt-4-0125-preview,gpt-4-1106-preview,gpt-4-0613,gpt-3.5-turbo,gpt-3.5-turbo-0125,gpt-3.5-turbo-1106,gpt-3.5-turbo-0613,llama-3-1-8b-instruct
     # ConfigMap with config.yaml is now created in templates/configmap-librechat-config.yaml
@@ -135,6 +142,19 @@ librechat:
     databases:
       - LibreChat
     enabled: true
+    # ServiceAccount configuration for OpenShift SCC anyuid
+    # The ServiceAccount name must match: {{ .Release.Name }}-mongodb (i.e., librechat-mongodb)
+    serviceAccount:
+      create: true
+      name: librechat-mongodb
+      automountServiceAccountToken: true
+    # Security context for MongoDB (compatible with anyuid SCC)
+    # With anyuid SCC, we can use any UID including 1001
+    podSecurityContext:
+      fsGroup: 1001
+    containerSecurityContext:
+      runAsUser: 1001
+      runAsNonRoot: true
     extraVolumeMounts:
       - name: datadir
         mountPath: /data/db
