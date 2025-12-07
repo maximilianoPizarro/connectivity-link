@@ -43,6 +43,9 @@ spec:
               - envFrom:
                   - secretRef:
                       name: llama-stack-secrets
+                env:
+                  - name: MCP_HEADERS
+                    value: '{"backstage-actions": {"Authorization": "Bearer backstage"}}'
                 image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
                 name: llama-stack
                 ports:
