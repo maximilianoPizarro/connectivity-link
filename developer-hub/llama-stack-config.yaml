@@ -197,12 +197,12 @@ data:
         provider_type: remote::model-context-protocol
         config:
           headers:
-            Authorization: "Bearer backstage"
+            Authorization: "Bearer ${env.MCP_TOKEN}"
           mcp_headers:
             "http://localhost:7007/api/mcp-actions/v1":
-              Authorization: "Bearer backstage"
+              Authorization: "Bearer ${env.MCP_TOKEN}"
             "http://localhost:7007/api/mcp-actions/v1/sse":
-              Authorization: "Bearer backstage"
+              Authorization: "Bearer ${env.MCP_TOKEN}"
       - provider_id: rag-runtime 
         provider_type: inline::rag-runtime
         config: {}
