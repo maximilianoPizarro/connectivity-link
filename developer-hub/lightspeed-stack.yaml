@@ -22,7 +22,7 @@ data:
       url: "http://localhost:8321"
     
     inference:
-      default_provider: llama-3-2-3b
+      default_provider: vllm
       default_model: llama-3-2-3b
     
     user_data_collection:
