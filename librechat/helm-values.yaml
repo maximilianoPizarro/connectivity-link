@@ -123,9 +123,11 @@ librechat:
       create: true
       name: librechat-postgresql
       automountServiceAccountToken: true
-    # Force empty securityContext to prevent chart defaults
-    podSecurityContext: null
-    containerSecurityContext: null
+    # Disable securityContext to let OpenShift SCC handle it
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
     primary:
       initdb:
         scripts:
@@ -156,10 +158,13 @@ librechat:
       create: true
       name: librechat-mongodb
       automountServiceAccountToken: true
-    # Force empty securityContext to prevent chart defaults
-    podSecurityContext: null
-    containerSecurityContext: null
-    initContainersSecurityContext: null
+    # Disable securityContext to let OpenShift SCC handle it
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
+    initContainersSecurityContext:
+      enabled: false
     extraVolumeMounts:
       - name: datadir
         mountPath: /data/db
