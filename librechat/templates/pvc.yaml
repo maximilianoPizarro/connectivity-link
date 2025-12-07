@@ -38,6 +38,11 @@ spec:
     requests:
       storage: {{ include "librechat.persistence.size" (dict "path" "data" "default" "1Gi" "root" .) }}
   storageClassName: {{ include "librechat.persistence.storageClass" . }}
+{{- $logsEnabled := true }}
+{{- if and (hasKey .Values.librechat.persistence "logs") (hasKey (index .Values.librechat.persistence "logs") "enabled") }}
+  {{- $logsEnabled = (index .Values.librechat.persistence "logs" "enabled") }}
+{{- end }}
+{{- if $logsEnabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -58,6 +63,12 @@ spec:
     requests:
       storage: {{ include "librechat.persistence.size" (dict "path" "logs" "default" "1Gi" "root" .) }}
   storageClassName: {{ include "librechat.persistence.storageClass" . }}
+{{- end }}
+{{- $apiLogsEnabled := true }}
+{{- if and (hasKey .Values.librechat.persistence "apiLogs") (hasKey (index .Values.librechat.persistence "apiLogs") "enabled") }}
+  {{- $apiLogsEnabled = (index .Values.librechat.persistence "apiLogs" "enabled") }}
+{{- end }}
+{{- if $apiLogsEnabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -78,3 +89,4 @@ spec:
     requests:
       storage: {{ include "librechat.persistence.size" (dict "path" "apiLogs" "default" "1Gi" "root" .) }}
   storageClassName: {{ include "librechat.persistence.storageClass" . }}
+{{- end }}

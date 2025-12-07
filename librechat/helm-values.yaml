@@ -24,6 +24,14 @@ librechat:
           - path: /
             pathType: ImplementationSpecific
     tls: []
+  # ServiceAccount configuration for LibreChat subchart deployment
+  # The chart creates librechat-sa with Role and RoleBinding automatically
+  # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
+  serviceAccount:
+    create: true
+    name: librechat-sa
+    automountServiceAccountToken: true
+  serviceAccountName: librechat-sa
   librechat:
     namespace: librechat
     persistence:
@@ -33,10 +41,11 @@ librechat:
         size: 1Gi
       data:
         size: 1Gi
+      # Logs volumes configured as ephemeral (emptyDir) - see volumes section
       logs:
-        size: 1Gi
+        enabled: false  # Disable persistent storage for logs
       apiLogs:
-        size: 1Gi
+        enabled: false  # Disable persistent storage for API logs
     configEnv:
       SEARCH: 'true'
       MEILI_NO_ANALYTICS: 'true'
@@ -244,11 +253,9 @@ librechat:
       persistentVolumeClaim:
         claimName: librechat-data
     - name: librechat-logs-volume
-      persistentVolumeClaim:
-        claimName: librechat-logs
+      emptyDir: {}  # Ephemeral volume for logs
     - name: librechat-api-logs-volume
-      persistentVolumeClaim:
-        claimName: librechat-api-logs
+      emptyDir: {}  # Ephemeral volume for API logs
     - name: keycloak-auth-config
       configMap:
         name: librechat-keycloak-auth
