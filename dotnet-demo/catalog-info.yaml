@@ -24,6 +24,8 @@ metadata:
     backstage.io/argocd-app-name: dotnet-demo
     backstage.io/argocd-app-namespace: openshift-gitops
     backstage.io/argocd-app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/dotnet-demo
+    # Nexus Repository Manager Integration
+    nexus-repository-manager/instance-name: nexus-instance
   links:
     - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
       title: Nexus Repository
@@ -51,7 +53,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: maximilianopizarro
+  owner: user:default/maximilianopizarro
   system: cicd-platform
   # No dependencies - standalone component
   # dependsOn:
@@ -66,7 +68,7 @@ metadata:
 spec:
   type: rest
   lifecycle: production
-  owner: maximilianopizarro
+  owner: user:default/maximilianopizarro
   definition: |
     openapi: "3.0.0"
     info:
