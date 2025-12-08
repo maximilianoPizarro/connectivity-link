@@ -38,6 +38,6 @@ data:
         user: lightspeed_user
         password: lightspeed_password_123
     
-    mcp_servers:
-      - name: backstage-actions
-        url: "http://localhost:7007/api/mcp-actions/v1"
+    #mcp_servers:
+    #  - name: backstage-actions
+    #    url: "http://localhost:7007/api/mcp-actions/v1"

@@ -28,6 +28,9 @@ data:
     p, role:default/authenticated, scaffolder.task, read, allow
     p, role:default/authenticated, scaffolder.task, create, allow
     p, role:default/authenticated, scaffolder.action.execute, use, allow
+    
+    # Adoption Insights permissions for ALL users
+    p, role:default/authenticated, adoption-insights.events.read, read, allow
 
     # ==========================================================
     # 2. PLATFORM ENGINEER ROLE (Full Admin Permissions)
@@ -54,6 +57,9 @@ data:
     p, role:default/platformengineer, scaffolder.action.execute, use, allow
 
     p, role:default/platformengineer, permission.policy, read, allow
+    
+    # Adoption Insights permissions for Platform Engineers
+    p, role:default/platformengineer, adoption-insights.events.read, read, allow
 
     # ==========================================================
     # 3. USER ROLE ASSIGNMENTS
@@ -82,6 +88,10 @@ data:
     # They already have full Lightspeed permissions through authenticated role
     g, user:default/user3-devteam1, role:default/authenticated
     g, user:default/user4-devteam1, role:default/authenticated
+    
+    # Group assignments (Keycloak groups)
+    # Assign rhdh group to platformengineer role (has all permissions including Adoption Insights)
+    g, group:default/rhdh, role:default/platformengineer
 
     # ==========================================================
     # 4. LEGACY ROLES (Optional - for backward compatibility)
@@ -100,6 +110,9 @@ data:
     p, role:default/rhdhpai-users, scaffolder-template, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.read, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.create, create, allow
+    
+    # Adoption Insights permissions for rhdhpai-users
+    p, role:default/rhdhpai-users, adoption-insights.events.read, read, allow
 
     # If you still need 'template-executers' for other users, keep its definition:
     p, role:default/template-executers, scaffolder.action.execute, use, allow
