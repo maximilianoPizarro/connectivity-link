@@ -279,6 +279,16 @@ data:
               password: ${ARGOCD_INSTANCE_2_PASSWORD}
     # Kubernetes Integration
     kubernetes:
+      # Cluster locator methods - required by the plugin
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: 'https://kubernetes.default.svc'
+              name: 'local'
+              authProvider: 'serviceAccount'
+              skipTLSVerify: false
+              skipMetricsLookup: false
+              # Service account token is automatically mounted
       # Custom resources for Tekton plugin
       customResources:
         - group: 'tekton.dev'
