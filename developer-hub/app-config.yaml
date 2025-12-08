@@ -279,6 +279,9 @@ data:
               password: ${ARGOCD_INSTANCE_2_PASSWORD}
     # Kubernetes Integration
     kubernetes:
+      # Service locator method - required by the plugin
+      serviceLocatorMethod:
+        type: 'multiTenant'
       # Cluster locator methods - required by the plugin
       clusterLocatorMethods:
         - type: 'config'
