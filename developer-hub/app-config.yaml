@@ -9,7 +9,7 @@ metadata:
 data:
   app-config-rhdh.yaml: |
     app:
-      title: AI Dev Developer Hub
+      title: RHDH - Developer Lightspeed Dev Preview
       baseUrl: "${RHDH_BASE_URL}"
     integrations:
       github:
@@ -338,6 +338,6 @@ data:
           # Optional: Authentication token if required
           # token: ${NEXUS_TOKEN}
           # Optional: Username and password for basic auth
-          # username: ${NEXUS_USERNAME}
-          # password: ${NEXUS_PASSWORD}
+          username: ${NEXUS_USERNAME}
+          password: ${NEXUS_PASSWORD}
 
