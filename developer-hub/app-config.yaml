@@ -12,8 +12,8 @@ data:
       title: Developer Lightspeed Dev Preview
       baseUrl: "${RHDH_BASE_URL}"
       branding:
-        fullLogo: ${RHDH_FULL_LOGO}"
-        iconLogo: ${RHDH_ICON_LOGO}"
+        fullLogo: "${RHDH_FULL_LOGO}"
+        iconLogo: "${RHDH_ICON_LOGO}"
 
     integrations:
       github:
