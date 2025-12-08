@@ -60,10 +60,8 @@ data:
       - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
         disabled: false
       # Kubernetes Backend Plugin
+      # Note: The frontend plugin is typically included with the backend or loaded automatically
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-kubernetes-backend:bs_1.42.5__0.20.1!backstage-plugin-kubernetes-backend
-        disabled: false
-      # Kubernetes Frontend Plugin
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-kubernetes:bs_1.42.5__0.20.1!backstage-plugin-kubernetes
         disabled: false
       # MCP server backend plugin (Latest version)
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:next__0.1.2!backstage-plugin-mcp-actions-backend
