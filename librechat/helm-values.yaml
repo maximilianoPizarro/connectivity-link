@@ -5,8 +5,8 @@ librechat:
       existingSecretName: librechat-secretenv
   image:
     pullPolicy: IfNotPresent
-    registry: ghcr.io
-    repository: danny-avila/librechat
+    registry: quay.io
+    repository: maximilianopizarro/redhat-chat
     tag: 'v0.8.1-rc2'
   imagePullSecrets: []
 
