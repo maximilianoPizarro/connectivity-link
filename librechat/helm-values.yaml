@@ -7,7 +7,7 @@ librechat:
     pullPolicy: IfNotPresent
     registry: quay.io
     repository: maximilianopizarro/redhat-chat
-    tag: 'v0.8.1-rc2'
+    tag: 'v0.8.1-rc1'
   imagePullSecrets: []
 
   route:
