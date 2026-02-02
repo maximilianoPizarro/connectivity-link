@@ -157,7 +157,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
       destination:
@@ -192,7 +192,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
         kustomize:
@@ -281,7 +281,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
         helm:

@@ -9,7 +9,7 @@ metadata:
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/workshop-pipelines
     argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/workshop-pipelines
-    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+    github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - tekton
     - pipelines

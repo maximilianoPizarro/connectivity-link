@@ -5,11 +5,11 @@ metadata:
   namespace: default
   description: .NET Demo Application - Sample application demonstrating CI/CD pipeline with Nexus artifact publishing
   annotations:
-    # GitLab Integration (standard format)
-    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+    # GitHub Integration (standard format)
+    github.com/project-slug: maximilianoPizarro/connectivity-link
     # Backstage Standard Annotations
     backstage.io/view-url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#browse/browse:releases:com/example/dotnet-demo
-    backstage.io/source-location: url:https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/connectivity-link/tree/main/dotnet-demo
     backstage.io/techdocs-ref: dir:.
     # Kubernetes Integration
     backstage.io/kubernetes-namespace: dotnet-demo
@@ -33,7 +33,7 @@ metadata:
     - url: http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#browse/browse:releases:com/example/dotnet-demo
       title: View Artifacts in Nexus
       icon: package
-    - url: https://gitlab.com/maximilianoPizarro/connectivity-link/-/tree/main/dotnet-demo
+    - url: https://github.com/maximilianoPizarro/connectivity-link/tree/main/dotnet-demo
       title: Source Code
       icon: code
     - url: https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/#/namespaces/dotnet-demo-pipeline/pipelines/dotnet-demo-pipeline

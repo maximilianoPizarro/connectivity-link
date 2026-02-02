@@ -13,7 +13,7 @@ spec:
     - name: git-url
       description: Git repository URL
       type: string
-      default: "https://gitlab.com/maximilianoPizarro/connectivity-link.git"
+      default: "https://github.com/maximilianoPizarro/connectivity-link.git"
     - name: git-revision
       description: Git revision (branch, tag, or commit)
       type: string

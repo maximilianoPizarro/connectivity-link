@@ -10,7 +10,7 @@ This document provides step-by-step instructions for demonstrating the .NET appl
 - [ ] Tekton Pipelines installed in cluster
 - [ ] Access to `workshop-pipelines` namespace
 - [ ] Developer Hub (Backstage) running and accessible
-- [ ] GitLab repository access
+- [ ] GitHub repository access
 
 ## Step 1: Prepare Nexus Repository
 
@@ -97,7 +97,7 @@ kubectl create secret generic nexus-credentials \
 
 ```bash
 tkn pipeline start dotnet-demo-pipeline \
-  -p git-url=https://gitlab.com/maximilianoPizarro/connectivity-link.git \
+  -p git-url=https://github.com/maximilianoPizarro/connectivity-link.git \
   -p git-revision=main \
   -p nexus-url=http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com \
   -p nexus-repository=releases \
@@ -147,7 +147,7 @@ spec:
     name: dotnet-demo-pipeline
   params:
     - name: git-url
-      value: "https://gitlab.com/maximilianoPizarro/connectivity-link.git"
+      value: "https://github.com/maximilianoPizarro/connectivity-link.git"
     - name: git-revision
       value: "main"
     - name: nexus-url
@@ -252,7 +252,7 @@ EOF
 **Solution:**
 ```bash
 # Verify Git URL is accessible
-curl -I https://gitlab.com/maximilianoPizarro/connectivity-link.git
+curl -I https://github.com/maximilianoPizarro/connectivity-link.git
 
 # Check Tekton git-clone task is available
 kubectl get clustertask git-clone
@@ -298,7 +298,7 @@ curl -u admin:password http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.o
 # Check Developer Hub logs
 kubectl logs -n developer-hub -l app=backstage-backend --tail=100 | grep dotnet
 
-# Verify GitLab provider is configured
+# Verify GitHub provider is configured
 # Check app-config.yaml includes dotnet-demo location
 
 # Force catalog refresh

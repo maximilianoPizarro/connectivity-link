@@ -19,11 +19,11 @@ data:
       github:
         - host: github.com
           token: ${GITHUB_INTEGRATION}
-      gitlab:
-        - host: gitlab.com
+      github:
+        - host: github.com
           # Token is required to avoid rate limits when using multiple providers
-          # Set GITLAB_INTEGRATION secret with your GitLab personal access token
-          token: ${GITLAB_INTEGRATION}
+          # Set GITHUB_INTEGRATION secret with your GitHub personal access token
+          token: ${GITHUB_INTEGRATION}
     auth:
       environment: production
       session:
@@ -73,7 +73,7 @@ data:
           - https://*.githubusercontent.com
       reading:
         allow:
-          - host: gitlab.com
+          - host: github.com
       # Proxy configuration for Nexus Repository Manager
       # The plugin uses /nexus-repository-manager path to proxy requests to Nexus
       # Requests to /nexus-repository-manager/* are proxied to Nexus root
@@ -110,159 +110,171 @@ data:
                 - resolver: preferredUsernameMatchingUserEntityName
                 # Fallback to email matching
                 - resolver: emailMatchingUserEntityProfileEmail
-        gitlab:
+        github:
           connectivity-link-developer-hub:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /developer-hub/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
           connectivity-link-neuralbank-stack:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /neuralbank-stack/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 20 }
           connectivity-link-rhbk:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /rhbk/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 25 }
           connectivity-link-rhcl-operator:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /rhcl-operator/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 30 }
           connectivity-link-servicemeshoperator3:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /servicemeshoperator3/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 35 }
           connectivity-link-devspaces:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /devspaces/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 40 }
           connectivity-link-operators:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /operators/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 45 }
           connectivity-link-workshop-pipelines:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /workshop-pipelines/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 50 }
           connectivity-link-openshift-gitops:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /openshift-gitops/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 55 }
           connectivity-link-namespaces:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /namespaces/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 60 }
           connectivity-link-groups:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /groups/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 65 }
           connectivity-link-dotnet-demo:
-            host: gitlab.com
-            project: maximilianoPizarro/connectivity-link
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
             branch: main
             catalogPath: /dotnet-demo/catalog-info.yaml
-            token: ${GITLAB_INTEGRATION}
+            token: ${GITHUB_INTEGRATION}
             schedule:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 70 }
       locations:
-        # GitLab catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
+        # GitHub catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/developer-hub/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/developer-hub/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/neuralbank-stack/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/neuralbank-stack/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhbk/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/rhbk/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhcl-operator/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/rhcl-operator/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/servicemeshoperator3/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/servicemeshoperator3/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/devspaces/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/devspaces/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/operators/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/operators/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/workshop-pipelines/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/workshop-pipelines/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/openshift-gitops/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/openshift-gitops/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/namespaces/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/namespaces/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/groups/catalog-info.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/domains.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/groups/domains.yaml
         # User entities are now included in groups/catalog-info.yaml
         # Keeping this location for backward compatibility
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/users.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/groups/users.yaml
         - type: url
-          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/dotnet-demo/catalog-info.yaml
         # Red Hat Developer Hub Software Templates Collection
         - type: url
           target: https://raw.githubusercontent.com/redhat-developer/red-hat-developer-hub-software-templates/main/templates.yaml
@@ -352,9 +364,9 @@ data:
       sonarqube: false
       keycloak: true
       ocm: true
-      github: false
+      github: true
       githubOrg: false
-      gitlab: true
+      gitlab: false
       jenkins: true
       permission: false
 

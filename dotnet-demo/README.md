@@ -13,7 +13,7 @@ This demo includes:
 
 ```
 ┌─────────────────┐
-│   GitLab Repo   │
+│   GitHub Repo   │
 │  (Source Code)  │
 └────────┬────────┘
          │
@@ -133,7 +133,7 @@ Or use Tekton CLI:
 
 ```bash
 tkn pipeline start dotnet-demo-pipeline \
-  -p git-url=https://gitlab.com/maximilianoPizarro/connectivity-link.git \
+  -p git-url=https://github.com/maximilianoPizarro/connectivity-link.git \
   -p git-revision=main \
   -p nexus-url=http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com \
   -p nexus-repository=releases \
