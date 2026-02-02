@@ -1,0 +1,66 @@
+---
+# Domain definitions for Backstage catalog
+# Domains represent business domains that contain multiple systems
+
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: platform
+  description: Platform engineering domain - Infrastructure, developer tools, and platform services
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: development
+  description: Development platform and tooling domain
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: devops
+  description: DevOps and CI/CD domain
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: networking
+  description: Networking and service mesh domain
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: security
+  description: Security and authentication domain
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: infrastructure
+  description: Infrastructure and cluster management domain
+spec:
+  owner: maximilianopizarro
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: banking
+  description: Banking and financial services domain
+spec:
+  owner: maximilianopizarro
+

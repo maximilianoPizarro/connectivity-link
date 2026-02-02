@@ -21,30 +21,22 @@ backend:
 frontend:
   image:
     repository: quay.io/maximilianopizarro/neuralbank-front 
-    tag: "latest"
+    tag: "pkce"
     pullPolicy: Always
   service:
-    port: 80
+    port: 8080
   replicaCount: 1
 
-# --- Proxy (Gateway Nginx) ---
-proxy:
-  image:
-    repository: nginxinc/nginx-unprivileged
-    tag: "latest"
-  service:
-    type: LoadBalancer
-    port: 80
 
 # --- Keycloak Configuration ---
 keycloak:
-  issuerUrl: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank'
-  clientId: 'neuralbank'
-  clientSecret: 'nkxmlxN1wICSYrZ1QoIeUtVvjjCKfeXh'
-  authorizationEndpoint: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
-  redirectUri: 'https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/auth/callback'
-  tokenEndpoint: 'https://rhbk.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
-  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com'
+  issuerUrl: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank'
+  clientId: 'neuralbank-frontend'
+  clientSecret: 'hg6hlG50pjVtiNpzzPpgSQxCJVPVwNLu'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
+  redirectUri: 'https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback'
+  tokenEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
 
 # --- API Configuration ---
 api:

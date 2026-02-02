@@ -1,0 +1,185 @@
+---
+# Root group - all teams are children of this group
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: backstage
+  description: Root organization group for Developer Hub
+spec:
+  type: organization
+  profile:
+    displayName: Developer Hub Organization
+    email: admin@developer-hub.local
+  children:
+    - developers
+    - devteam1
+    - infrastructure
+    - platformengineers
+    - rhdh
+    - platform-team
+    - application-team
+    - janus-authors
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: developers
+  description: General developers team
+  annotations:
+    # Keycloak group path - this helps the provider sync members
+    keycloak.org/group-path: /developers
+spec:
+  type: team
+  profile:
+    displayName: Developers
+    email: developers@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+  # Do not specify members manually here
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: devteam1
+  description: Development Team 1
+  annotations:
+    keycloak.org/group-path: /devteam1
+spec:
+  type: team
+  profile:
+    displayName: Dev Team 1
+    email: devteam1@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: infrastructure
+  description: Infrastructure team responsible for infrastructure management
+  annotations:
+    keycloak.org/group-path: /infrastructure
+spec:
+  type: team
+  profile:
+    displayName: Infrastructure Team
+    email: infrastructure@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platformengineers
+  description: Platform engineering team responsible for infrastructure, authentication, and developer tools
+  annotations:
+    keycloak.org/group-path: /platformengineers
+spec:
+  type: team
+  profile:
+    displayName: Platform Engineers
+    email: platformengineers@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: rhdh
+  description: Red Hat Developer Hub team
+  annotations:
+    keycloak.org/group-path: /rhdh
+spec:
+  type: team
+  profile:
+    displayName: RHDH Team
+    email: rhdh@developer-hub.local
+  parent: backstage
+  children: []
+  # Members are automatically synced from Keycloak by the keycloakOrg provider
+
+---
+# Legacy groups - mapped to Keycloak groups for synchronization
+# platform-team maps to platformengineers group in Keycloak
+# Note: Members must be manually specified since this is a legacy group name
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  description: Platform engineering team responsible for infrastructure, authentication, and developer tools
+  annotations:
+    # Map to platformengineers group in Keycloak for user synchronization
+    keycloak.org/group-path: /platformengineers
+spec:
+  type: team
+  profile:
+    displayName: Platform Team
+    email: platform-team@developer-hub.local
+  parent: backstage
+  children: []
+  members:
+    # Members from platformengineers Keycloak group
+    - user7-platform
+    - user8-platform
+    # Members from infrastructure Keycloak group
+    - user5-infra
+    - user6-infra
+    # Members from rhdh Keycloak group
+    - user9-rhdh
+    - user10-rhdh
+
+---
+# Legacy group - mapped to developers group in Keycloak
+# application-team maps to developers group in Keycloak
+# Note: Members must be manually specified since this is a legacy group name
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: application-team
+  description: Application development team responsible for business applications
+  annotations:
+    # Map to developers group in Keycloak for user synchronization
+    keycloak.org/group-path: /developers
+spec:
+  type: team
+  profile:
+    displayName: Application Team
+    email: application-team@developer-hub.local
+  parent: backstage
+  children: []
+  members:
+    # Members from developers Keycloak group
+    - user1-dev
+    - user2-dev
+    # Members from devteam1 Keycloak group
+    - user3-devteam1
+    - user4-devteam1
+
+---
+# Janus IDP Authors Group - For templates and documentation authors
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: janus-authors
+  description: Janus IDP authors and contributors
+spec:
+  type: team
+  profile:
+    displayName: Janus Authors
+    email: janus-authors@developer-hub.local
+  parent: backstage
+  children: []
+  # This group is referenced by templates and documentation
+  # Members can be added manually or synced from Keycloak if needed
+
+# User entities are now defined in groups/users.yaml
+# This prevents duplication and ensures single source of truth

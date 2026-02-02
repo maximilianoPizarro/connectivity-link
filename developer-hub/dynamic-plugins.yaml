@@ -15,7 +15,9 @@ data:
         disabled: false
       - package:  ./dynamic-plugins/dist/backstage-community-plugin-catalog-backend-module-keycloak-dynamic
         disabled: false
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed:bs_1.39.1__0.5.7!red-hat-developer-hub-backstage-plugin-lightspeed
+      - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
+        disabled: false
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed
         disabled: false
         pluginConfig:
           lightspeed:
@@ -23,12 +25,14 @@ data:
             # If not provided, the plugin uses built-in default prompts
             prompts:
               - title: 'Getting Started with Red Hat Developer Hub'
-                message: Can you guide me through the first steps to start using Developer Hub
-                  as a developer, like exploring the Software Catalog and adding my
-                  service?
+                message: Can you guide me through the first steps to start using Developer Hub as a developer, like exploring the Software Catalog and adding my service?
           dynamicPlugins:
             frontend:
               red-hat-developer-hub.backstage-plugin-lightspeed:
+                translationResources:
+                  - importName: lightspeedTranslations
+                    module: Alpha
+                    ref: lightspeedTranslationRef
                 appIcons:
                   - name: LightspeedIcon
                     module: LightspeedPlugin
@@ -40,17 +44,69 @@ data:
                     menuItem:
                       icon: LightspeedIcon
                       text: Lightspeed
-      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed-backend:bs_1.39.1__0.5.7!red-hat-developer-hub-backstage-plugin-lightspeed-backend
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed-backend:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed-backend
         disabled: false
         pluginConfig:
           lightspeed:
-            # REQUIRED: Configure LLM servers with OpenAI API compatibility
+            # Connect to lightspeed-core service running as sidecar
+            # lightspeed-core handles communication with LLM servers
             servers:
               - id: ${LLM_SERVER_ID}
-                url: ${LLM_SERVER_URL}
-                token: ${LLM_SERVER_TOKEN}
+                url: "http://localhost:8082"
+                token: ""
     
-            # OPTIONAL: Port for lightspeed service (default: 8080)
-            # servicePort: ${LIGHTSPEED_SERVICE_PORT}
+            # Port for lightspeed-core service (running as sidecar)
+            servicePort: 8082            
       - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+        disabled: false
+      # Kubernetes Backend Plugin
+      # Note: The frontend plugin is included by default in Red Hat Developer Hub
+      # and does not need to be installed separately as an OCI image
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-kubernetes-backend:bs_1.42.5__0.20.1!backstage-plugin-kubernetes-backend
+        disabled: false
+      # MCP server backend plugin (Latest version)
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-plugin-mcp-actions-backend:next__0.1.2!backstage-plugin-mcp-actions-backend
+        disabled: false
+      # MCP tools plugins (Latest versions)
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool:next__0.4.0!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
+        disabled: false
+      # Quickstart Plugin (Frontend)
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-quickstart:next__1.6.2!red-hat-developer-hub-backstage-plugin-quickstart
+        disabled: false
+      # TechDocs MCP Tool - Temporarily disabled due to missing dependency @backstage/plugin-techdocs-node
+      # - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/redhat-developer-hub-backstage-plugin-techdocs-mcp-tool:next__0.1.1!redhat-developer-hub-backstage-plugin-techdocs-mcp-tool
+      #   disabled: false
+      # Nexus Repository Manager Plugin (Frontend) - Latest version
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-nexus-repository-manager:next__1.16.0!backstage-community-plugin-nexus-repository-manager
+        disabled: false
+        pluginConfig:
+          dynamicPlugins:
+            frontend:
+              backstage-community.plugin-nexus-repository-manager:
+                mountPoints:
+                  - mountPoint: entity.page.nexus-repository-manager/cards
+                    importName: NexusRepositoryManagerCard
+                    config:
+                      layout:
+                        gridColumn: "1 / -1"
+                        gridRowStart: 1
+                      if:
+                        allOf:
+                          - isNexusRepositoryManagerAvailable
+      # Tekton Plugin (Frontend) - Latest version
+      - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/backstage-community-plugin-tekton:next__3.29.0!backstage-community-plugin-tekton
+        pluginConfig:
+          dynamicPlugins:
+            frontend:
+              backstage-community.plugin-tekton:
+                mountPoints:
+                  - mountPoint: entity.page.ci/cards
+                    importName: TektonCI
+                    config:
+                      layout:
+                        gridColumn: "1 / -1"
+                        gridRowStart: 1
+                      if:
+                        allOf:
+                          - isTektonCIAvailable
         disabled: false

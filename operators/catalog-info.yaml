@@ -1,0 +1,108 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: operators
+  description: Collection of OpenShift operators managed via Helm chart - Includes RHCL, Service Mesh, Dev Spaces, RHBK, RHDH, and Pipeline operators
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/operators
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/operators
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - operators
+    - helm
+    - olm
+    - operator-lifecycle-manager
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: servicemesh-operator
+  description: Service Mesh Operator subscription
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: devspaces-operator
+  description: Dev Spaces Operator subscription
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: rhcl-operator-subscription
+  description: Red Hat Connectivity Link Operator subscription
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: rhbk-operator
+  description: Red Hat Build of Keycloak Operator subscription
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: rhdh-operator
+  description: Red Hat Developer Hub Operator subscription
+  annotations:
+    argocd/app-name: operators
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: operator-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: operator-platform
+  description: Operator management and lifecycle platform
+spec:
+  owner: maximilianopizarro
+  domain: platform
+

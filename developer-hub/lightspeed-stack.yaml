@@ -1,0 +1,43 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: lightspeed-stack
+  namespace: developer-hub
+  labels:
+    rhdh.redhat.com/ext-config-sync: 'true'
+  annotations:
+    rhdh.redhat.com/backstage-name: developer-hub
+data:
+  lightspeed-stack.yaml: |
+    # Lightspeed Stack Configuration
+    # This configuration is used by the lightspeed-core container
+    
+    name: lightspeed-stack
+    
+    service:
+      host: "0.0.0.0"
+      port: 8082
+    
+    llama_stack:
+      url: "http://localhost:8321"
+    
+    inference:
+      default_provider: vllm
+      default_model: llama-3-2-3b
+    
+    user_data_collection:
+      feedback_storage: "/tmp/data/feedback"
+      transcripts_storage: "/tmp/data/transcripts"
+    
+    conversation_cache:
+      type: postgres
+      postgres:
+        host: lightspeed-postgresql-db-service
+        port: 5432
+        db: lightspeed_conversations
+        user: lightspeed_user
+        password: lightspeed_password_123
+    
+    #mcp_servers:
+    #  - name: backstage-actions
+    #    url: "http://localhost:7007/api/mcp-actions/v1"

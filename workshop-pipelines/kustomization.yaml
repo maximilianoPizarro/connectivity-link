@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - clusterrolebinding.yaml
+  - rolebinding.yaml
+  - scc-rolebinding.yaml
+
+namespace: workshop-pipelines
+

@@ -1,0 +1,56 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: argocd
+  description: OpenShift GitOps (ArgoCD) - GitOps controller for managing Kubernetes applications and infrastructure
+  annotations:
+    backstage.io/view-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    argocd/app-name: openshift-gitops
+    argocd/app-namespace: openshift-gitops
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - argocd
+    - gitops
+    - continuous-delivery
+    - kubernetes
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: gitops-platform
+  providesApis:
+    - argocd-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: argocd-api
+  description: ArgoCD REST API for application management
+spec:
+  type: rest
+  lifecycle: production
+  owner: maximilianopizarro
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: ArgoCD API
+      version: "1.0.0"
+    paths:
+      /api/v1/applications:
+        get:
+          summary: List applications
+      /api/v1/applications/{name}:
+        get:
+          summary: Get application details
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: gitops-platform
+  description: GitOps and continuous delivery platform
+spec:
+  owner: maximilianopizarro
+  domain: devops
+

@@ -1,0 +1,185 @@
+---
+# User entities for Backstage catalog
+# Users are typically created automatically when they first authenticate via Keycloak,
+# but explicit definitions ensure they appear in the catalog and can be referenced as owners
+#
+# IMPORTANT: If you want to use a user as an owner in components/systems/domains,
+# you MUST define them here as a User entity. Otherwise, Backstage will try to resolve
+# them as a Group and show "Entities not found" errors.
+#
+# Example: If you want to use user1-dev as an owner, add:
+# ---
+# apiVersion: backstage.io/v1alpha1
+# kind: User
+# metadata:
+#   name: user1-dev
+#   namespace: default
+# spec:
+#   profile:
+#     displayName: User One
+#     email: user1@developer-hub.local
+#   memberOf:
+#     - developers
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: maximilianopizarro
+  namespace: default
+  description: Maximiliano Pizarro - Platform Engineer and Administrator
+spec:
+  profile:
+    displayName: Maximiliano Pizarro
+    email: maximiliano.pizarro.5@gmail.com
+    picture: https://github.com/maximilianoPizarro.png
+  memberOf:
+    - platform-team
+    - platformengineers
+    - rhdh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user1-dev
+  namespace: default
+  description: User One - Developer
+spec:
+  profile:
+    displayName: User One
+    email: user1@developer-hub.local
+  memberOf:
+    - developers
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user2-dev
+  namespace: default
+  description: User Two - Developer
+spec:
+  profile:
+    displayName: User Two
+    email: user2@developer-hub.local
+  memberOf:
+    - developers
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user3-devteam1
+  namespace: default
+  description: User Three - Dev Team 1
+spec:
+  profile:
+    displayName: User Three
+    email: user3@developer-hub.local
+  memberOf:
+    - devteam1
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user4-devteam1
+  namespace: default
+  description: User Four - Dev Team 1
+spec:
+  profile:
+    displayName: User Four
+    email: user4@developer-hub.local
+  memberOf:
+    - devteam1
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user5-infra
+  namespace: default
+  description: User Five - Infrastructure Team
+spec:
+  profile:
+    displayName: User Five
+    email: user5@developer-hub.local
+  memberOf:
+    - platform-team
+    - infrastructure
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user6-infra
+  namespace: default
+  description: User Six - Infrastructure Team
+spec:
+  profile:
+    displayName: User Six
+    email: user6@developer-hub.local
+  memberOf:
+    - platform-team
+    - infrastructure
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user7-platform
+  namespace: default
+  description: User Seven - Platform Engineers
+spec:
+  profile:
+    displayName: User Seven
+    email: user7@developer-hub.local
+  memberOf:
+    - platform-team
+    - platformengineers
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user8-platform
+  namespace: default
+  description: User Eight - Platform Engineers
+spec:
+  profile:
+    displayName: User Eight
+    email: user8@developer-hub.local
+  memberOf:
+    - platform-team
+    - platformengineers
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user9-rhdh
+  namespace: default
+  description: User Nine - RHDH Team
+spec:
+  profile:
+    displayName: User Nine
+    email: user9@developer-hub.local
+  memberOf:
+    - platform-team
+    - rhdh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: user10-rhdh
+  namespace: default
+  description: User Ten - RHDH Team
+spec:
+  profile:
+    displayName: User Ten
+    email: user10@developer-hub.local
+  memberOf:
+    - platform-team
+    - rhdh
+

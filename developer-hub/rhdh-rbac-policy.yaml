@@ -8,11 +8,37 @@ metadata:
     rhdh.redhat.com/backstage-name: developer-hub
 data:
   rbac-policy.csv: |
+    # ==========================================================
+    # 1. BASE PERMISSIONS FOR ALL AUTHENTICATED USERS
+    # ==========================================================
+    # The 'role:default/authenticated' role is automatically assigned to any logged-in user.
+    # These permissions apply to ALL users
+    
+    # Lightspeed permissions for ALL users
+    p, role:default/authenticated, lightspeed.chat.read, read, allow
+    p, role:default/authenticated, lightspeed.chat.create, create, allow
+    p, role:default/authenticated, lightspeed.chat.delete, delete, allow
+    
+    # Catalog permissions for ALL users
+    p, role:default/authenticated, catalog-entity, read, allow
+    p, role:default/authenticated, catalog.location, read, allow
+    
+    # Scaffolder permissions for ALL users
+    p, role:default/authenticated, scaffolder-template, read, allow
+    p, role:default/authenticated, scaffolder.task, read, allow
+    p, role:default/authenticated, scaffolder.task, create, allow
+    p, role:default/authenticated, scaffolder.action.execute, use, allow
+    
+    # Adoption Insights permissions for ALL users
+    p, role:default/authenticated, adoption-insights.events.read, read, allow
+
+    # ==========================================================
+    # 2. PLATFORM ENGINEER ROLE (Full Admin Permissions)
+    # ==========================================================
     # Define a comprehensive 'admin' role
-    p, role:default/platformengineer, lightspeed.chat, read, allow
-    p, role:default/platformengineer, lightspeed.chat, create, allow
-    p, role:default/platformengineer, lightspeed.chat, update, allow
-    p, role:default/platformengineer, lightspeed.chat, delete, allow
+    p, role:default/platformengineer, lightspeed.chat.read, read, allow
+    p, role:default/platformengineer, lightspeed.chat.create, create, allow
+    p, role:default/platformengineer, lightspeed.chat.delete, delete, allow
 
     p, role:default/platformengineer, catalog-entity, read, allow
     p, role:default/platformengineer, catalog-entity, create, allow
@@ -31,10 +57,45 @@ data:
     p, role:default/platformengineer, scaffolder.action.execute, use, allow
 
     p, role:default/platformengineer, permission.policy, read, allow
+    
+    # Adoption Insights permissions for Platform Engineers
+    p, role:default/platformengineer, adoption-insights.events.read, read, allow
 
-    # Assign maximilianopizarro to the new 'platformengineer' role
+    # ==========================================================
+    # 3. USER ROLE ASSIGNMENTS
+    # ==========================================================
+    # Assign users to roles based on their groups
+    # Following the pattern: g, user:default/<username>, role:default/<rolename>
+    
+    # Platform Engineers (Full Admin Permissions)
+    # Users in infrastructure, platformengineers, and rhdh groups get admin role
     g, user:default/maximilianopizarro, role:default/platformengineer
+    g, user:default/user5-infra, role:default/platformengineer
+    g, user:default/user6-infra, role:default/platformengineer
+    g, user:default/user7-platform, role:default/platformengineer
+    g, user:default/user8-platform, role:default/platformengineer
+    g, user:default/user9-rhdh, role:default/platformengineer
+    g, user:default/user10-rhdh, role:default/platformengineer
+    
+    # Developers (Basic Users - inherit from authenticated role)
+    # user1-dev and user2-dev inherit permissions from role:default/authenticated
+    # They already have full Lightspeed permissions through authenticated role
+    g, user:default/user1-dev, role:default/authenticated
+    g, user:default/user2-dev, role:default/authenticated
+    
+    # Dev Team 1 (Basic Users - inherit from authenticated role)
+    # user3-devteam1 and user4-devteam1 inherit permissions from role:default/authenticated
+    # They already have full Lightspeed permissions through authenticated role
+    g, user:default/user3-devteam1, role:default/authenticated
+    g, user:default/user4-devteam1, role:default/authenticated
+    
+    # Group assignments (Keycloak groups)
+    # Assign rhdh group to platformengineer role (has all permissions including Adoption Insights)
+    g, group:default/rhdh, role:default/platformengineer
 
+    # ==========================================================
+    # 4. LEGACY ROLES (Optional - for backward compatibility)
+    # ==========================================================
     # If you still want the 'rhdhpai-users' role for other users, keep its definition:
     p, role:default/rhdhpai-users, lightspeed.chat.read, read, allow
     p, role:default/rhdhpai-users, lightspeed.chat.create, create, allow
@@ -49,6 +110,9 @@ data:
     p, role:default/rhdhpai-users, scaffolder-template, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.read, read, allow
     p, role:default/rhdhpai-users, scaffolder.task.create, create, allow
+    
+    # Adoption Insights permissions for rhdhpai-users
+    p, role:default/rhdhpai-users, adoption-insights.events.read, read, allow
 
     # If you still need 'template-executers' for other users, keep its definition:
     p, role:default/template-executers, scaffolder.action.execute, use, allow

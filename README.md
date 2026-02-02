@@ -68,7 +68,37 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 
 ## 🔧 Configuration: Pre-configure DNS with ApplicationSets
 
-**⚠️ Important**: Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
+**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
+
+Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
+
+### Automatic Domain Update
+
+We provide a bash script to automatically replace all cluster domain references:
+
+```bash
+chmod +x update-cluster-domain.sh
+./update-cluster-domain.sh <your-cluster-base-domain>
+```
+
+**Example:**
+```bash
+./update-cluster-domain.sh apps.your-cluster.example.com
+```
+
+The script will:
+- Find all YAML files containing the demo cluster domain
+- Replace them with your cluster's base domain
+- Show a summary of updated files
+
+### Manual Domain Update
+
+If you prefer to update manually, search and replace `apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com` with your cluster's base domain in the following locations:
+
+- `neuralbank-stack/values.yaml` - Keycloak and application URLs
+- `rhcl-operator/` - OIDC policies and route configurations
+- `servicemeshoperator3/` - Gateway route hostnames
+- `rhbk/` - Keycloak hostname and redirect URIs
 
 ### Finding Your Cluster Domain
 
@@ -345,9 +375,18 @@ Before proceeding, **pre-configure your cluster domain** in the ApplicationSet d
 
 Create the ApplicationSet / ArgoCD instance using the top-level manifest:
 
+**Option 1: Apply via ArgoCD UI (Recommended)**
+1. Open the OpenShift GitOps (ArgoCD) console
+2. Go to Settings > Repositories and ensure this repository is added
+3. Create a new Application pointing to this repository and the `applicationset-instance.yaml` file
+4. ArgoCD will process the ApplicationSet and create all applications
+
+**Option 2: Apply via kubectl (if YAML validation passes)**
 ```bash
 oc apply -f applicationset-instance.yaml
 ```
+
+**Note:** If you encounter YAML parsing errors, it's because the ApplicationSet uses Go templates (`{{- if eq .app_type "rbac"}}`) which are processed by ArgoCD, not by Kubernetes. In this case, use Option 1 (ArgoCD UI) or apply the ApplicationSet as an ArgoCD Application.
 
 - `applicationset-instance.yaml` creates/instantiates the applications defined in this repo and points them to this repository for ArgoCD to reconcile
 - After applying, open the OpenShift GitOps (ArgoCD) console to view status and sync applications if needed
@@ -439,6 +478,7 @@ oc create route edge neuralbank-external-route \
 
 - [`applicationset-instance.yaml`](applicationset-instance.yaml) — ArgoCD ApplicationSet/instance manifest that ties multiple applications together
 - [`update-cluster-domain.sh`](update-cluster-domain.sh) — Bash script to automatically update cluster domain references (legacy method; **recommended**: use ApplicationSets with Kustomize patches as described in [Configuration](#-configuration-pre-configure-dns-with-applicationsets))
+- [`uninstall-applicationset.sh`](uninstall-applicationset.sh) — Bash script to gracefully uninstall all applications and operators
 
 ### Developer Hub (`developer-hub/`)
 
@@ -643,6 +683,18 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 
 - [`namespaces/namespaces.yaml`](namespaces/namespaces.yaml) — Kubernetes namespace definitions for the demo
 
+### Workshop Pipelines (`workshop-pipelines/`)
+
+Helm-based deployment configuration for the workshop-pipelines chart from an external Helm repository:
+
+- [`workshop-pipelines/values.yaml`](workshop-pipelines/values.yaml) — Custom values file for the workshop-pipelines Helm chart
+- [`workshop-pipelines/README.md`](workshop-pipelines/README.md) — Documentation for the workshop-pipelines deployment
+
+**Key Features:**
+- Deployed from external Helm repository: `https://maximilianopizarro.github.io/workshop-pipelines/`
+- Customizable via `values.yaml` in this repository
+- Managed by ArgoCD through ApplicationSet with sync_wave: 4
+
 ## 📝 Notes
 
 - The demo configuration uses a Keycloak operator CR ([`rhbk/keycloak.yaml`](rhbk/keycloak.yaml)) to bootstrap an instance and wire it to a PostgreSQL database
@@ -667,4 +719,59 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
   <img src="https://maximilianopizarro.github.io/connectivity-link/rhcl-policy-topogy.png" width="900"/>
 </div>
 
----
+## 🗑️ Uninstallation
+
+To gracefully uninstall all applications and operators generated by the ApplicationSet, use the provided uninstallation script:
+
+```bash
+chmod +x uninstall-applicationset.sh
+./uninstall-applicationset.sh
+```
+
+### Uninstallation Options
+
+The script provides several options for different uninstallation scenarios:
+
+**Dry-run mode** (preview what would be deleted without making changes):
+```bash
+./uninstall-applicationset.sh --dry-run
+```
+
+**Force mode** (skip confirmation prompts):
+```bash
+./uninstall-applicationset.sh --force
+```
+
+**Complete cleanup** (also removes operator subscriptions and namespaces):
+```bash
+./uninstall-applicationset.sh --clean-all
+```
+
+**Combined options**:
+```bash
+./uninstall-applicationset.sh --force --clean-all
+```
+
+### What the Script Does
+
+The uninstallation script performs the following operations in reverse order of installation (sync_wave 5 → 1):
+
+1. **Removes ArgoCD Applications** in reverse sync order:
+   - `neuralbank-stack` (sync_wave: 5)
+   - `workshop-pipelines` (sync_wave: 4)
+   - `servicemeshoperator3` and `rhcl-operator` (sync_wave: 3)
+   - `developer-hub`, `rhbk`, and `operators` (sync_wave: 2)
+   - `namespaces` (sync_wave: 1)
+
+2. **Removes the ApplicationSet** instance
+
+3. **Optional cleanup** (with `--clean-all` flag):
+   - Removes operator subscriptions (rhcl-operator, servicemeshoperator3, devspaces, openshift-pipelines-operator-rh)
+   - Deletes namespaces (neuralbank-stack, workshop-pipelines, developer-hub, rhbk-operator, kuadrant-operator, rhdh-operator, istio-system)
+
+### Important Notes
+
+- The script waits for ArgoCD sync operations to complete before deleting applications
+- With `--clean-all`, namespaces may take time to fully delete due to finalizers
+- You can verify remaining resources with: `oc get applications -n openshift-gitops`
+- Check namespace deletion status with: `oc get namespaces`

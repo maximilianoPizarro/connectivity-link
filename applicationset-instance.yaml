@@ -1,67 +1,285 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: connectivity-link-demo
+  name: connectivity-infra-all-in-one
   namespace: openshift-gitops
 spec:
+  goTemplate: true
   generators:
     - list:
         elements:
+          # Infrastructure - Plain applications
+          - name: openshift-gitops
+            namespace: openshift-gitops
+            path: openshift-gitops
+            sync_wave: "0"
+            app_type: plain
           - name: namespaces
             namespace: openshift-gitops
             path: namespaces
             sync_wave: "1"
-   
+            app_type: plain
           - name: operators
             namespace: openshift-gitops
             path: operators
             sync_wave: "2"
-
-          - name: rhbk
-            namespace: rhbk-operator
-            path: rhbk
-            sync_wave: "2"
-      
+            app_type: plain
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
             sync_wave: "2"
-
+            app_type: plain
           - name: servicemeshoperator3
             namespace: openshift-operators
             path: servicemeshoperator3
             sync_wave: "3"
-
+            app_type: plain
           - name: rhcl-operator
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
-
+            app_type: plain
+          # RBAC applications
+          - name: workshop-pipelines-rbac
+            namespace: workshop-pipelines
+            path: workshop-pipelines
+            sync_wave: "2"
+            app_type: rbac
+          # RHBK with kustomize patches
+          - name: rhbk
+            namespace: rhbk-operator
+            path: rhbk
+            sync_wave: "2"
+            app_type: kustomize
+            keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+            app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+          # Helm applications - Internal repo
           - name: neuralbank-stack
             namespace: neuralbank-stack
             path: neuralbank-stack
             sync_wave: "5"
-            sourceType: Helm
-            # Opcional
-            # helm:
-            #   valueFiles:
-            #     - helm-values.yaml            
+            app_type: helm-internal
+            keycloak_host: rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+            app_host: neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+          # DotNet Demo Application
+          - name: dotnet-demo
+            namespace: dotnet-demo
+            path: dotnet-demo
+            sync_wave: "6"
+            app_type: plain
   template:
     metadata:
-      name: '{{name}}'   
+      name: '{{.name}}'
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
-        path: '{{path}}'
+        path: '{{.path}}'
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{namespace}}'
+        namespace: '{{.namespace}}'
       syncPolicy:
         automated:
           selfHeal: true
           prune: true
         syncOptions:
           - CreateNamespace=true
-          - PruneLast=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-apps-helm-external
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: workshop-pipelines
+            namespace: workshop-pipelines
+            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
+            chart: workshop-pipelines
+            chartVersion: "0.1.6"
+            sync_wave: "5"
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{.helmRepoURL}}'
+        targetRevision: '{{.chartVersion}}'
+        chart: '{{.chart}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: librechat-rbac
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: librechat-rbac
+            namespace: librechat
+            path: librechat-rbac
+            sync_wave: "6"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: librechat-helm
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: librechat
+            namespace: librechat
+            path: librechat
+            sync_wave: "7"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        helm:
+          valueFiles:
+            - helm-values.yaml
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+      ignoreDifferences:
+        - group: apps
+          kind: StatefulSet
+          jsonPointers:
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1log-dir
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1mongodb
+        - group: apps
+          kind: StatefulSet
+          name: librechat-postgresql
+          jsonPointers:
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1postgresql
+            - /spec/template/spec/containers/0/securityContext/seLinuxOptions
+            - /spec/template/spec/securityContext/seLinuxOptions
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: redhat-cop
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: nexus2
+            namespace: nexus2
+            path: nexus2
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: devspaces
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"  
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: devspaces
+            namespace: devspaces
+            path: devspaces
+  template:
+    metadata:
+      name: '{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://gitlab.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false  # Deshabilitar prune para evitar que ArgoCD elimine la CRD instalada por el operador
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+      ignoreDifferences:
+        - group: apiextensions.k8s.io
+          kind: CustomResourceDefinition
+          name: checlusters.org.eclipse.che
+

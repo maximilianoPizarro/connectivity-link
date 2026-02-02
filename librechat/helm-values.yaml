@@ -1,0 +1,253 @@
+librechat:
+  global:
+    librechat:
+      existingSecretApiKey: OPENAI_API_KEY
+      existingSecretName: librechat-secretenv
+  image:
+    pullPolicy: IfNotPresent
+    registry: quay.io
+    repository: maximilianopizarro/redhat-chat
+    tag: 'latest'
+  imagePullSecrets: []
+
+  route:
+    enabled: true  
+    host: 'librechat.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+
+  ingress:
+    annotations: {}
+    className: ''
+    enabled: false
+    hosts:
+      - host: librechat.openshiftapps.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+  # ServiceAccount configuration for LibreChat subchart deployment
+  # The chart creates librechat-sa with Role and RoleBinding automatically
+  # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
+  serviceAccount:
+    create: true
+    name: librechat-sa
+    automountServiceAccountToken: true
+  serviceAccountName: librechat-sa
+  librechat:
+    namespace: librechat
+    persistence:
+      enabled: false  # All volumes configured as ephemeral (emptyDir)
+      storageClassName: gp3-csi
+      uploads:
+        enabled: false  # Ephemeral volume
+      data:
+        enabled: false  # Ephemeral volume
+      logs:
+        enabled: false  # Ephemeral volume
+      apiLogs:
+        enabled: false  # Ephemeral volume
+    configEnv:
+      SEARCH: 'true'
+      MEILI_NO_ANALYTICS: 'true'
+      MEILI_MASTER_KEY: librechat
+      EMBEDDINGS_PROVIDER: ollama
+      OLLAMA_BASE_URL: http://librechat-ollama:11434/v1
+      EMBEDDINGS_MODEL: nomic-embed-text
+      DEBUG_MCP: 'true'
+      DEBUG_CONSOLE: 'true'
+      RHDH_HOST: https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+      RHDH_MCP_TOKEN: backstage
+      LLM_SERVER_ID: llama-3-2-3b
+      LLM_SERVER_TOKEN: 0d730b5c1bc2bc24fd657bf4ded0ba72
+      LLM_SERVER_URL: https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1
+      # OPENAI_API_KEY is loaded from secret librechat-secretenv via global.existingSecretApiKey
+      # Do not set it here in configEnv to avoid conflicts
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      CREDS_IV: 118a16ffe26a8712d0adb5b3cf8229ca
+      CREDS_KEY: 99f12ba0ea72257aa78df8e99c9be801716a7e16fe77e7510a914112528aa05c
+      DEBUG_PLUGINS: 'true'
+      JWT_REFRESH_SECRET: 8a447c316c171f5df8e304c085187b6d10e4eeef5174137d4ad4d2cdd956f5e7
+      JWT_SECRET: 83096493d70e22561f84191c24f459d72e9b41f4c8657fe43aae8cb9b0fe1fa4
+      ALLOW_EMAIL_LOGIN: 'true'
+      ALLOW_REGISTRATION: 'true'
+      ALLOW_SOCIAL_LOGIN: 'true'
+      DOMAIN_SERVER: 'https://librechat.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+      DOMAIN_SERVER: 'https://librechat.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+      OPENID_CALLBACK_URL: /oauth/openid/callback
+      OPENID_LOGIN_ENABLED: 'true'
+      OPENID_SESSION_SECRET: sessionsecret
+      OPENID_ISSUER: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/backstage'
+      OPENID_USE_END_SESSION_ENDPOINT: 'true'
+      OPENID_CLIENT_ID: backstage
+      OPENID_CLIENT_SECRET: FfzjFAAuQUGjZDtKUErTx9fOaqF7RV6m
+      SOCIAL_LOGIN_ENABLED: 'true'
+      OPENID_SCOPE: openid profile email
+      OPENID_REQUIRED_ROLE_TOKEN_KIND: access
+      OPENID_REQUIRED_ROLE_PARAMETER_PATH: realm_access.roles
+      # User profile picture configuration
+      # LibreChat will automatically use the 'picture' claim from the OIDC token
+      # Make sure Keycloak is configured to include the 'picture' claim in the token
+      OPENID_USERNAME_CLAIM: preferred_username
+      OPENID_NAME_CLAIM: name
+      OPENID_EMAIL_CLAIM: email
+      OPENID_PICTURE_CLAIM: picture    
+      PLUGIN_MODELS: >-
+        gpt-4,gpt-4-turbo-preview,gpt-4-0125-preview,gpt-4-1106-preview,gpt-4-0613,gpt-3.5-turbo,gpt-3.5-turbo-0125,gpt-3.5-turbo-1106,gpt-3.5-turbo-0613,llama-3-1-8b-instruct
+    # ConfigMap with config.yaml is now created in templates/configmap-librechat-config.yaml
+    # The ConfigMap is mounted as a volume (see volumes section below)
+    configYamlContent: ''
+    existingConfigYaml: ''
+    existingSecretName: librechat-secretenv
+    # ServiceAccount configuration for LibreChat deployment
+    # The chart creates librechat-sa with Role and RoleBinding automatically
+    # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
+    serviceAccount:
+      create: true
+      name: librechat-sa
+      automountServiceAccountToken: true
+    # Also set serviceAccountName directly for the deployment
+    serviceAccountName: librechat-sa
+    imageVolume:
+      accessModes: ReadWriteOnce
+      enabled: true
+      size: 10G
+  librechat-rag-api:
+    embeddingsProvider: openai
+    enabled: true
+  lifecycle: {}
+  meilisearch:
+    auth:
+      existingMasterKeySecret: librechat-secretenv
+    enabled: true
+    image:
+      tag: v1.7.3
+    persistence:
+      enabled: true
+      storageClass: ''
+    serviceAccountName: librechat-meilisearch-sa
+  postgresql:
+    auth:
+      database: librechat-vectordb
+      username: postgres
+      password: postgres 
+    enabled: true
+    image:
+      registry: ghcr.io
+      repository: bat-bs/bitnami-pgvector
+      tag: pg16
+    # ServiceAccount configuration for OpenShift SCC anyuid
+    # The ServiceAccount name must match: {{ .Release.Name }}-postgresql (i.e., librechat-postgresql)
+    serviceAccount:
+      create: true
+      name: librechat-postgresql
+      automountServiceAccountToken: true
+    primary:
+      # Override securityContext - keep fsGroup for volume permissions
+      # Bitnami PostgreSQL needs fsGroup: 1001 for /bitnami/postgresql/data
+      podSecurityContext:
+        # fsGroup is needed for volume permissions with SCC anyuid
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        # Remove other fields to let OpenShift SCC anyuid handle them
+        supplementalGroups: null
+        sysctls: null
+      containerSecurityContext:
+        # Disable containerSecurityContext to let OpenShift SCC anyuid handle it
+        enabled: false
+      initdb:
+        scripts:
+          create-librechat-db.sql: |
+            -- Ensure the database exists
+            CREATE DATABASE "librechat-vectordb" WITH OWNER postgres;
+
+            -- Connect to the new database and create the pgvector extension
+            \c librechat-vectordb
+            CREATE EXTENSION IF NOT EXISTS vector;
+
+            -- CREATE USER postgres WITH PASSWORD 'postgres';
+            -- GRANT ALL PRIVILEGES ON DATABASE "librechat-vectordb" TO postgres;
+  mongodb:
+    image:
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: mongo
+      tag: '8.0.13'
+    auth:
+      enabled: false
+    databases:
+      - LibreChat
+    enabled: true
+    # ServiceAccount configuration for OpenShift SCC anyuid
+    # The ServiceAccount name must match: {{ .Release.Name }}-mongodb (i.e., librechat-mongodb)
+    serviceAccount:
+      create: true
+      name: librechat-mongodb
+      automountServiceAccountToken: true
+    # Disable securityContext to let OpenShift SCC handle it
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
+    initContainersSecurityContext:
+      enabled: false
+    extraVolumeMounts:
+      - name: datadir
+        mountPath: /data/db
+  ollama:
+    enabled: true
+
+  nameOverride: ''
+  nodeSelector: {}
+  podAnnotations: {}
+  podLabels: {}
+  # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
+  podSecurityContext: {}
+  # ServiceAccount for LibreChat deployment - must match RoleBinding in librechat-rbac
+  serviceAccountName: librechat-sa
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+  securityContext: {}
+  service:
+    annotations: {}
+    port: 3080
+    type: ClusterIP
+  tolerations: []
+  updateStrategy:
+    type: RollingUpdate
+  volumeMounts:
+    - name: librechat-data-volume
+      mountPath: /app/data
+    - name: librechat-uploads-volume
+      mountPath: /app/uploads
+    - name: librechat-logs-volume
+      mountPath: /app/logs
+    - name: librechat-api-logs-volume
+      mountPath: /app/api/logs
+    - name: keycloak-auth-config
+      mountPath: /app/api/data/auth.json
+      subPath: auth.json
+      readOnly: true
+    - name: librechat-config
+      mountPath: /app/librechat.yaml
+      subPath: librechat.yaml
+      readOnly: true
+  volumes:
+    - name: librechat-uploads-volume
+      emptyDir: {}  # Ephemeral volume
+    - name: librechat-data-volume
+      emptyDir: {}  # Ephemeral volume
+    - name: librechat-logs-volume
+      emptyDir: {}  # Ephemeral volume
+    - name: librechat-api-logs-volume
+      emptyDir: {}  # Ephemeral volume
+    - name: keycloak-auth-config
+      configMap:
+        name: librechat-keycloak-auth
+    - name: librechat-config
+      configMap:
+        name: librechat-config  # This will be created by the template configmap-librechat-config.yaml

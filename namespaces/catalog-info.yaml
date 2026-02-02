@@ -1,0 +1,31 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: namespaces
+  description: Kubernetes namespace definitions for the connectivity-link demo infrastructure
+  annotations:
+    argocd/app-name: namespaces
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/namespaces
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/namespaces
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - namespaces
+    - kubernetes
+    - infrastructure
+spec:
+  type: infrastructure
+  owner: maximilianopizarro
+  system: infrastructure-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: infrastructure-platform
+  description: Infrastructure and resource management platform
+spec:
+  owner: maximilianopizarro
+  domain: infrastructure
+

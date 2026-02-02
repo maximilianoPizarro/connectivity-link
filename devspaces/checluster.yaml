@@ -1,0 +1,53 @@
+apiVersion: org.eclipse.che/v2
+kind: CheCluster
+metadata:
+  name: devspaces
+  namespace: devspaces
+  labels:
+    app.kubernetes.io/instance: devspaces
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous=true
+spec:
+  components:
+    cheServer:
+      debug: false
+      deployment:
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+    pluginRegistry:
+      openVSXURL: "https://open-vsx.org"
+    devfileRegistry:
+      disableInternalRegistry: false
+      externalDevfileRegistries:
+        - url: "https://registry.devfile.io"
+  devEnvironments:
+    defaultNamespace:
+      autoProvision: true
+      template: "<username>-devspaces"
+    defaultComponents:
+      - name: universal-developer-image
+        container:
+          image: registry.redhat.io/devspaces/udi-rhel9:latest
+          memoryLimit: "8Gi"
+          memoryRequest: "4Gi"
+          cpuLimit: "4000m"
+          cpuRequest: "2000m"
+    defaultEditor: che-incubator/che-code/latest
+    disableContainerBuildCapabilities: false
+    secondsOfInactivityBeforeIdling: 3600
+    storage:
+      pvcStrategy: per-user
+  security:
+    containerSecurityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        add:
+          - SETGID
+          - SETUID

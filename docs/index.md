@@ -74,7 +74,37 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 
 ## 🔧 Configuration: Pre-configure DNS with ApplicationSets
 
-**⚠️ Important**: Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
+**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
+
+Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
+
+### Automatic Domain Update
+
+We provide a bash script to automatically replace all cluster domain references:
+
+```bash
+chmod +x update-cluster-domain.sh
+./update-cluster-domain.sh <your-cluster-base-domain>
+```
+
+**Example:**
+```bash
+./update-cluster-domain.sh apps.your-cluster.example.com
+```
+
+The script will:
+- Find all YAML files containing the demo cluster domain
+- Replace them with your cluster's base domain
+- Show a summary of updated files
+
+### Manual Domain Update
+
+If you prefer to update manually, search and replace `apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com` with your cluster's base domain in the following locations:
+
+- `neuralbank-stack/values.yaml` - Keycloak and application URLs
+- `rhcl-operator/` - OIDC policies and route configurations
+- `servicemeshoperator3/` - Gateway route hostnames
+- `rhbk/` - Keycloak hostname and redirect URIs
 
 ### Finding Your Cluster Domain
 

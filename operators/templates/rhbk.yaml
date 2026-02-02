@@ -18,6 +18,8 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: stable-v26.2
+  startingCSV: rhbk-operator.v26.2.11-opr.1
+  installPlanApproval: Automatic
   name: rhbk-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace

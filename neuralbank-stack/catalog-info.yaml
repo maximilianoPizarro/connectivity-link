@@ -1,0 +1,121 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: neuralbank-stack
+  namespace: default
+  description: NeuralBank demo application stack - Full-stack application with frontend, backend, database, and proxy
+  annotations:
+    backstage.io/view-url: https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    argocd/app-name: neuralbank-stack
+    argocd/app-namespace: openshift-gitops
+    # ArgoCD URL - Update with your cluster domain
+    # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/neuralbank-stack
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/neuralbank-stack
+    gitlab.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - neuralbank
+    - demo-app
+    - full-stack
+    - postgresql
+    - helm
+    - frontend
+    - backend
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: neuralbank-system
+  providesApis:
+    - neuralbank-api
+  consumesApis:
+    - keycloak-api
+  dependsOn:
+    - component:rhbk/keycloak
+    - component:rhcl-operator/gateway
+    - component:servicemeshoperator3/istio-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: neuralbank-backend
+  namespace: default
+  description: NeuralBank backend API service
+  annotations:
+    argocd/app-name: neuralbank-stack
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: neuralbank-system
+  providesApis:
+    - neuralbank-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: neuralbank-frontend
+  namespace: default
+  description: NeuralBank frontend web application
+  annotations:
+    argocd/app-name: neuralbank-stack
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: website
+  lifecycle: production
+  owner: maximilianopizarro
+  system: neuralbank-system
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: neuralbank-database
+  namespace: default
+  description: NeuralBank PostgreSQL database
+  annotations:
+    argocd/app-name: neuralbank-stack
+    argocd/app-namespace: openshift-gitops
+spec:
+  type: database
+  lifecycle: production
+  owner: maximilianopizarro
+  system: neuralbank-system
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: neuralbank-api
+  namespace: default
+  description: NeuralBank REST API
+spec:
+  type: rest
+  lifecycle: production
+  owner: maximilianopizarro
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: NeuralBank API
+      version: "1.0.0"
+    paths:
+      /api:
+        get:
+          summary: Get API data
+      /q:
+        get:
+          summary: Query endpoint
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: neuralbank-system
+  namespace: default
+  description: NeuralBank application system
+spec:
+  owner: maximilianopizarro
+  domain: banking
+

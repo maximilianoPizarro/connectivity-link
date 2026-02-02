@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: librechat-keycloak-auth
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: config
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+data:
+  auth.json: |
+    {
+      "realm": "backstage",
+      "auth-server-url": "https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/",
+      "ssl-required": "external",
+      "resource": "backstage",
+      "credentials": {
+        "secret": "FfzjFAAuQUGjZDtKUErTx9fOaqF7RV6m"
+      },
+      "confidential-port": 0
+    }
+

@@ -1,0 +1,24 @@
+apiVersion: v2
+name: librechat
+description: A Helm chart for deploying LibreChat, an open-source, AI-powered chat application
+type: application
+version: "v0.8.1-rc2"
+appVersion: "v0.8.1-rc2"
+home: https://maximilianopizarro.github.io/librechat/
+icon: https://raw.githubusercontent.com/maximilianoPizarro/librechat/main/logo-rhel.png
+keywords:
+  - librechat
+  - chat
+  - ai
+  - llm
+  - chatbot
+  - open-source
+maintainers:
+  - name: Carlos Estay
+    email: cestay@redhat.com
+  - name: Maximiliano Pizarro
+    email: mapizarr@redhat.com
+dependencies:
+  - name: librechat
+    version: "1.8.15"
+    repository: "https://charts.openshift.io"

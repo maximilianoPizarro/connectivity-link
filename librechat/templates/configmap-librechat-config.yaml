@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Values.librechat.namespace | default .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: config
+    app.kubernetes.io/part-of: librechat
+    app.kubernetes.io/managed-by: Helm
+data:
+  librechat.yaml: |-
+    version: 1.0.3
+    cache: true
+    mcpServers:
+      backstage-actions:
+        type: streamable-http
+        url: "https://backstage-developer-hub-developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/api/mcp-actions/v1"
+        description: "MCP agent based on the Backstage MCP Actions plugin. This agent enables interaction with your Red Hat Developer Hub (Backstage) instance, allowing you to query catalog entities, manage components, view Kubernetes resources, check Tekton pipeline status, and perform various Backstage operations. Example prompts: 'List all components in the catalog', 'Show me the status of the dotnet-demo pipeline', 'What Kubernetes resources are deployed for the dotnet-demo application?', 'Create a new component in Backstage', 'Show me all services owned by the platform-team'."
+        headers:
+          Authorization: "Bearer backstage"
+        startup: true
+    fileConfig:
+      endpoints:
+        assistants:
+          fileLimit: 5
+          fileSizeLimit: 10  # Maximum size for an individual file in MB
+          totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
+          supportedMimeTypes:
+            - "image/.*"
+            - "application/pdf"
+        openAI:
+          disabled: true  # Disables file uploading to the OpenAI endpoint
+        default:
+          totalSizeLimit: 20
+        YourCustomEndpointName:
+          fileLimit: 2
+          fileSizeLimit: 5
+      serverFileSizeLimit: 100  # Global server file size limit in MB
+      avatarSizeLimit: 2  # Limit for user avatar image size in MB
+    rateLimits:
+      fileUploads:
+        ipMax: 100
+        ipWindowInMinutes: 60  # Rate limit window for file uploads per IP
+        userMax: 50
+        userWindowInMinutes: 60  # Rate limit window for file uploads per user
+    endpoints:
+      assistants:
+        disableBuilder: false  # Disable Assistants Builder Interface by setting to `true`
+        pollIntervalMs: 750  # Polling interval for checking assistant updates
+        timeoutMs: 180000  # Timeout for assistant operations
+        fileLimit: 5
+        fileSizeLimit: 10   # Maximum size for an individual file in MB
+        totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
+        supportedMimeTypes:
+          - "image/.*"
+          - "application/pdf"
+      custom:
+        - name: "Ollama"
+          apiKey: "IiI="
+          baseURL: "http://librechat-ollama:11434/v1" # Adjust if Ollama is on a different host
+          models:
+            default: ["llama2"] # Example models, fetch from your Ollama instance
+            fetch: true
+          titleConvo: true
+          titleModel: "llama2"
+          summarize: false
+          summaryModel: "llama2"
+        - name: "llama-3-2-3b"
+          apiKey: "0d730b5c1bc2bc24fd657bf4ded0ba72"
+          baseURL: "https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1"
+          models:
+            default: ["llama-3-2-3b"]
+          titleConvo: true
+          titleModel: "llama-3-2-3b"
+          summarize: false
+          summaryModel: "llama-3-2-3b"
+

@@ -9,12 +9,21 @@ metadata:
 data:
   app-config-rhdh.yaml: |
     app:
-      title: AI Dev Developer Hub
+      title: Developer Lightspeed Dev Preview
       baseUrl: "${RHDH_BASE_URL}"
+      branding:
+        fullLogo: "${RHDH_FULL_LOGO}"
+        iconLogo: "${RHDH_ICON_LOGO}"
+
     integrations:
       github:
         - host: github.com
           token: ${GITHUB_INTEGRATION}
+      gitlab:
+        - host: gitlab.com
+          # Token is required to avoid rate limits when using multiple providers
+          # Set GITLAB_INTEGRATION secret with your GitLab personal access token
+          token: ${GITLAB_INTEGRATION}
     auth:
       environment: production
       session:
@@ -37,8 +46,17 @@ data:
             options:
               token: ${BACKEND_SECRET}
               subject: admin-curl-access
+          - type: static
+            options:
+              token: ${MCP_TOKEN}
+              subject: mcp-clients              
         keys:
           - secret: "${BACKEND_SECRET}"
+          - secret: "${MCP_TOKEN}"
+      actions:
+        pluginSources:
+          - software-catalog-mcp-tool
+          - techdocs-mcp-tool
       baseUrl: "${RHDH_BASE_URL}"
       cors:
         origin: "${RHDH_BASE_URL}"
@@ -47,8 +65,28 @@ data:
         img-src:
           - "'self'"
           - "data:"
+          - https://img.shields.io
           - https://img.freepik.com
-          - https://cdn.dribbble.com     
+          - https://cdn.dribbble.com
+          - https://github.com
+          - https://*.github.com
+          - https://*.githubusercontent.com
+      reading:
+        allow:
+          - host: gitlab.com
+      # Proxy configuration for Nexus Repository Manager
+      # The plugin uses /nexus-repository-manager path to proxy requests to Nexus
+      # Requests to /nexus-repository-manager/* are proxied to Nexus root
+      proxy:
+        '/nexus-repository-manager':
+          target: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+          # Path rewriting: /nexus-repository-manager/service/rest -> /service/rest
+          pathRewrite:
+            '^/nexus-repository-manager': ''
+          headers:
+            X-Requested-With: 'XMLHttpRequest'
+          changeOrigin: true
+          secure: false
     signInPage: oidc
     catalog:
       providers:
@@ -63,30 +101,272 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 15 }
+            # User and group synchronization settings
+            # Users are automatically created on first login
+            # Groups and group memberships are synced from Keycloak
             signIn:
               resolvers:
+                # Try preferredUsername first (matches Keycloak username)
+                - resolver: preferredUsernameMatchingUserEntityName
+                # Fallback to email matching
                 - resolver: emailMatchingUserEntityProfileEmail
-      rules:
-          - allow: [Component, Group, User, Resource, Location, Template, API]
+        gitlab:
+          connectivity-link-developer-hub:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /developer-hub/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 15 }
+          connectivity-link-neuralbank-stack:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /neuralbank-stack/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 20 }
+          connectivity-link-rhbk:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /rhbk/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 25 }
+          connectivity-link-rhcl-operator:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /rhcl-operator/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 30 }
+          connectivity-link-servicemeshoperator3:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /servicemeshoperator3/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 35 }
+          connectivity-link-devspaces:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /devspaces/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 40 }
+          connectivity-link-operators:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /operators/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 45 }
+          connectivity-link-workshop-pipelines:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /workshop-pipelines/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 50 }
+          connectivity-link-openshift-gitops:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /openshift-gitops/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 55 }
+          connectivity-link-namespaces:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /namespaces/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 60 }
+          connectivity-link-groups:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /groups/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 65 }
+          connectivity-link-dotnet-demo:
+            host: gitlab.com
+            project: maximilianoPizarro/connectivity-link
+            branch: main
+            catalogPath: /dotnet-demo/catalog-info.yaml
+            token: ${GITLAB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 70 }
       locations:
+        # GitLab catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
         - type: url
-          target: https://github.com/redhat-ai-dev/ai-lab-template/blob/main/all.yaml
-          rules:
-            - allow: [Component, API, Group, System]
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/developer-hub/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/neuralbank-stack/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhbk/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/rhcl-operator/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/servicemeshoperator3/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/devspaces/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/operators/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/workshop-pipelines/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/openshift-gitops/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/namespaces/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/catalog-info.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/domains.yaml
+        # User entities are now included in groups/catalog-info.yaml
+        # Keeping this location for backward compatibility
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/groups/users.yaml
+        - type: url
+          target: https://gitlab.com/maximilianoPizarro/connectivity-link/-/blob/main/dotnet-demo/catalog-info.yaml
+        # Red Hat Developer Hub Software Templates Collection
+        - type: url
+          target: https://raw.githubusercontent.com/redhat-developer/red-hat-developer-hub-software-templates/main/templates.yaml
+      rules:
+          - allow: [Component, Group, User, Resource, Location, Template, API, System, Domain]
+    # ArgoCD Integration
+    argocd:
+      appLocatorMethods:
+        - type: 'config'
+          instances:
+            - name: openshift-gitops
+              url: ${ARGOCD_INSTANCE_2_URL}
+              username: ${ARGOCD_INSTANCE_2_USERNAME}
+              password: ${ARGOCD_INSTANCE_2_PASSWORD}
+    # Kubernetes Integration
+    kubernetes:
+      # Service locator method - required by the plugin
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      # Cluster locator methods - required by the plugin
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: 'https://kubernetes.default.svc'
+              name: 'local'
+              authProvider: 'serviceAccount'
+              skipTLSVerify: false
+              skipMetricsLookup: false
+              # Service account token is automatically mounted
+      # Custom resources for Tekton plugin
+      customResources:
+        - group: 'tekton.dev'
+          apiVersion: 'v1beta1'
+          plural: 'pipelineruns'
+        - group: 'tekton.dev'
+          apiVersion: 'v1beta1'
+          plural: 'taskruns'
+    # Tekton/CI Pipeline Configuration
+    # Configure Tekton integration for pipeline visualization
+    tekton:
+      # Base URL for Tekton Dashboard (if available)
+      dashboardUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+      # Namespace where pipelines are located
+      # Note: dotnet-demo pipelines are in dotnet-demo namespace
+      namespace: dotnet-demo
+    # CI/CD Integration
+    ci:
+      - name: tekton
+        baseUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+        # Optional: Configure authentication if needed
+        # auth:
+        #   token: ${TEKTON_TOKEN}
+    # Lightspeed server configuration
+    # Required by OLS (Road Core Service) backend for Lightspeed plugin
+    # Note: This configuration connects to lightspeed-core (sidecar) at localhost:8082
+    # lightspeed-core handles communication with llama-stack, which connects to external LLM service
+    # NOTE: conversation_cache is managed by lightspeed-core (configured in lightspeed-stack.yaml)
+    # This configuration is for the plugin backend only
     lightspeed:
       servers:
-        #- id: ollama
-        #  url: "http://librechat-ollama.librechat.svc.cluster.local:11434/v1" # Change this to your Ollama URL if it's different
-        #  token: "EMPTY"      
         - id: "${LLM_SERVER_ID}"
-          url: "${LLM_SERVER_URL}"
-          token: "${LLM_SERVER_TOKEN}"
+          url: "${LLM_SERVER_URL}"  # Should be http://localhost:8082 (lightspeed-core)
+          token: "${LLM_SERVER_TOKEN}"  # Empty string for local connection
+    # MCP (Model Context Protocol) Configuration
+    # Note: MCP configuration is separate from Lightspeed servers
+    mcp:
+      mcpServers:
+        backstage-actions:
+          url: "${RHDH_HOST}/api/mcp-actions/v1"
+          headers:
+            Authorization: "Bearer ${MCP_TOKEN}"
     permission:
       enabled: true
       rbac:
-        policies-csv-file: ./rbac-policy.csv
+        policies-csv-file: /opt/app-root/src/rbac-policy.csv
         policyFileReload: true
         admin:
           users:
             - name: user:default/maximilianopizarro
+
+    # Plugin Feature Flags / Enabled Plugins Configuration
+    # Control which plugins are enabled/disabled in the UI
+    enabled:
+      kubernetes: true
+      techdocs: true
+      argocd: true
+      sonarqube: false
+      keycloak: true
+      ocm: true
+      github: false
+      githubOrg: false
+      gitlab: true
+      jenkins: true
+      permission: false
+
+    # Nexus Repository Manager Plugin Configuration
+    nexusRepositoryManager:
+      # Nexus instance configuration
+      instances:
+        - name: nexus-instance
+          url: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
+          # Optional: Authentication token if required
+          # token: ${NEXUS_TOKEN}
+          # Optional: Username and password for basic auth
+          username: ${NEXUS_USERNAME}
+          password: ${NEXUS_PASSWORD}
 

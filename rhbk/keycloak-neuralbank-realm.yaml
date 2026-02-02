@@ -21,7 +21,7 @@ spec:
       name: Frontend Web App
       publicClient: true
       standardFlowEnabled: true
-      redirectUris: ["https://neuralbank.apps.cluster-lv5jx.lv5jx.sandbox2484.opentlc.com/*"]
+      redirectUris: ["https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/*"]
       webOrigins: ["*"]
     - clientId: neuralbank-backend
       name: Backend API Service
