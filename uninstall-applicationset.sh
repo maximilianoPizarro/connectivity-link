@@ -14,24 +14,41 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Variables
-APPLICATIONSET_NAME="connectivity-link-demo"
 APPLICATIONSET_NAMESPACE="openshift-gitops"
 DRY_RUN=false
 FORCE=false
 CLEAN_ALL=false
 
+# ApplicationSets a eliminar (en orden inverso de creación)
+declare -a APPLICATIONSETS=(
+    "librechat-helm"
+    "connectivity-apps-helm-external"
+    "connectivity-infra-all-in-one"
+)
+
 # Aplicaciones en orden inverso de sync_wave para desinstalación
-# Orden: sync_wave 5 -> 4 -> 3 -> 2 -> 1
+# Orden: sync_wave 7 -> 6 -> 5 -> 4 -> 3 -> 2 -> 1 -> 0
 declare -a APPLICATIONS=(
-    "neuralbank-stack"           # sync_wave: 5
-    "workshop-pipelines"         # sync_wave: 4
-    "workshop-pipelines-repo"   # sync_wave: 1 (HelmChartRepository)
-    "servicemeshoperator3"       # sync_wave: 3
-    "rhcl-operator"              # sync_wave: 3
-    "developer-hub"             # sync_wave: 2
-    "rhbk"                      # sync_wave: 2
-    "operators"                 # sync_wave: 2
-    "namespaces"                # sync_wave: 1
+    # Applications sync_wave 7
+    "librechat"
+    "devspaces"
+    # Applications sync_wave 6
+    "dotnet-demo"
+    # Applications sync_wave 5
+    "neuralbank-stack"
+    "workshop-pipelines"
+    # Applications sync_wave 3
+    "developer-hub"
+    # Applications sync_wave 2
+    "servicemeshoperator3"
+    "rhcl-operator"
+    "rhbk"
+    "workshop-pipelines-rbac"
+    # Applications sync_wave 1
+    "operators"
+    # Applications sync_wave 0
+    "namespaces"
+    "openshift-gitops"
 )
 
 # Namespaces a limpiar (si --clean-all)
@@ -40,9 +57,13 @@ declare -a NAMESPACES_TO_CLEAN=(
     "workshop-pipelines"
     "developer-hub"
     "rhbk-operator"
-    "kuadrant-operator"
     "rhdh-operator"
+    "kuadrant-operator"
     "istio-system"
+    "dotnet-demo"
+    "librechat"
+    "devspaces"
+    "nexus2"
 )
 
 # Subscriptions a eliminar (si --clean-all)
@@ -51,6 +72,9 @@ declare -a SUBSCRIPTIONS=(
     "servicemeshoperator3"
     "devspaces"
     "openshift-pipelines-operator-rh"
+    "rhbk-operator"
+    "rhdh-operator"
+    "kubernetes-imagepuller-operator"
 )
 
 # Funciones de utilidad
@@ -93,13 +117,31 @@ check_dependencies() {
     print_success "Dependencias verificadas"
 }
 
-# Verificar que el ApplicationSet existe
-check_applicationset() {
-    if ! oc get applicationset "${APPLICATIONSET_NAME}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
-        print_warning "ApplicationSet '${APPLICATIONSET_NAME}' no encontrado en namespace '${APPLICATIONSET_NAMESPACE}'"
+# Verificar que existen ApplicationSets
+check_applicationsets() {
+    local found=false
+    for aset in "${APPLICATIONSETS[@]}"; do
+        if oc get applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
+            found=true
+            break
+        fi
+    done
+    
+    if [ "$found" = false ]; then
+        print_warning "No se encontraron ApplicationSets en namespace '${APPLICATIONSET_NAMESPACE}'"
         return 1
     fi
     return 0
+}
+
+# Listar ApplicationSets existentes
+list_applicationsets() {
+    print_info "ApplicationSets encontrados:"
+    for aset in "${APPLICATIONSETS[@]}"; do
+        if oc get applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
+            echo "  - ${aset}"
+        fi
+    done
 }
 
 # Eliminar aplicación de ArgoCD
@@ -146,21 +188,54 @@ delete_application() {
     fi
 }
 
-# Eliminar ApplicationSet
-delete_applicationset() {
-    print_header "Eliminando ApplicationSet"
+# Eliminar ApplicationSets
+delete_applicationsets() {
+    print_header "Eliminando ApplicationSets"
     
-    if [ "$DRY_RUN" = true ]; then
-        print_warning "[DRY-RUN] Se eliminaría: oc delete applicationset ${APPLICATIONSET_NAME} -n ${APPLICATIONSET_NAMESPACE}"
-        return 0
-    fi
+    for aset in "${APPLICATIONSETS[@]}"; do
+        if [ "$DRY_RUN" = true ]; then
+            if oc get applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
+                print_warning "[DRY-RUN] Se eliminaría: oc delete applicationset ${aset} -n ${APPLICATIONSET_NAMESPACE}"
+            fi
+            continue
+        fi
+        
+        if oc get applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
+            print_info "Eliminando ApplicationSet: ${aset}"
+            oc delete applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" --wait=true --timeout=60s || true
+            print_success "ApplicationSet ${aset} eliminado"
+        else
+            print_warning "ApplicationSet ${aset} no existe, omitiendo"
+        fi
+    done
+}
+
+# Eliminar ConsoleLinks
+delete_consolelinks() {
+    print_header "Eliminando ConsoleLinks"
     
-    if check_applicationset; then
-        oc delete applicationset "${APPLICATIONSET_NAME}" -n "${APPLICATIONSET_NAMESPACE}" --wait=true --timeout=60s
-        print_success "ApplicationSet eliminado"
-    else
-        print_warning "ApplicationSet no existe, omitiendo"
-    fi
+    declare -a consolelinks=(
+        "openshift-gitops"
+        "connectivity-link"
+        "devspaces"
+    )
+    
+    for cl in "${consolelinks[@]}"; do
+        if [ "$DRY_RUN" = true ]; then
+            if oc get consolelink "${cl}" &> /dev/null; then
+                print_warning "[DRY-RUN] Se eliminaría: oc delete consolelink ${cl}"
+            fi
+            continue
+        fi
+        
+        if oc get consolelink "${cl}" &> /dev/null; then
+            print_info "Eliminando ConsoleLink: ${cl}"
+            oc delete consolelink "${cl}" --wait=true --timeout=30s || true
+            print_success "ConsoleLink ${cl} eliminado"
+        else
+            print_warning "ConsoleLink ${cl} no existe, omitiendo"
+        fi
+    done
 }
 
 # Limpiar subscriptions de operadores
@@ -272,14 +347,26 @@ confirm_action() {
     fi
     
     echo ""
-    print_warning "Esta acción eliminará las siguientes aplicaciones:"
+    print_warning "Esta acción eliminará:"
+    echo ""
+    print_info "ApplicationSets:"
+    for aset in "${APPLICATIONSETS[@]}"; do
+        if oc get applicationset "${aset}" -n "${APPLICATIONSET_NAMESPACE}" &> /dev/null; then
+            echo "  - ${aset}"
+        fi
+    done
+    echo ""
+    print_info "Aplicaciones de ArgoCD:"
     for app in "${APPLICATIONS[@]}"; do
         echo "  - ${app}"
     done
     echo ""
     
     if [ "$CLEAN_ALL" = true ]; then
-        print_warning "Modo --clean-all activado: también se eliminarán subscriptions y namespaces"
+        print_warning "Modo --clean-all activado: también se eliminarán:"
+        echo "  - ConsoleLinks"
+        echo "  - Subscriptions de operadores"
+        echo "  - Namespaces"
     fi
     
     if [ "$DRY_RUN" = true ]; then
@@ -302,8 +389,11 @@ main() {
     parse_arguments "$@"
     check_dependencies
     
-    if ! check_applicationset && [ "$DRY_RUN" = false ]; then
-        print_warning "ApplicationSet no encontrado. Verificando si hay aplicaciones huérfanas..."
+    # Listar ApplicationSets existentes
+    list_applicationsets
+    
+    if ! check_applicationsets && [ "$DRY_RUN" = false ]; then
+        print_warning "No se encontraron ApplicationSets. Verificando si hay aplicaciones huérfanas..."
     fi
     
     confirm_action
@@ -326,19 +416,34 @@ main() {
             "neuralbank-stack")
                 namespace="neuralbank-stack"
                 ;;
-            "workshop-pipelines")
+            "workshop-pipelines"|"workshop-pipelines-rbac")
                 namespace="workshop-pipelines"
                 ;;
-            "workshop-pipelines-repo")
+            "dotnet-demo")
+                namespace="dotnet-demo"
+                ;;
+            "librechat"|"librechat-rbac")
+                namespace="librechat"
+                ;;
+            "devspaces")
+                namespace="devspaces"
+                ;;
+            "openshift-gitops"|"namespaces"|"operators")
                 namespace="openshift-gitops"
+                ;;
+            *)
+                namespace="${APPLICATIONSET_NAMESPACE}"
                 ;;
         esac
         
         delete_application "${app}" "${namespace}"
     done
     
-    # Eliminar ApplicationSet
-    delete_applicationset
+    # Eliminar ApplicationSets
+    delete_applicationsets
+    
+    # Eliminar ConsoleLinks
+    delete_consolelinks
     
     # Limpieza adicional si se solicita
     if [ "$CLEAN_ALL" = true ]; then

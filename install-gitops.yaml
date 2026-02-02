@@ -1,0 +1,656 @@
+- name: Install OpenShift GitOps Operator
+  hosts: localhost
+  gather_facts: true
+  vars:
+    gitops_operator_name: openshift-gitops-operator
+    gitops_subscription_name: openshift-gitops-operator
+    gitops_namespace: openshift-operators
+    gitops_target_namespace: openshift-gitops
+    gitops_csv_prefix: openshift-gitops-operator
+    gitops_csv_version: "1.19.1"
+    gitops_channel: "gitops-1.19"
+
+  tasks:
+    - name: Check if oc CLI is available
+      command: which oc
+      register: oc_check
+      changed_when: false
+      failed_when: false
+
+    - name: Fail if oc CLI is not found
+      fail:
+        msg: "oc (OpenShift CLI) is not installed. Please install it first."
+      when: oc_check.rc != 0
+
+    - name: Get current OpenShift user
+      command: oc whoami
+      register: oc_user
+      changed_when: false
+
+    - name: Display authenticated user
+      debug:
+        msg: "Authenticated as: {{ oc_user.stdout }}"
+
+    - name: Get cluster domain
+      command: oc get ingress.config/cluster -o jsonpath='{.spec.domain}'
+      register: cluster_domain_result
+      changed_when: false
+      failed_when: false
+
+    - name: Set cluster domain
+      set_fact:
+        cluster_domain: "{{ cluster_domain_result.stdout }}"
+      when: cluster_domain_result.rc == 0 and cluster_domain_result.stdout | length > 0
+
+    - name: Prompt for cluster domain if not detected
+      set_fact:
+        cluster_domain: "{{ lookup('env', 'CLUSTER_DOMAIN') | default('', true) }}"
+      when: cluster_domain is not defined or cluster_domain == ""
+
+    - name: Fail if cluster domain is not set
+      fail:
+        msg: "Cluster domain is required. Set CLUSTER_DOMAIN environment variable or ensure cluster is accessible."
+      when: cluster_domain is not defined or cluster_domain == ""
+
+    - name: Construct apps domain
+      set_fact:
+        apps_domain: "{{ 'apps.' + cluster_domain if not cluster_domain.startswith('apps.') else cluster_domain }}"
+        keycloak_host: "rhbk.{{ 'apps.' + cluster_domain if not cluster_domain.startswith('apps.') else cluster_domain }}"
+        app_host: "neuralbank.{{ 'apps.' + cluster_domain if not cluster_domain.startswith('apps.') else cluster_domain }}"
+
+    - name: Display cluster information
+      debug:
+        msg:
+          - "Cluster domain: {{ cluster_domain }}"
+          - "Apps domain: {{ apps_domain }}"
+          - "Keycloak host: {{ keycloak_host }}"
+          - "App host: {{ app_host }}"
+
+    - name: Ensure openshift-operators namespace exists
+      k8s:
+        name: "{{ gitops_namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Check if OperatorGroup exists
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha2
+        kind: OperatorGroup
+        namespace: "{{ gitops_namespace }}"
+        name: global-operators
+      register: operatorgroup_check
+
+    - name: Create OperatorGroup if it doesn't exist
+      k8s:
+        api_version: operators.coreos.com/v1alpha2
+        kind: OperatorGroup
+        name: global-operators
+        namespace: "{{ gitops_namespace }}"
+        state: present
+        definition:
+          spec: {}
+      when: operatorgroup_check.resources | length == 0
+
+    - name: Check CatalogSource health
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: CatalogSource
+        namespace: openshift-marketplace
+        name: redhat-operators
+      register: catalogsource_info
+
+    - name: Display CatalogSource status
+      debug:
+        msg:
+          - "CatalogSource status: {{ catalogsource_info.resources[0].status.connectionState.lastObservedState | default('Unknown') }}"
+          - "CatalogSource ready: {{ catalogsource_info.resources[0].status.conditions | selectattr('type', 'equalto', 'Ready') | map(attribute='status') | first | default('Unknown') }}"
+      when: catalogsource_info.resources | length > 0
+
+    - name: Get current timestamp for CatalogSource update
+      set_fact:
+        force_update_timestamp: "{{ ansible_facts['date_time']['epoch'] }}"
+      when: catalogsource_info.resources | length > 0 and 
+            (catalogsource_info.resources[0].status.connectionState.lastObservedState | default('') != 'READY' or
+             catalogsource_info.resources[0].status.conditions | selectattr('type', 'equalto', 'Ready') | map(attribute='status') | first | default('False') != 'True')
+
+    - name: Force CatalogSource update if needed
+      command: >
+        oc patch catalogsource redhat-operators
+        -n openshift-marketplace
+        --type=merge
+        -p '{"metadata":{"annotations":{"olm.catalogSource.forceUpdate":"{{ force_update_timestamp }}"}}}'
+      when: catalogsource_info.resources | length > 0 and 
+            (catalogsource_info.resources[0].status.connectionState.lastObservedState | default('') != 'READY' or
+             catalogsource_info.resources[0].status.conditions | selectattr('type', 'equalto', 'Ready') | map(attribute='status') | first | default('False') != 'True')
+      register: catalogsource_patch_result
+      changed_when: catalogsource_patch_result.rc == 0
+
+    - name: Wait for CatalogSource to be ready
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: CatalogSource
+        namespace: openshift-marketplace
+        name: redhat-operators
+      register: catalogsource_ready
+      until: >
+        catalogsource_ready.resources | length > 0 and
+        catalogsource_ready.resources[0].status.connectionState.lastObservedState | default('') == 'READY'
+      retries: 30
+      delay: 5
+      failed_when: false
+      when: catalogsource_info.resources | length > 0
+
+    - name: Check if subscription already exists
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        namespace: "{{ gitops_namespace }}"
+        name: "{{ gitops_subscription_name }}"
+      register: subscription_check
+
+    - name: Delete existing subscription if it has issues
+      k8s:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        namespace: "{{ gitops_namespace }}"
+        name: "{{ gitops_subscription_name }}"
+        state: absent
+      when: >
+        subscription_check.resources | length > 0 and
+        (subscription_check.resources[0].status.conditions | selectattr('type', 'equalto', 'CatalogSourcesUnhealthy') | map(attribute='status') | first | default('False') == 'True' or
+         subscription_check.resources[0].status.conditions | selectattr('type', 'equalto', 'ResolutionFailed') | map(attribute='status') | first | default('False') == 'True')
+
+    - name: Get available channels for operator
+      command: >
+        oc get packagemanifests {{ gitops_operator_name }}
+        -n openshift-marketplace
+        -o jsonpath='{.status.channels[*].name}'
+      register: available_channels_list
+      failed_when: false
+      changed_when: false
+
+    - name: Get CSV for gitops-1.19 channel
+      command: >
+        oc get packagemanifests {{ gitops_operator_name }}
+        -n openshift-marketplace
+        -o jsonpath='{.status.channels[?(@.name=="gitops-1.19")].currentCSV}'
+      register: csv_1_19
+      failed_when: false
+      changed_when: false
+      when: >
+        available_channels_list.rc == 0 and
+        'gitops-1.19' in available_channels_list.stdout
+
+    - name: Set CSV name from gitops-1.19 channel
+      set_fact:
+        gitops_starting_csv: "{{ csv_1_19.stdout }}"
+      when: >
+        csv_1_19.rc == 0 and
+        csv_1_19.stdout | length > 0
+
+    - name: Display target CSV
+      debug:
+        msg: "Target CSV: {{ gitops_starting_csv }}"
+      when: gitops_starting_csv is defined
+
+    - name: Create or update Subscription with gitops-1.19 channel
+      k8s:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        name: "{{ gitops_subscription_name }}"
+        namespace: "{{ gitops_namespace }}"
+        state: present
+        definition:
+          spec:
+            channel: gitops-1.19
+            name: "{{ gitops_operator_name }}"
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
+            installPlanApproval: Automatic
+            startingCSV: "{{ gitops_starting_csv | default(omit) }}"
+
+    - name: Check subscription status
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        namespace: "{{ gitops_namespace }}"
+        name: "{{ gitops_subscription_name }}"
+      register: subscription_status
+      failed_when: false
+
+    - name: Display subscription status
+      debug:
+        msg:
+          - "Subscription conditions:"
+          - "{{ subscription_status.resources[0].status.conditions | default([]) | map(attribute='type') | list }}"
+      when: >
+        subscription_status.resources | length > 0 and
+        subscription_status.resources[0].status is defined and
+        subscription_status.resources[0].status.conditions is defined
+
+    - name: Check for ResolutionFailed condition
+      debug:
+        msg: "Subscription has ResolutionFailed condition. This usually means the operator is not available in the specified channel. Trying to find available channels..."
+      when: >
+        subscription_status.resources | length > 0 and
+        subscription_status.resources[0].status is defined and
+        subscription_status.resources[0].status.conditions is defined and
+        (subscription_status.resources[0].status.conditions | 
+         selectattr('type', 'equalto', 'ResolutionFailed') | 
+         selectattr('status', 'equalto', 'True') | 
+         list | length > 0)
+
+    - name: Get available channels for operator
+      command: >
+        oc get packagemanifests openshift-gitops-operator
+        -n openshift-marketplace
+        -o jsonpath='{.status.channels[*].name}'
+      register: available_channels
+      failed_when: false
+      changed_when: false
+      when: >
+        subscription_status.resources | length > 0 and
+        subscription_status.resources[0].status is defined and
+        subscription_status.resources[0].status.conditions is defined and
+        (subscription_status.resources[0].status.conditions | 
+         selectattr('type', 'equalto', 'ResolutionFailed') | 
+         selectattr('status', 'equalto', 'True') | 
+         list | length > 0)
+
+    - name: Display available channels
+      debug:
+        msg: "Available channels: {{ available_channels.stdout | default('Not found') }}"
+      when: >
+        available_channels is defined and
+        available_channels.rc is defined and
+        available_channels.rc == 0 and
+        available_channels.stdout is defined and
+        available_channels.stdout | length > 0
+
+    - name: Update subscription to use latest channel if stable not available
+      k8s:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        name: "{{ gitops_subscription_name }}"
+        namespace: "{{ gitops_namespace }}"
+        state: present
+        definition:
+          spec:
+            channel: "{{ (available_channels.stdout | default('stable')).split(' ') | first }}"
+            name: "{{ gitops_operator_name }}"
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
+            installPlanApproval: Automatic
+      when: >
+        available_channels is defined and
+        available_channels.rc is defined and
+        available_channels.rc == 0 and
+        available_channels.stdout is defined and
+        available_channels.stdout | length > 0 and
+        'stable' not in available_channels.stdout
+
+    - name: Wait for InstallPlan to be created
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        namespace: "{{ gitops_namespace }}"
+        name: "{{ gitops_subscription_name }}"
+      register: subscription_status_final
+      until: >
+        subscription_status_final.resources | length > 0 and
+        subscription_status_final.resources[0].status is defined and
+        subscription_status_final.resources[0].status.installPlanRef is defined and
+        subscription_status_final.resources[0].status.installPlanRef.name is defined
+      retries: 30
+      delay: 5
+      failed_when: false
+
+    - name: Get InstallPlan name
+      set_fact:
+        install_plan_name: "{{ subscription_status_final.resources[0].status.installPlanRef.name }}"
+      when: >
+        subscription_status_final.resources | length > 0 and
+        subscription_status_final.resources[0].status is defined and
+        subscription_status_final.resources[0].status.installPlanRef is defined and
+        subscription_status_final.resources[0].status.installPlanRef.name is defined
+
+    - name: Wait for InstallPlan to be approved
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: InstallPlan
+        namespace: "{{ gitops_namespace }}"
+        name: "{{ install_plan_name }}"
+      register: installplan_status
+      until: >
+        installplan_status.resources | length > 0 and
+        installplan_status.resources[0].spec.approved == true
+      retries: 10
+      delay: 2
+      when: install_plan_name is defined
+
+    - name: Approve InstallPlan if not approved
+      command: >
+        oc patch installplan {{ install_plan_name }}
+        -n {{ gitops_namespace }}
+        --type=merge
+        -p '{"spec":{"approved":true}}'
+      when: >
+        install_plan_name is defined and
+        installplan_status.resources | length > 0 and
+        installplan_status.resources[0].spec.approved != true
+      register: installplan_patch_result
+      changed_when: installplan_patch_result.rc == 0
+
+    - name: Wait for CSV to be installed and ready
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        namespace: "{{ gitops_namespace }}"
+      register: csv_list
+      until: >
+        csv_list.resources | length > 0 and
+        (csv_list.resources | 
+         selectattr('metadata.name', 'search', gitops_csv_prefix) | 
+         selectattr('status.phase', 'equalto', 'Succeeded') | 
+         list | length > 0)
+      retries: 60
+      delay: 5
+      failed_when: false
+
+    - name: Get CSV name
+      set_fact:
+        csv_name: "{{ csv_list.resources | selectattr('metadata.name', 'search', gitops_csv_prefix) | selectattr('status.phase', 'equalto', 'Succeeded') | map(attribute='metadata.name') | first }}"
+      when: >
+        csv_list.resources | length > 0 and
+        (csv_list.resources | 
+         selectattr('metadata.name', 'search', gitops_csv_prefix) | 
+         selectattr('status.phase', 'equalto', 'Succeeded') | 
+         list | length > 0)
+
+    - name: Display CSV status
+      debug:
+        msg: "CSV {{ csv_name }} is installed and ready"
+      when: csv_name is defined
+
+    - name: Check if CSV installation failed
+      fail:
+        msg: "CSV from channel {{ gitops_channel }} failed to install. Check the CSV status with: oc get csv -n {{ gitops_namespace }} | grep {{ gitops_csv_prefix }}"
+      when: >
+        csv_list.resources | length == 0 or
+        (csv_list.resources | 
+         selectattr('metadata.name', 'search', gitops_csv_prefix) | 
+         selectattr('status.phase', 'equalto', 'Succeeded') | 
+         list | length == 0)
+
+    - name: Wait for openshift-gitops namespace to be created
+      k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: "{{ gitops_target_namespace }}"
+      register: gitops_namespace_check
+      until: gitops_namespace_check.resources | length > 0
+      retries: 30
+      delay: 5
+      failed_when: false
+
+    - name: Check if ArgoCD CRD exists
+      command: oc get crd argocds.argoproj.io
+      register: argocd_crd_check
+      failed_when: false
+      changed_when: false
+
+    - name: Wait for ArgoCD CRD to be available
+      command: oc get crd argocds.argoproj.io
+      register: argocd_crd_available
+      until: argocd_crd_available.rc == 0
+      retries: 30
+      delay: 5
+      failed_when: false
+
+    - name: Check if ArgoCD instance exists and is available
+      k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: ArgoCD
+        namespace: "{{ gitops_target_namespace }}"
+        name: openshift-gitops
+      register: argocd_instance_check
+      failed_when: false
+      changed_when: false
+      when: argocd_crd_available.rc == 0
+
+    - name: Display ArgoCD instance status
+      debug:
+        msg:
+          - "ArgoCD instance status:"
+          - "  Phase: {{ argocd_instance_check.resources[0].status.phase | default('Unknown') }}"
+          - "  Application Controller: {{ argocd_instance_check.resources[0].status.applicationController | default('Not available') }}"
+          - "  Server: {{ argocd_instance_check.resources[0].status.server | default('Not available') }}"
+      when: >
+        argocd_instance_check.resources | length > 0
+
+    - name: Wait for ArgoCD instance to be available
+      k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: ArgoCD
+        namespace: "{{ gitops_target_namespace }}"
+        name: openshift-gitops
+      register: argocd_instance
+      until: >
+        argocd_instance.resources | length > 0 and
+        argocd_instance.resources[0].status.phase | default('') == 'Available'
+      retries: 60
+      delay: 5
+      failed_when: false
+      when: >
+        argocd_crd_available.rc == 0 and
+        (argocd_instance_check.resources | length == 0 or
+         argocd_instance_check.resources[0].status.phase | default('') != 'Available')
+
+    - name: Verify ArgoCD instance final status
+      k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: ArgoCD
+        namespace: "{{ gitops_target_namespace }}"
+        name: openshift-gitops
+      register: argocd_final_check
+      failed_when: false
+
+    - name: Display installation success
+      debug:
+        msg:
+          - "OpenShift GitOps Operator installed successfully!"
+          - "CSV: {{ csv_name | default('Not found') }}"
+          - "Namespace: {{ gitops_target_namespace }}"
+          - "ArgoCD instance phase: {{ argocd_final_check.resources[0].status.phase | default('Unknown') if argocd_final_check.resources | length > 0 else 'Instance not found' }}"
+      when: csv_name is defined or argocd_final_check.resources | length > 0
+
+    - name: Display warning if ArgoCD not available
+      debug:
+        msg: "Warning: ArgoCD instance may not be fully available. Check with: oc get argocd openshift-gitops -n {{ gitops_target_namespace }}"
+      when: >
+        argocd_final_check.resources | length == 0 or
+        argocd_final_check.resources[0].status.phase | default('') != 'Available'
+
+    - name: Apply ApplicationSet and verify operators
+      block:
+        - name: Set ApplicationSet variables
+          set_fact:
+            applicationset_file: "{{ playbook_dir }}/applicationset-instance.yaml"
+            gitops_namespace: openshift-gitops
+            required_operators:
+              - name: servicemeshoperator3
+                namespace: openshift-operators
+              - name: rhcl-operator
+                namespace: openshift-operators
+              - name: rhbk-operator
+                namespace: rhbk-operator
+              - name: rhdh-operator
+                namespace: rhdh-operator
+              - name: devspaces
+                namespace: openshift-operators
+
+        - name: Check if ApplicationSet file exists
+          stat:
+            path: "{{ applicationset_file }}"
+          register: applicationset_file_stat
+
+        - name: Fail if ApplicationSet file not found
+          fail:
+            msg: "ApplicationSet file not found: {{ applicationset_file }}"
+          when: not applicationset_file_stat.stat.exists
+
+        - name: Apply ApplicationSet
+          command: oc apply -f "{{ applicationset_file }}"
+          register: apply_applicationset_result
+          failed_when: apply_applicationset_result.rc != 0
+
+        - name: Display ApplicationSet status
+          debug:
+            msg: "ApplicationSet applied successfully"
+
+        - name: Wait for ApplicationSet to create applications
+          pause:
+            seconds: 10
+
+        - name: Check applications were created
+          command: oc get applications -n "{{ gitops_namespace }}" --no-headers
+          register: apps_check
+          failed_when: false
+          changed_when: false
+          until: apps_check.rc == 0 and apps_check.stdout | length > 0
+          retries: 12
+          delay: 5
+
+        - name: Display applications
+          command: oc get applications -n "{{ gitops_namespace }}"
+          register: all_apps
+          changed_when: false
+          failed_when: false
+
+        - name: Show applications status
+          debug:
+            msg: "{{ all_apps.stdout_lines }}"
+          when: all_apps.rc == 0
+
+        - name: Wait for operator subscriptions to be created
+          pause:
+            seconds: 15
+
+        - name: Verify required operators are being installed
+          block:
+            - name: Check operator subscription exists
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: Subscription
+                namespace: "{{ item.namespace }}"
+                name: "{{ item.name }}"
+              register: operator_subscription
+              failed_when: false
+              changed_when: false
+              loop: "{{ required_operators }}"
+              loop_control:
+                label: "{{ item.name }} in {{ item.namespace }}"
+
+            - name: Display operator subscription status
+              debug:
+                msg:
+                  - "Operator: {{ item.item.name }}"
+                  - "Namespace: {{ item.item.namespace }}"
+                  - "Subscription exists: {{ item.resources | length > 0 }}"
+                  - "Status: {{ item.resources[0].status | default('Not available') if item.resources | length > 0 else 'Not found' }}"
+              loop: "{{ operator_subscription.results }}"
+              loop_control:
+                label: "{{ item.item.name }}"
+
+          rescue:
+            - name: Display error checking operator subscriptions
+              debug:
+                msg: "Error checking operator subscriptions. Continuing..."
+
+        - name: Wait for operators to be installed and ready
+          block:
+            - name: Check operator CSV status
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: ClusterServiceVersion
+                namespace: "{{ item.namespace }}"
+              register: operator_csvs
+              failed_when: false
+              changed_when: false
+              loop: "{{ required_operators }}"
+              loop_control:
+                label: "{{ item.name }} in {{ item.namespace }}"
+
+            - name: Wait for each operator CSV to be Succeeded
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: ClusterServiceVersion
+                namespace: "{{ item.namespace }}"
+              register: csv_status
+              until: >
+                csv_status.resources | length > 0 and
+                (csv_status.resources | selectattr('metadata.name', 'match', '.*' + item.name + '.*') | map(attribute='status.phase') | list | first | default('') == 'Succeeded')
+              retries: 60
+              delay: 10
+              failed_when: false
+              loop: "{{ required_operators }}"
+              loop_control:
+                label: "{{ item.name }}"
+
+            - name: Verify operator CSV final status
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: ClusterServiceVersion
+                namespace: "{{ item.namespace }}"
+              register: csv_final_check
+              failed_when: false
+              loop: "{{ required_operators }}"
+              loop_control:
+                label: "{{ item.name }}"
+
+            - name: Check if operator is ready
+              set_fact:
+                operator_ready: >
+                  {{ csv_final_check.resources | selectattr('metadata.name', 'match', '.*' + item.name + '.*') | map(attribute='status.phase') | list | first | default('') == 'Succeeded' }}
+              loop: "{{ csv_final_check.results }}"
+              loop_control:
+                loop_var: csv_result
+                index_var: csv_index
+
+            - name: Display operator status
+              debug:
+                msg:
+                  - "Operator: {{ item.item.name }}"
+                  - "Namespace: {{ item.item.namespace }}"
+                  - "CSV Phase: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('Not found') }}"
+                  - "Ready: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('') == 'Succeeded' }}"
+              loop: "{{ csv_final_check.results }}"
+              loop_control:
+                label: "{{ item.item.name }}"
+
+            - name: Fail if any operator is not ready
+              fail:
+                msg: >
+                  Operator {{ item.item.name }} in namespace {{ item.item.namespace }} is not ready.
+                  CSV Phase: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('Not found') }}
+                  Check with: oc get csv -n {{ item.item.namespace }} | grep {{ item.item.name }}
+              when: >
+                item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('') != 'Succeeded'
+              loop: "{{ csv_final_check.results }}"
+              loop_control:
+                label: "{{ item.item.name }}"
+
+          rescue:
+            - name: Display operator installation error details
+              debug:
+                msg:
+                  - "Error waiting for operators to be ready"
+                  - "Check operator status with: oc get csv -n <namespace>"
+                  - "Check subscriptions with: oc get subscription -n <namespace>"
+                  - "Check subscription conditions: oc get subscription <operator-name> -n <namespace> -o yaml | grep -A 10 conditions"
+              failed_when: true
+
+        - name: Display operators installation success
+          debug:
+            msg: "All required operators are installed and ready!"

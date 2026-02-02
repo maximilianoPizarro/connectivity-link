@@ -8,6 +8,9 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   channel: {{ .channel }}
+  {{- if .startingCSV }}
+  startingCSV: {{ .startingCSV }}
+  {{- end }}
   installPlanApproval: Automatic
   name: {{ .name }}
   source: {{ .source }}

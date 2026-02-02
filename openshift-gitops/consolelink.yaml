@@ -1,0 +1,15 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: openshift-gitops
+  # Note: ConsoleLink is cluster-scoped, no namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  # href will be set dynamically by install.sh script
+  # This file is kept for reference but the script will create/update the ConsoleLink
+  href: 'https://openshift-gitops-server-openshift-gitops.apps.cluster-vct46.vct46.sandbox830.opentlc.com'
+  location: ApplicationMenu
+  applicationMenu:
+    section: GitOps
+  text: OpenShift GitOps

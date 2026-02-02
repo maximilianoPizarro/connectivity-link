@@ -1,0 +1,15 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: connectivity-link
+  # Note: ConsoleLink is cluster-scoped, no namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  # href will be set dynamically by install.sh script
+  # This file is kept for reference but the script will create/update the ConsoleLink
+  href: 'https://neuralbank.apps.cluster-vct46.vct46.sandbox830.opentlc.com'
+  location: ApplicationMenu
+  applicationMenu:
+    section: Connectivity Link
+  text: Connectivity Link

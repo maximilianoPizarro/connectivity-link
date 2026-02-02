@@ -13,3 +13,13 @@ subscriptions:
     namespace: openshift-operators
     channel: stable
     source: redhat-operators
+  - name: rhbk-operator
+    namespace: rhbk-operator
+    channel: stable-v26.2
+    startingCSV: rhbk-operator.v26.2.11-opr.1
+    source: redhat-operators
+  - name: rhdh-operator
+    namespace: rhdh-operator
+    channel: fast
+    startingCSV: rhdh-operator.v1.8.0
+    source: redhat-operators
