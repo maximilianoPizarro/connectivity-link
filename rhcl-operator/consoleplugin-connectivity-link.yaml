@@ -1,0 +1,14 @@
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: connectivity-link-plugin
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  backend:
+    service:
+      name: neuralbank
+      namespace: neuralbank-stack
+      port: 8080
+      basePath: /api/plugin
+  displayName: Connectivity Link

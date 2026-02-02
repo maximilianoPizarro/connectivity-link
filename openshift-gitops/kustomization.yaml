@@ -6,7 +6,7 @@ namespace: openshift-gitops
 resources:
   - resources/admin-permissions.yaml
   - resources/cmp-plugin-configmap.yaml
-  - consolelink.yaml
+  - resources/consoleplugin-gitops.yaml
 
 patches:
   - path: patches/argocd-instance-patch.yaml

@@ -31,8 +31,9 @@ After forking, update the repository references in `applicationset-instance.yaml
 ## 📋 TL;DR
 
 - **Requirements**: OpenShift 4.20+ with cluster-admin privileges
-- **Minimal step**: Install the OpenShift GitOps operator
-- **Then**: `oc apply -f applicationset-instance.yaml` to instantiate the demo applications
+- **Installation Method**: Automated installation using Ansible playbook
+- **Quick Start**: Run `ansible-playbook install-gitops.yaml` to install GitOps operator and deploy all applications
+- **Manual Alternative**: Install OpenShift GitOps operator, then `oc apply -f applicationset-instance.yaml`
 - **Outcome**: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository
 
 ## 📖 Overview
@@ -46,9 +47,10 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **Service Mesh**: Istio-based service mesh for traffic management and security
 - **API Gateway**: Kubernetes Gateway API implementation with Istio
 - **Authentication**: Keycloak for identity and access management
-- **Authorization**: Kuadrant/Authorino for OIDC-based API protection
+- **Authorization**: Kuadrant/Authorino for OIDC-based API protection via OIDCPolicy
 - **Application Stack**: NeuralBank demo application (frontend, backend, database)
 - **Developer Hub**: Red Hat Developer Hub (Backstage) integration
+- **Automated Installation**: Ansible playbook for complete infrastructure provisioning
 
 ### Key Components
 
@@ -56,6 +58,18 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **OpenShift GitOps (ArgoCD)**: Used as the GitOps controller to reconcile the declared state in this repository with the cluster
 - **Service Mesh Operator**: Manages the Istio service mesh control plane and data plane
 - **RHCL Operator**: Red Hat Connectivity Link operator for managing connectivity policies and OIDC authentication
+- **Ansible Automation**: Automated installation playbook that ensures proper operator installation order and verification
+
+### Architecture Overview
+
+The architecture follows a **consolidated ApplicationSet approach** where all infrastructure components, operators, and applications are managed through a single `applicationset-instance.yaml` file. This simplifies deployment and ensures proper installation order through `sync_wave` annotations.
+
+**Installation Order (by sync_wave):**
+1. **Wave 0**: OpenShift GitOps operator installation
+2. **Wave 1**: Namespaces creation
+3. **Wave 2**: Operators (rhbk-operator, RBAC configurations)
+4. **Wave 3**: Infrastructure components (Service Mesh, RHCL Operator, Developer Hub)
+5. **Wave 4-7**: Applications (NeuralBank Stack, Nexus, DotNet Demo, LibreChat)
 
 ## ⚙️ Important Requirements
 
@@ -355,6 +369,52 @@ spec:
 - **Environment-specific**: Use different ApplicationSets for different environments (dev, staging, prod)
 
 ## 🚀 Getting Started
+
+### Automated Installation with Ansible (Recommended)
+
+The easiest way to install Connectivity Link is using the provided Ansible playbook, which automates the entire installation process:
+
+**Prerequisites:**
+```bash
+# Install Ansible and required Python packages
+pip install -r requirements.txt
+
+# Or using system package manager
+dnf install ansible python3-kubernetes
+```
+
+**Run the installation:**
+```bash
+ansible-playbook install-gitops.yaml
+```
+
+**What the Ansible playbook does:**
+1. **Installs OpenShift GitOps Operator** (version 1.19.1)
+   - Creates CatalogSource if needed
+   - Creates OperatorGroup
+   - Creates/updates Subscription
+   - Waits for InstallPlan and CSV to be ready
+   - Verifies ArgoCD CRD is available
+
+2. **Applies ApplicationSet**
+   - Applies `applicationset-instance.yaml` to deploy all components
+   - Waits for operators to be installed and ready
+   - Verifies operator installations before proceeding
+
+3. **Enables Console Plugins**
+   - Enables GitOps console plugin
+   - Enables Connectivity Link console plugin
+   - Patches ConsoleOperator to activate plugins
+
+4. **Fixes Operator Configurations**
+   - Fixes `rhbk-operator` OperatorGroup (ensures SingleNamespace installation)
+   - Cleans up duplicate `devspaces` subscriptions
+
+The playbook ensures proper installation order and handles common configuration issues automatically.
+
+### Manual Installation (Alternative)
+
+If you prefer to install manually:
 
 ### Step 1: Install OpenShift GitOps Operator
 
@@ -706,6 +766,165 @@ Helm-based deployment configuration for the workshop-pipelines chart from an ext
   - API protection with fine-grained authorization policies
 
 ## 🏗️ Architecture Diagrams
+
+### System Architecture
+
+The following diagram illustrates the complete system architecture, showing how all components interact:
+
+```mermaid
+graph TB
+    subgraph "GitOps Layer"
+        GitRepo[Git Repository<br/>connectivity-link]
+        ArgoCD[ArgoCD<br/>OpenShift GitOps]
+        AppSet[ApplicationSet<br/>connectivity-infra-all-in-one]
+    end
+
+    subgraph "Operator Layer"
+        GitOpsOp[OpenShift GitOps Operator]
+        SMOperator[Service Mesh Operator]
+        RHCLOp[RHCL Operator]
+        RHBKOp[Keycloak Operator]
+        RHDHOp[Developer Hub Operator]
+    end
+
+    subgraph "Infrastructure Layer"
+        SMCP[Service Mesh Control Plane<br/>Istio]
+        Gateway[Kubernetes Gateway<br/>neuralbank-gateway]
+        Kuadrant[Kuadrant<br/>Authorino Manager]
+    end
+
+    subgraph "Authentication & Authorization"
+        Keycloak[Keycloak<br/>OIDC Provider]
+        Authorino[Authorino<br/>AuthN/AuthZ Engine]
+        OIDCPolicy[OIDCPolicy<br/>OIDC Configuration]
+        AuthPolicy[AuthPolicy<br/>Advanced Auth Rules]
+    end
+
+    subgraph "Application Layer"
+        Frontend[NeuralBank Frontend]
+        Backend[NeuralBank Backend]
+        DB[(PostgreSQL)]
+    end
+
+    subgraph "Developer Tools"
+        DevHub[Developer Hub<br/>Backstage]
+        DevSpaces[DevSpaces]
+    end
+
+    GitRepo --> ArgoCD
+    ArgoCD --> AppSet
+    AppSet --> GitOpsOp
+    AppSet --> SMOperator
+    AppSet --> RHCLOp
+    AppSet --> RHBKOp
+    AppSet --> RHDHOp
+
+    SMOperator --> SMCP
+    SMCP --> Gateway
+    RHCLOp --> Kuadrant
+    Kuadrant --> Authorino
+    RHCLOp --> OIDCPolicy
+    RHCLOp --> AuthPolicy
+
+    RHBKOp --> Keycloak
+    OIDCPolicy --> Keycloak
+    AuthPolicy --> Authorino
+    Authorino --> Gateway
+
+    Gateway --> Frontend
+    Gateway --> Backend
+    Backend --> DB
+
+    RHDHOp --> DevHub
+    AppSet --> DevSpaces
+
+    style GitRepo fill:#e1f5ff
+    style ArgoCD fill:#e1f5ff
+    style Keycloak fill:#ffebee
+    style Authorino fill:#ffebee
+    style Gateway fill:#f3e5f5
+    style Frontend fill:#e8f5e9
+    style Backend fill:#e8f5e9
+```
+
+### OIDC Authentication Flow
+
+The following sequence diagram illustrates the complete OIDC authentication flow using Keycloak and Authorino:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Gateway as Istio Gateway
+    participant Authorino
+    participant Keycloak
+    participant Backend
+
+    User->>Frontend: 1. Access protected resource (/api/*)
+    Frontend->>Gateway: 2. HTTP Request
+    Gateway->>Authorino: 3. Check AuthPolicy/OIDCPolicy
+    Authorino->>Authorino: 4. No valid token found
+    
+    alt User not authenticated
+        Authorino->>Gateway: 5. 302 Redirect to Keycloak
+        Gateway->>User: 6. Redirect to Keycloak login
+        User->>Keycloak: 7. Authenticate (username/password)
+        Keycloak->>Keycloak: 8. Validate credentials
+        Keycloak->>User: 9. Authorization code (redirect to /auth/callback)
+        User->>Gateway: 10. GET /auth/callback?code=xxx
+        Gateway->>Authorino: 11. Forward callback request
+        Authorino->>Keycloak: 12. Exchange code for token (POST /token)
+        Keycloak->>Authorino: 13. Return ID token + Access token
+        Authorino->>Authorino: 14. Validate JWT token
+        Authorino->>Gateway: 15. Set cookie (jwt=token) + redirect to /
+        Gateway->>User: 16. Redirect to application root
+    end
+
+    User->>Frontend: 17. Access protected resource (with cookie)
+    Frontend->>Gateway: 18. HTTP Request (Cookie: jwt=token)
+    Gateway->>Authorino: 19. Check AuthPolicy with token
+    Authorino->>Authorino: 20. Validate JWT from cookie
+    Authorino->>Keycloak: 21. Verify token signature (optional)
+    Keycloak->>Authorino: 22. Token valid
+    Authorino->>Gateway: 23. Authentication successful
+    Gateway->>Backend: 24. Forward request with Bearer token
+    Backend->>Backend: 25. Process request
+    Backend->>Gateway: 26. Response
+    Gateway->>Frontend: 27. Response
+    Frontend->>User: 28. Display data
+```
+
+### Installation Flow
+
+The following diagram shows the automated installation process using Ansible:
+
+```mermaid
+graph TD
+    Start[Start Installation] --> Ansible[Run Ansible Playbook<br/>install-gitops.yaml]
+    
+    Ansible --> InstallGitOps[Install OpenShift GitOps Operator]
+    InstallGitOps --> WaitGitOps[Wait for GitOps Operator Ready]
+    WaitGitOps --> VerifyCRD[Verify ArgoCD CRD Available]
+    
+    VerifyCRD --> ApplyAppSet[Apply ApplicationSet<br/>applicationset-instance.yaml]
+    
+    ApplyAppSet --> SyncWave0[Sync Wave 0:<br/>GitOps Operator]
+    SyncWave0 --> SyncWave1[Sync Wave 1:<br/>Namespaces]
+    SyncWave1 --> SyncWave2[Sync Wave 2:<br/>Operators & RBAC]
+    
+    SyncWave2 --> VerifyOps[Verify Operators Installed]
+    VerifyOps --> SyncWave3[Sync Wave 3:<br/>Infrastructure]
+    SyncWave3 --> SyncWave4[Sync Wave 4-7:<br/>Applications]
+    
+    SyncWave4 --> EnablePlugins[Enable Console Plugins<br/>GitOps & Connectivity Link]
+    EnablePlugins --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]
+    FixConfig --> Complete[Installation Complete]
+    
+    style Start fill:#e1f5ff
+    style Ansible fill:#fff3e0
+    style VerifyOps fill:#ffebee
+    style Complete fill:#e8f5e9
+```
 
 ### The Application Solution without Auth 🙌:
 

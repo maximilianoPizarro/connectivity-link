@@ -1,0 +1,14 @@
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: gitops-plugin
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  backend:
+    service:
+      name: openshift-gitops-server
+      namespace: openshift-gitops
+      port: 443
+      basePath: /api/plugin
+  displayName: GitOps

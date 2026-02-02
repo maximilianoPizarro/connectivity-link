@@ -1,14 +1,3 @@
-apiVersion: operators.coreos.com/v1alpha2
-kind: OperatorGroup
-metadata:
-  name: rhbk-operator
-  namespace: rhbk-operator
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-spec:
-  targetNamespaces:
-    - rhbk-operator
----
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:

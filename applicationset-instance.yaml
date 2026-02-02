@@ -19,11 +19,6 @@ spec:
             path: namespaces
             sync_wave: "1"
             app_type: plain
-          - name: operators
-            namespace: openshift-gitops
-            path: operators
-            sync_wave: "2"
-            app_type: helm-internal
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -38,6 +33,11 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
+            app_type: plain
+          - name: rhbk-operator
+            namespace: rhbk-operator
+            path: rhbk-operator
+            sync_wave: "2"
             app_type: plain
           # RBAC applications
           - name: workshop-pipelines-rbac
@@ -82,11 +82,46 @@ spec:
       source:
         repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
-        {{- if eq .app_type "helm-internal" }}
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: operators-helm
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: operators
+            namespace: openshift-gitops
+            path: operators
+            sync_wave: "2"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
         helm:
           valueFiles:
             - helm-values.yaml
-        {{- end }}
         path: '{{.path}}'
       destination:
         server: 'https://kubernetes.default.svc'

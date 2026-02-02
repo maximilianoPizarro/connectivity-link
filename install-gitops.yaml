@@ -291,20 +291,91 @@
         'stable' not in available_channels.stdout
 
     - name: Wait for InstallPlan to be created
-      k8s_info:
-        api_version: operators.coreos.com/v1alpha1
-        kind: Subscription
-        namespace: "{{ gitops_namespace }}"
-        name: "{{ gitops_subscription_name }}"
-      register: subscription_status_final
-      until: >
-        subscription_status_final.resources | length > 0 and
-        subscription_status_final.resources[0].status is defined and
-        subscription_status_final.resources[0].status.installPlanRef is defined and
-        subscription_status_final.resources[0].status.installPlanRef.name is defined
-      retries: 30
-      delay: 5
-      failed_when: false
+      block:
+        - name: Check subscription status for InstallPlan
+          k8s_info:
+            api_version: operators.coreos.com/v1alpha1
+            kind: Subscription
+            namespace: "{{ gitops_namespace }}"
+            name: "{{ gitops_subscription_name }}"
+          register: subscription_status_final
+          until: >
+            subscription_status_final.resources | length > 0 and
+            subscription_status_final.resources[0].status is defined and
+            (subscription_status_final.resources[0].status.installPlanRef is defined and
+             subscription_status_final.resources[0].status.installPlanRef.name is defined)
+          retries: 20
+          delay: 10
+          failed_when: false
+
+        - name: Display subscription status for debugging
+          debug:
+            msg:
+              - "Subscription status check:"
+              - "  - Subscription exists: {{ subscription_status_final.resources | length > 0 }}"
+              - "  - Has status: {{ subscription_status_final.resources[0].status is defined if subscription_status_final.resources | length > 0 else false }}"
+              - "  - Has installPlanRef: {{ subscription_status_final.resources[0].status.installPlanRef is defined if (subscription_status_final.resources | length > 0 and subscription_status_final.resources[0].status is defined) else false }}"
+              - "  - Conditions: {{ subscription_status_final.resources[0].status.conditions | default([]) | map(attribute='type') | list if (subscription_status_final.resources | length > 0 and subscription_status_final.resources[0].status is defined) else [] }}"
+          when: subscription_status_final.resources | length > 0
+
+        - name: Check for subscription errors
+          debug:
+            msg:
+              - "Subscription error detected:"
+              - "{{ subscription_status_final.resources[0].status.conditions | default([]) | selectattr('status', 'equalto', 'True') | selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) | map(attribute='message') | list }}"
+          when: >
+            subscription_status_final.resources | length > 0 and
+            subscription_status_final.resources[0].status is defined and
+            subscription_status_final.resources[0].status.conditions is defined and
+            (subscription_status_final.resources[0].status.conditions | 
+             selectattr('status', 'equalto', 'True') | 
+             selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) | 
+             list | length > 0)
+
+        - name: Check for InstallPlans directly in namespace
+          k8s_info:
+            api_version: operators.coreos.com/v1alpha1
+            kind: InstallPlan
+            namespace: "{{ gitops_namespace }}"
+          register: installplans_direct
+          failed_when: false
+          when: >
+            subscription_status_final.resources | length == 0 or
+            subscription_status_final.resources[0].status is not defined or
+            subscription_status_final.resources[0].status.installPlanRef is not defined or
+            subscription_status_final.resources[0].status.installPlanRef.name is not defined
+
+        - name: Use InstallPlan found directly if subscription doesn't have reference
+          set_fact:
+            install_plan_name: "{{ installplans_direct.resources[0].metadata.name }}"
+          when: >
+            installplans_direct.resources | length > 0 and
+            (subscription_status_final.resources | length == 0 or
+             subscription_status_final.resources[0].status is not defined or
+             subscription_status_final.resources[0].status.installPlanRef is not defined or
+             subscription_status_final.resources[0].status.installPlanRef.name is not defined)
+
+        - name: Fail if InstallPlan not created after retries
+          fail:
+            msg: >
+              InstallPlan was not created after 20 retries (~3.3 minutes).
+              This usually indicates:
+              - CatalogSource is not ready or unhealthy
+              - Operator is not available in the specified channel ({{ gitops_channel }})
+              - Network issues preventing access to the operator catalog
+              
+              Troubleshooting steps:
+              1. Check subscription: oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
+              2. Check subscription conditions: oc describe subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }}
+              3. Check InstallPlans: oc get installplan -n {{ gitops_namespace }}
+              4. Check CatalogSource: oc get catalogsource redhat-operators -n openshift-marketplace
+              5. Check operator availability: oc get packagemanifests {{ gitops_operator_name }} -n openshift-marketplace
+          when: >
+            (subscription_status_final.resources | length == 0 or
+             subscription_status_final.resources[0].status is not defined or
+             subscription_status_final.resources[0].status.installPlanRef is not defined or
+             subscription_status_final.resources[0].status.installPlanRef.name is not defined) and
+            (installplans_direct.resources is not defined or installplans_direct.resources | length == 0)
 
     - name: Get InstallPlan name
       set_fact:
@@ -654,3 +725,160 @@
         - name: Display operators installation success
           debug:
             msg: "All required operators are installed and ready!"
+
+        - name: Clean up duplicate devspaces subscription if exists
+          block:
+            - name: Check for duplicate devspaces subscriptions
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: Subscription
+                namespace: openshift-operators
+              register: all_subscriptions
+              failed_when: false
+
+            - name: Find devspaces subscriptions
+              set_fact:
+                devspaces_subs: >
+                  {{ all_subscriptions.resources | selectattr('metadata.name', 'equalto', 'devspaces') | list }}
+
+            - name: Delete duplicate devspaces subscription without startingCSV
+              k8s:
+                state: absent
+                api_version: operators.coreos.com/v1alpha1
+                kind: Subscription
+                namespace: openshift-operators
+                name: devspaces
+              when: >
+                devspaces_subs | length > 1 or
+                (devspaces_subs | length == 1 and
+                 devspaces_subs[0].spec.startingCSV | default('') == '')
+              register: delete_result
+              failed_when: false
+
+            - name: Display cleanup status
+              debug:
+                msg:
+                  - "devspaces subscriptions found: {{ devspaces_subs | length }}"
+                  - "Action: {{ 'Deleted duplicate subscription' if delete_result.changed | default(false) else 'No duplicate found or already cleaned' }}"
+                  - "Note: The correct subscription should have startingCSV: devspacesoperator.v3.24.0"
+
+        - name: Fix rhbk-operator OperatorGroup if it has AllNamespaces
+          block:
+            - name: Check if rhbk-operator OperatorGroup exists
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha2
+                kind: OperatorGroup
+                namespace: rhbk-operator
+                name: rhbk-operator
+              register: rhbk_og
+              failed_when: false
+
+            - name: Check if OperatorGroup has AllNamespaces (empty spec)
+              set_fact:
+                has_allnamespaces: >
+                  {{ rhbk_og.resources | length > 0 and
+                     (rhbk_og.resources[0].spec | default({}) | length == 0 or
+                      rhbk_og.resources[0].spec.targetNamespaces | default([]) | length == 0) }}
+
+            - name: Delete and recreate OperatorGroup if it has AllNamespaces
+              block:
+                - name: Delete existing OperatorGroup with AllNamespaces
+                  k8s:
+                    state: absent
+                    api_version: operators.coreos.com/v1alpha2
+                    kind: OperatorGroup
+                    namespace: rhbk-operator
+                    name: rhbk-operator
+                  when: has_allnamespaces | default(false)
+
+                - name: Wait for OperatorGroup deletion
+                  pause:
+                    seconds: 5
+                  when: has_allnamespaces | default(false)
+
+                - name: Create OperatorGroup with targetNamespaces
+                  k8s:
+                    state: present
+                    definition:
+                      apiVersion: operators.coreos.com/v1alpha2
+                      kind: OperatorGroup
+                      metadata:
+                        name: rhbk-operator
+                        namespace: rhbk-operator
+                        annotations:
+                          argocd.argoproj.io/sync-wave: "2"
+                      spec:
+                        targetNamespaces:
+                          - rhbk-operator
+                  when: has_allnamespaces | default(false)
+                  register: create_rhbk_og
+
+            - name: Display OperatorGroup fix status
+              debug:
+                msg:
+                  - "rhbk-operator OperatorGroup status:"
+                  - "  - Exists: {{ rhbk_og.resources | length > 0 }}"
+                  - "  - Has AllNamespaces: {{ has_allnamespaces | default(false) }}"
+                  - "  - Action taken: {{ 'Recreated with targetNamespaces' if has_allnamespaces | default(false) else 'No action needed' }}"
+                  - "Note: If the operator CSV still shows AllNamespaces error, you may need to delete the Subscription and let it recreate"
+
+        - name: Enable console plugins for GitOps and Connectivity Link
+          block:
+            - name: Enable GitOps console plugin
+              k8s:
+                state: present
+                definition:
+                  apiVersion: console.openshift.io/v1
+                  kind: ConsolePlugin
+                  metadata:
+                    name: gitops-plugin
+                  spec:
+                    backend:
+                      service:
+                        name: openshift-gitops-server
+                        namespace: openshift-gitops
+                        port: 443
+                        basePath: /api/plugin
+                    displayName: GitOps
+              register: gitops_plugin_result
+              failed_when: false
+
+            - name: Enable Connectivity Link console plugin
+              k8s:
+                state: present
+                definition:
+                  apiVersion: console.openshift.io/v1
+                  kind: ConsolePlugin
+                  metadata:
+                    name: connectivity-link-plugin
+                  spec:
+                    backend:
+                      service:
+                        name: neuralbank
+                        namespace: neuralbank-stack
+                        port: 8080
+                        basePath: /api/plugin
+                    displayName: Connectivity Link
+              register: connectivity_plugin_result
+              failed_when: false
+
+            - name: Wait for ConsolePlugin resources to be created by ArgoCD
+              pause:
+                seconds: 30
+
+            - name: Patch ConsoleOperator to enable plugins
+              command: >
+                oc patch console.operator.openshift.io cluster --type merge
+                -p '{"spec":{"plugins":["gitops-plugin","connectivity-link-plugin"]}}'
+              register: console_patch_result
+              failed_when: false
+              changed_when: console_patch_result.rc == 0
+
+            - name: Display console plugins status
+              debug:
+                msg:
+                  - "Console plugins configuration:"
+                  - "  - GitOps plugin: gitops-plugin"
+                  - "  - Connectivity Link plugin: connectivity-link-plugin"
+                  - "Note: Plugins will be enabled in the console after ArgoCD syncs the ConsolePlugin resources"
+                  - "To manually enable: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
