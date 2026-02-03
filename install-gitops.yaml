@@ -290,9 +290,139 @@
         available_channels.stdout | length > 0 and
         'stable' not in available_channels.stdout
 
-    - name: Wait for InstallPlan to be created
+    - name: Wait for InstallPlan (with fallback if pinned version unavailable)
       block:
-        - name: Check subscription status for InstallPlan
+        - name: Wait for InstallPlan to be created
+          block:
+            - name: Check subscription status for InstallPlan
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: Subscription
+                namespace: "{{ gitops_namespace }}"
+                name: "{{ gitops_subscription_name }}"
+              register: subscription_status_final
+              until: >
+                (subscription_status_final.resources | default([]) | length > 0) and
+                (subscription_status_final.resources[0].status is defined) and
+                (subscription_status_final.resources[0].status.installPlanRef is defined and
+                 subscription_status_final.resources[0].status.installPlanRef.name is defined)
+              retries: 20
+              delay: 10
+              failed_when: false
+
+            - name: Display subscription status for debugging
+              debug:
+                msg:
+                  - "Subscription status check:"
+                  - "  - Subscription exists: {{ (subscription_status_final.resources | default([])) | length > 0 }}"
+                  - "  - Has status: {{ (subscription_status_final.resources | default([]) | length > 0) and (subscription_status_final.resources[0].status is defined) }}"
+                  - "  - Has installPlanRef: {{ (subscription_status_final.resources | default([]) | length > 0) and (subscription_status_final.resources[0].status.installPlanRef is defined) }}"
+                  - "  - Conditions: {{ subscription_status_final.resources[0].status.conditions | default([]) | map(attribute='type') | list }}"
+              when: (subscription_status_final.resources | default([])) | length > 0
+
+            - name: Check for subscription errors
+              debug:
+                msg:
+                  - "Subscription error detected:"
+                  - "{{ subscription_status_final.resources[0].status.conditions | default([]) | selectattr('status', 'equalto', 'True') | selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) | map(attribute='message') | list }}"
+              when: >
+                (subscription_status_final.resources | default([]) | length > 0) and
+                subscription_status_final.resources[0].status is defined and
+                subscription_status_final.resources[0].status.conditions is defined and
+                (subscription_status_final.resources[0].status.conditions |
+                 selectattr('status', 'equalto', 'True') |
+                 selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) |
+                 list | length > 0)
+
+            - name: Check for InstallPlans directly in namespace
+              k8s_info:
+                api_version: operators.coreos.com/v1alpha1
+                kind: InstallPlan
+                namespace: "{{ gitops_namespace }}"
+              register: installplans_direct
+              failed_when: false
+              when: >
+                (subscription_status_final.resources | default([]) | length == 0) or
+                subscription_status_final.resources[0].status is not defined or
+                subscription_status_final.resources[0].status.installPlanRef is not defined or
+                subscription_status_final.resources[0].status.installPlanRef.name is not defined
+
+            - name: Use InstallPlan found directly if subscription doesn't have reference
+              set_fact:
+                install_plan_name: "{{ installplans_direct.resources[0].metadata.name }}"
+              when: >
+                (installplans_direct.resources | default([]) | length > 0) and
+                ((subscription_status_final.resources | default([]) | length == 0) or
+                 subscription_status_final.resources[0].status is not defined or
+                 subscription_status_final.resources[0].status.installPlanRef is not defined or
+                 subscription_status_final.resources[0].status.installPlanRef.name is not defined)
+
+            - name: Fail if InstallPlan not created after retries
+              fail:
+                msg: >
+                  InstallPlan was not created after 20 retries (~3.3 minutes).
+                  This usually indicates:
+                  - CatalogSource is not ready or unhealthy
+                  - Operator is not available in the specified channel ({{ gitops_channel }})
+                  - Network issues preventing access to the operator catalog
+                  
+                  Troubleshooting steps:
+                  1. Check subscription: oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
+                  2. Check subscription conditions: oc describe subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }}
+                  3. Check InstallPlans: oc get installplan -n {{ gitops_namespace }}
+                  4. Check CatalogSource: oc get catalogsource redhat-operators -n openshift-marketplace
+                  5. Check operator availability: oc get packagemanifests {{ gitops_operator_name }} -n openshift-marketplace
+              when: >
+                ((subscription_status_final.resources | default([]) | length == 0) or
+                 ((subscription_status_final.resources | default([]) | length > 0) and
+                  (subscription_status_final.resources[0].status is not defined or
+                   subscription_status_final.resources[0].status.installPlanRef is not defined or
+                   subscription_status_final.resources[0].status.installPlanRef.name is not defined))) and
+                (installplans_direct.resources is not defined or (installplans_direct.resources | default([]) | length == 0))
+
+      rescue:
+        - name: Fallback - InstallPlan not created with pinned version
+          debug:
+            msg: "Trying fallback: subscription without version pin (use latest from catalog)"
+
+        - name: Get available channels for fallback
+          command: >
+            oc get packagemanifests {{ gitops_operator_name }} -n openshift-marketplace
+            -o jsonpath='{.status.channels[*].name}'
+          register: fallback_channels
+          changed_when: false
+          failed_when: false
+
+        - name: Set fallback channel
+          set_fact:
+            fallback_channel: "{{ (fallback_channels.stdout | default('stable')).split() | first }}"
+
+        - name: Remove startingCSV from subscription so OLM resolves latest in channel
+          command: >
+            oc patch subscription {{ gitops_subscription_name }}
+            -n {{ gitops_namespace }}
+            --type=json
+            -p '[{"op": "remove", "path": "/spec/startingCSV"}]'
+          register: remove_starting_csv
+          failed_when: false
+          changed_when: remove_starting_csv.rc == 0
+
+        - name: Update subscription to fallback channel (no startingCSV)
+          k8s:
+            api_version: operators.coreos.com/v1alpha1
+            kind: Subscription
+            name: "{{ gitops_subscription_name }}"
+            namespace: "{{ gitops_namespace }}"
+            state: present
+            definition:
+              spec:
+                channel: "{{ fallback_channel }}"
+                name: "{{ gitops_operator_name }}"
+                source: redhat-operators
+                sourceNamespace: openshift-marketplace
+                installPlanApproval: Automatic
+
+        - name: Wait for InstallPlan (fallback)
           k8s_info:
             api_version: operators.coreos.com/v1alpha1
             kind: Subscription
@@ -300,88 +430,82 @@
             name: "{{ gitops_subscription_name }}"
           register: subscription_status_final
           until: >
-            subscription_status_final.resources | length > 0 and
-            subscription_status_final.resources[0].status is defined and
+            (subscription_status_final.resources | default([]) | length > 0) and
+            (subscription_status_final.resources[0].status is defined) and
             (subscription_status_final.resources[0].status.installPlanRef is defined and
              subscription_status_final.resources[0].status.installPlanRef.name is defined)
-          retries: 20
+          retries: 30
           delay: 10
           failed_when: false
 
-        - name: Display subscription status for debugging
-          debug:
-            msg:
-              - "Subscription status check:"
-              - "  - Subscription exists: {{ subscription_status_final.resources | length > 0 }}"
-              - "  - Has status: {{ subscription_status_final.resources[0].status is defined if subscription_status_final.resources | length > 0 else false }}"
-              - "  - Has installPlanRef: {{ subscription_status_final.resources[0].status.installPlanRef is defined if (subscription_status_final.resources | length > 0 and subscription_status_final.resources[0].status is defined) else false }}"
-              - "  - Conditions: {{ subscription_status_final.resources[0].status.conditions | default([]) | map(attribute='type') | list if (subscription_status_final.resources | length > 0 and subscription_status_final.resources[0].status is defined) else [] }}"
-          when: subscription_status_final.resources | length > 0
-
-        - name: Check for subscription errors
-          debug:
-            msg:
-              - "Subscription error detected:"
-              - "{{ subscription_status_final.resources[0].status.conditions | default([]) | selectattr('status', 'equalto', 'True') | selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) | map(attribute='message') | list }}"
+        - name: Set install_plan_name from fallback subscription
+          set_fact:
+            install_plan_name: "{{ subscription_status_final.resources[0].status.installPlanRef.name }}"
           when: >
-            subscription_status_final.resources | length > 0 and
+            (subscription_status_final.resources | default([]) | length > 0) and
             subscription_status_final.resources[0].status is defined and
-            subscription_status_final.resources[0].status.conditions is defined and
-            (subscription_status_final.resources[0].status.conditions | 
-             selectattr('status', 'equalto', 'True') | 
-             selectattr('type', 'in', ['ResolutionFailed', 'CatalogSourcesUnhealthy', 'InstallPlanMissing']) | 
-             list | length > 0)
+            subscription_status_final.resources[0].status.installPlanRef is defined and
+            subscription_status_final.resources[0].status.installPlanRef.name is defined
 
-        - name: Check for InstallPlans directly in namespace
+        - name: Get InstallPlans directly (fallback)
           k8s_info:
             api_version: operators.coreos.com/v1alpha1
             kind: InstallPlan
             namespace: "{{ gitops_namespace }}"
           register: installplans_direct
           failed_when: false
-          when: >
-            subscription_status_final.resources | length == 0 or
-            subscription_status_final.resources[0].status is not defined or
-            subscription_status_final.resources[0].status.installPlanRef is not defined or
-            subscription_status_final.resources[0].status.installPlanRef.name is not defined
+          when: install_plan_name is not defined
 
-        - name: Use InstallPlan found directly if subscription doesn't have reference
+        - name: Set install_plan_name from direct list (fallback)
           set_fact:
             install_plan_name: "{{ installplans_direct.resources[0].metadata.name }}"
           when: >
-            installplans_direct.resources | length > 0 and
-            (subscription_status_final.resources | length == 0 or
-             subscription_status_final.resources[0].status is not defined or
-             subscription_status_final.resources[0].status.installPlanRef is not defined or
-             subscription_status_final.resources[0].status.installPlanRef.name is not defined)
+            install_plan_name is not defined and
+            (installplans_direct.resources | default([]) | length > 0)
 
-        - name: Fail if InstallPlan not created after retries
+        - name: Debug subscription and InstallPlans when fallback did not create InstallPlan
+          block:
+            - name: Get subscription and InstallPlans for debugging
+              command: >
+                oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
+              register: sub_yaml
+              changed_when: false
+              failed_when: false
+
+            - name: List InstallPlans in namespace
+              command: oc get installplan -n {{ gitops_namespace }} -o wide
+              register: ip_list
+              changed_when: false
+              failed_when: false
+
+            - name: Show subscription status (fallback failed)
+              debug:
+                msg:
+                  - "Subscription (last 50 lines):"
+                  - "{{ (sub_yaml.stdout_lines | default([]))[-50:] | join('\n') }}"
+              when: sub_yaml.stdout is defined and sub_yaml.stdout | length > 0
+
+            - name: Show InstallPlan list (fallback failed)
+              debug:
+                msg: "InstallPlans in {{ gitops_namespace }}: {{ ip_list.stdout | default('(none or error)') }}"
+          when: install_plan_name is not defined
+
+        - name: Fail if InstallPlan still not created after fallback
           fail:
             msg: >
-              InstallPlan was not created after 20 retries (~3.3 minutes).
-              This usually indicates:
-              - CatalogSource is not ready or unhealthy
-              - Operator is not available in the specified channel ({{ gitops_channel }})
-              - Network issues preventing access to the operator catalog
-              
-              Troubleshooting steps:
-              1. Check subscription: oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
-              2. Check subscription conditions: oc describe subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }}
-              3. Check InstallPlans: oc get installplan -n {{ gitops_namespace }}
-              4. Check CatalogSource: oc get catalogsource redhat-operators -n openshift-marketplace
-              5. Check operator availability: oc get packagemanifests {{ gitops_operator_name }} -n openshift-marketplace
-          when: >
-            (subscription_status_final.resources | length == 0 or
-             subscription_status_final.resources[0].status is not defined or
-             subscription_status_final.resources[0].status.installPlanRef is not defined or
-             subscription_status_final.resources[0].status.installPlanRef.name is not defined) and
-            (installplans_direct.resources is not defined or installplans_direct.resources | length == 0)
+              InstallPlan was not created even after fallback (subscription without version pin, waited ~5 min).
+              Check subscription conditions and catalog:
+              oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
+              oc describe subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }}
+              oc get installplan -n {{ gitops_namespace }}
+              oc get catalogsource redhat-operators -n openshift-marketplace -o yaml
+          when: install_plan_name is not defined
 
     - name: Get InstallPlan name
       set_fact:
         install_plan_name: "{{ subscription_status_final.resources[0].status.installPlanRef.name }}"
       when: >
-        subscription_status_final.resources | length > 0 and
+        (subscription_status_final.resources | default([]) | length > 0) and
         subscription_status_final.resources[0].status is defined and
         subscription_status_final.resources[0].status.installPlanRef is defined and
         subscription_status_final.resources[0].status.installPlanRef.name is defined
@@ -394,7 +518,7 @@
         name: "{{ install_plan_name }}"
       register: installplan_status
       until: >
-        installplan_status.resources | length > 0 and
+        (installplan_status.resources | default([]) | length > 0) and
         installplan_status.resources[0].spec.approved == true
       retries: 10
       delay: 2
@@ -408,7 +532,7 @@
         -p '{"spec":{"approved":true}}'
       when: >
         install_plan_name is defined and
-        installplan_status.resources | length > 0 and
+        (installplan_status.resources | default([]) | length > 0) and
         installplan_status.resources[0].spec.approved != true
       register: installplan_patch_result
       changed_when: installplan_patch_result.rc == 0
@@ -608,6 +732,29 @@
           pause:
             seconds: 15
 
+        - name: Wait for required operator subscriptions to exist
+          k8s_info:
+            api_version: operators.coreos.com/v1alpha1
+            kind: Subscription
+            namespace: "{{ item.namespace }}"
+            name: "{{ item.name }}"
+          register: sub_check
+          until: sub_check.resources | length > 0
+          retries: 36
+          delay: 10
+          failed_when: false
+          loop: "{{ required_operators }}"
+          loop_control:
+            label: "{{ item.name }} in {{ item.namespace }}"
+
+        - name: Warn if any subscription still missing after wait
+          debug:
+            msg: "Subscription {{ item.item.name }} in {{ item.item.namespace }} still not found after wait. CSV wait may fail."
+          loop: "{{ sub_check.results }}"
+          loop_control:
+            label: "{{ item.item.name }}"
+          when: item.resources | length == 0
+
         - name: Verify required operators are being installed
           block:
             - name: Check operator subscription exists
@@ -700,12 +847,29 @@
               loop_control:
                 label: "{{ item.item.name }}"
 
+            - name: Show CSV details for non-ready operators
+              debug:
+                msg:
+                  - "Operator {{ item.item.name }} ({{ item.item.namespace }}) CSV not Succeeded:"
+                  - "  Phase: {{ matching_csv.get('status', {}).get('phase', 'No CSV found') }}"
+                  - "  Conditions: {{ matching_csv.get('status', {}).get('conditions', []) | map(attribute='type') | list | join(', ') }}"
+                  - "  Messages: {{ matching_csv.get('status', {}).get('conditions', []) | map(attribute='message') | list | join(' | ') }}"
+                  - "  Run: oc get csv -n {{ item.item.namespace }}; oc describe csv -n {{ item.item.namespace }} <csv-name>"
+              loop: "{{ csv_final_check.results }}"
+              loop_control:
+                label: "{{ item.item.name }}"
+              vars:
+                matching_csv: "{{ (item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | list | first) | default({}) }}"
+              when: >
+                (item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('')) != 'Succeeded'
+
             - name: Fail if any operator is not ready
               fail:
                 msg: >
-                  Operator {{ item.item.name }} in namespace {{ item.item.namespace }} is not ready.
-                  CSV Phase: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('Not found') }}
-                  Check with: oc get csv -n {{ item.item.namespace }} | grep {{ item.item.name }}
+                  Operator {{ item.item.name }} in namespace {{ item.item.namespace }} did not reach CSV phase Succeeded (waited up to 10 min).
+                  Current phase: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('Not found') }}
+                  Condition messages: {{ ((item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | list | first) | default({})).get('status', {}).get('conditions', []) | default([]) | map(attribute='message') | list | join('; ') }}
+                  Check: oc get csv -n {{ item.item.namespace }}; oc describe csv -n {{ item.item.namespace }} <csv-name>
               when: >
                 item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('') != 'Succeeded'
               loop: "{{ csv_final_check.results }}"

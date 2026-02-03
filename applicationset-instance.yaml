@@ -51,8 +51,8 @@ spec:
             path: rhbk
             sync_wave: "2"
             app_type: kustomize
-            keycloak_host: rhbk.apps.cluster-vct46.vct46.sandbox830.opentlc.com
-            app_host: neuralbank.apps.cluster-vct46.vct46.sandbox830.opentlc.com
+            keycloak_host: rhbk.apps.rosa.dkam4-d8mjp-vdv.d2bq.p3.openshiftapps.com
+            app_host: neuralbank.apps.rosa.dkam4-d8mjp-vdv.d2bq.p3.openshiftapps.com
           # DotNet Demo Application
           - name: dotnet-demo
             namespace: dotnet-demo
@@ -149,8 +149,8 @@ spec:
             namespace: neuralbank-stack
             path: neuralbank-stack
             sync_wave: "5"
-            keycloak_host: rhbk.apps.cluster-vct46.vct46.sandbox830.opentlc.com
-            app_host: neuralbank.apps.cluster-vct46.vct46.sandbox830.opentlc.com
+            keycloak_host: rhbk.apps.rosa.dkam4-d8mjp-vdv.d2bq.p3.openshiftapps.com
+            app_host: neuralbank.apps.rosa.dkam4-d8mjp-vdv.d2bq.p3.openshiftapps.com
   template:
     metadata:
       name: '{{.name}}'
