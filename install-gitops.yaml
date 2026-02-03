@@ -830,7 +830,7 @@
             - name: Check if operator is ready
               set_fact:
                 operator_ready: >
-                  {{ csv_final_check.resources | selectattr('metadata.name', 'match', '.*' + item.name + '.*') | map(attribute='status.phase') | list | first | default('') == 'Succeeded' }}
+                  {{ csv_result.resources | selectattr('metadata.name', 'match', '.*' + csv_result.item.name + '.*') | map(attribute='status.phase') | list | first | default('') == 'Succeeded' }}
               loop: "{{ csv_final_check.results }}"
               loop_control:
                 loop_var: csv_result
@@ -986,9 +986,9 @@
                   - "  - Action taken: {{ 'Recreated with targetNamespaces' if has_allnamespaces | default(false) else 'No action needed' }}"
                   - "Note: If the operator CSV still shows AllNamespaces error, you may need to delete the Subscription and let it recreate"
 
-        - name: Enable console plugins for GitOps and Connectivity Link
+        - name: Enable console plugins for GitOps and Connectivity Link (barra vertical / sidebar)
           block:
-            - name: Enable GitOps console plugin
+            - name: Create or update GitOps ConsolePlugin (dynamic plugin)
               k8s:
                 state: present
                 definition:
@@ -1007,7 +1007,7 @@
               register: gitops_plugin_result
               failed_when: false
 
-            - name: Enable Connectivity Link console plugin
+            - name: Create or update Connectivity Link ConsolePlugin (dynamic plugin)
               k8s:
                 state: present
                 definition:
@@ -1026,11 +1026,23 @@
               register: connectivity_plugin_result
               failed_when: false
 
-            - name: Wait for ConsolePlugin resources to be created by ArgoCD
-              pause:
-                seconds: 30
+            - name: Wait for ConsolePlugin CRs to exist before enabling in console
+              k8s_info:
+                api_version: console.openshift.io/v1
+                kind: ConsolePlugin
+                name: "{{ item }}"
+              register: consoleplugin_check
+              until: consoleplugin_check.resources | length > 0
+              retries: 24
+              delay: 5
+              failed_when: false
+              loop:
+                - gitops-plugin
+                - connectivity-link-plugin
+              loop_control:
+                label: "{{ item }}"
 
-            - name: Patch ConsoleOperator to enable plugins
+            - name: Patch Console operator to enable plugins in sidebar (barra vertical)
               command: >
                 oc patch console.operator.openshift.io cluster --type merge
                 -p '{"spec":{"plugins":["gitops-plugin","connectivity-link-plugin"]}}'
@@ -1038,11 +1050,285 @@
               failed_when: false
               changed_when: console_patch_result.rc == 0
 
-            - name: Display console plugins status
+            - name: Brief pause for console operator to reconcile
+              pause:
+                seconds: 10
+              when: console_patch_result.rc == 0
+
+            - name: Re-apply console plugins patch (ensure sidebar entries persist)
+              command: >
+                oc patch console.operator.openshift.io cluster --type merge
+                -p '{"spec":{"plugins":["gitops-plugin","connectivity-link-plugin"]}}'
+              register: console_patch_retry
+              failed_when: false
+              changed_when: console_patch_retry.rc == 0
+              when: console_patch_result.rc == 0
+
+            - name: Verify plugins are enabled in Console spec
+              command: >
+                oc get console.operator.openshift.io cluster -o jsonpath='{.spec.plugins}'
+              register: console_plugins_actual
+              changed_when: false
+              failed_when: false
+
+            - name: Display console plugins status (barra vertical / dynamic plugin)
               debug:
                 msg:
-                  - "Console plugins configuration:"
-                  - "  - GitOps plugin: gitops-plugin"
-                  - "  - Connectivity Link plugin: connectivity-link-plugin"
-                  - "Note: Plugins will be enabled in the console after ArgoCD syncs the ConsolePlugin resources"
-                  - "To manually enable: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
+                  - "Plugins de consola (barra vertical / sidebar) configurados:"
+                  - "  - GitOps: gitops-plugin (objetos Argo CD desde la barra)"
+                  - "  - Connectivity Link: connectivity-link-plugin (objetos y topología desde la barra)"
+                  - "  - Console spec.plugins actual: {{ console_plugins_actual.stdout | default('(no leído)') }}"
+                  - "Para que se vean objetos y topología, los backends deben estar levantados (openshift-gitops-server, neuralbank)."
+                  - "Si no aparecen en la barra: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
+              when: console_plugins_actual is defined
+
+    - name: Create OIDC client credentials for OIDCPolicy and frontend
+      block:
+        - name: Set OIDC client ID from env or default
+          set_fact:
+            oidc_client_id: "{{ lookup('env', 'OIDC_CLIENT_ID') | default('neuralbank-frontend', true) }}"
+
+        - name: Generate random OIDC client secret when not provided
+          command: openssl rand -base64 24
+          register: oidc_secret_gen
+          changed_when: false
+          when: lookup('env', 'OIDC_CLIENT_SECRET') | length == 0
+
+        - name: Set OIDC client secret (from env or generated)
+          set_fact:
+            oidc_client_secret: "{{ lookup('env', 'OIDC_CLIENT_SECRET') if lookup('env', 'OIDC_CLIENT_SECRET') else oidc_secret_gen.stdout }}"
+
+        - name: Ensure neuralbank-stack namespace exists for OIDC Secret
+          k8s:
+            api_version: v1
+            kind: Namespace
+            name: neuralbank-stack
+            state: present
+
+        - name: Create Secret with OIDC credentials in neuralbank-stack (frontend)
+          k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: oidc-client-credentials
+                namespace: neuralbank-stack
+              type: Opaque
+              stringData:
+                client_id: "{{ oidc_client_id }}"
+                client_secret: "{{ oidc_client_secret }}"
+
+        - name: Create Secret with OIDC credentials in openshift-operators (OIDCPolicy)
+          k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: oidc-client-credentials
+                namespace: openshift-operators
+              type: Opaque
+              stringData:
+                client_id: "{{ oidc_client_id }}"
+                client_secret: "{{ oidc_client_secret }}"
+
+        - name: Patch OIDCPolicy with client ID and client secret
+          command: >
+            oc patch oidcpolicy neuralbank-oidc -n openshift-operators --type merge
+            -p '{"spec":{"provider":{"clientID":"{{ oidc_client_id }}","clientSecret":"{{ oidc_client_secret }}"}}}'
+          register: oidc_policy_patch
+          failed_when: false
+          changed_when: oidc_policy_patch.rc == 0
+
+        - name: Write OIDC credentials snippet for frontend Helm values
+          copy:
+            content: |
+              # OIDC credentials for NeuralBank frontend (generated by install-gitops)
+              # Use as Helm value override: helm upgrade ... -f oidc-credentials-values.yaml
+              # or set in neuralbank-stack/values.yaml / Application valueFiles
+              keycloak:
+                clientId: "{{ oidc_client_id }}"
+                clientSecret: "{{ oidc_client_secret }}"
+            dest: "{{ playbook_dir }}/oidc-credentials-values.yaml"
+            mode: '0600'
+
+        - name: Display OIDC credentials summary
+          debug:
+            msg:
+              - "OIDC client credentials created/updated:"
+              - "  Client ID: {{ oidc_client_id }}"
+              - "  Client secret: (stored in Secrets and oidc-credentials-values.yaml)"
+              - "  Secret 'oidc-client-credentials' in namespaces: neuralbank-stack, openshift-operators"
+              - "  OIDCPolicy neuralbank-oidc (openshift-operators): {{ 'patched' if oidc_policy_patch.rc == 0 else 'not found or patch failed (sync OIDCPolicy first)' }}"
+              - "  Frontend: use keycloak.clientId and keycloak.clientSecret from {{ playbook_dir }}/oidc-credentials-values.yaml in neuralbank-stack values"
+              - "  To provide your own: set env OIDC_CLIENT_ID and OIDC_CLIENT_SECRET before running install"
+      rescue:
+        - name: Display OIDC credentials block error
+          debug:
+            msg: "OIDC credentials block failed (namespaces or OIDCPolicy may not exist yet). Create client in Keycloak and set OIDC_CLIENT_ID / OIDC_CLIENT_SECRET, then re-run."
+          failed_when: false
+
+    - name: Generate Developer Hub (RHDH) secrets from Keycloak when operational
+      block:
+        - name: Ensure developer-hub namespace exists
+          k8s:
+            api_version: v1
+            kind: Namespace
+            name: developer-hub
+            state: present
+
+        - name: Get Keycloak admin credentials from secret (rhbk-operator)
+          command: >
+            oc get secret keycloak-initial-admin -n rhbk-operator
+            -o "jsonpath={{ '{.data.username}' }}" | base64 -d
+          register: kc_admin_user
+          changed_when: false
+          failed_when: false
+
+        - name: Get Keycloak admin password from secret
+          command: >
+            oc get secret keycloak-initial-admin -n rhbk-operator
+            -o "jsonpath={{ '{.data.password}' }}" | base64 -d
+          register: kc_admin_pass
+          changed_when: false
+          failed_when: false
+          no_log: true
+
+        - name: Wait for Keycloak admin API and get token
+          uri:
+            url: "https://{{ keycloak_host }}/realms/master/protocol/openid-connect/token"
+            method: POST
+            body_format: form-urlencoded
+            body:
+              grant_type: password
+              client_id: admin-cli
+              username: "{{ kc_admin_user.stdout }}"
+              password: "{{ kc_admin_pass.stdout }}"
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_token_result
+          retries: 12
+          delay: 10
+          until: kc_token_result.status == 200 and (kc_token_result.json | default({})).access_token | length > 0
+          failed_when: false
+
+        - name: Set Keycloak admin token
+          set_fact:
+            kc_access_token: "{{ kc_token_result.json.access_token }}"
+          when: kc_token_result.status | default(0) == 200 and (kc_token_result.json | default({})).access_token is defined
+
+        - name: Get backstage client UUID from Keycloak realm
+          uri:
+            url: "https://{{ keycloak_host }}/admin/realms/backstage/clients?clientId=backstage"
+            method: GET
+            headers:
+              Authorization: "Bearer {{ kc_access_token }}"
+              Content-Type: application/json
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_clients_result
+          when: kc_access_token is defined
+
+        - name: Set backstage client internal ID
+          set_fact:
+            kc_backstage_client_id: "{{ (kc_clients_result.json | default([{}])[0]).id }}"
+          when: >
+            kc_clients_result is defined and
+            kc_clients_result.json is defined and
+            (kc_clients_result.json | length) > 0
+
+        - name: Get backstage client secret from Keycloak
+          uri:
+            url: "https://{{ keycloak_host }}/admin/realms/backstage/clients/{{ kc_backstage_client_id }}/client-secret"
+            method: GET
+            headers:
+              Authorization: "Bearer {{ kc_access_token }}"
+              Content-Type: application/json
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_client_secret_result
+          when: kc_backstage_client_id is defined
+
+        - name: Set RHDH Keycloak and URL variables
+          set_fact:
+            rhdh_keycloak_realm: "backstage"
+            rhdh_keycloak_client_id: "backstage"
+            rhdh_client_id: "backstage"
+            rhdh_keycloak_client_secret: "{{ kc_client_secret_result.json.value }}"
+            rhdh_keycloak_base_url: "https://{{ keycloak_host }}"
+            rhdh_keycloak_metadata_url: "https://{{ keycloak_host }}/realms/backstage/.well-known/openid-configuration"
+            rhdh_host: "backstage-developer-hub-developer-hub.{{ apps_domain }}"
+            rhdh_base_url: "https://backstage-developer-hub-developer-hub.{{ apps_domain }}"
+            rhdh_callback_url: "https://backstage-developer-hub-developer-hub.{{ apps_domain }}/api/auth/oidc/handler/frame"
+          when: kc_client_secret_result.json.value is defined
+
+        - name: Generate random BACKEND_SECRET and ADMIN_TOKEN for RHDH
+          command: openssl rand -base64 16
+          register: rhdh_backend_secret_gen
+          changed_when: false
+          when: rhdh_keycloak_client_secret is defined
+
+        - name: Set RHDH backend and admin tokens
+          set_fact:
+            rhdh_backend_secret: "{{ rhdh_backend_secret_gen.stdout }}"
+            rhdh_admin_token: "{{ rhdh_backend_secret_gen.stdout }}"
+            rhdh_mcp_token: "backstage"
+          when: rhdh_backend_secret_gen.stdout is defined
+
+        - name: Set optional OLLAMA placeholders for RHDH secret
+          set_fact:
+            rhdh_ollama_token: ""
+            rhdh_ollama_url: "http://ollama:11434"
+          when: rhdh_backend_secret is defined
+
+        - name: Create Developer Hub secret in cluster
+          k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: secrets-rhdh
+                namespace: developer-hub
+              type: Opaque
+              stringData:
+                KEYCLOAK_CLIENT_ID: "{{ rhdh_keycloak_client_id }}"
+                KEYCLOAK_REALM: "{{ rhdh_keycloak_realm }}"
+                KEYCLOAK_CLIENT_SECRET: "{{ rhdh_keycloak_client_secret }}"
+                CLIENT_ID: "{{ rhdh_client_id }}"
+                CLIENT_SECRET: "{{ rhdh_keycloak_client_secret }}"
+                KEYCLOAK_BASE_URL: "{{ rhdh_keycloak_base_url }}"
+                KEYCLOAK_METADATA_URL: "{{ rhdh_keycloak_metadata_url }}"
+                RHDH_BASE_URL: "{{ rhdh_base_url }}"
+                RHDH_CALLBACK_URL: "{{ rhdh_callback_url }}"
+                BACKEND_SECRET: "{{ rhdh_backend_secret }}"
+                ADMIN_TOKEN: "{{ rhdh_admin_token }}"
+                MCP_TOKEN: "{{ rhdh_mcp_token }}"
+                OLLAMA_TOKEN: "{{ rhdh_ollama_token | default('') }}"
+                OLLAMA_URL: "{{ rhdh_ollama_url | default('') }}"
+          when: rhdh_backend_secret is defined
+
+        - name: Render RHDH secret manifest to file (gitignored)
+          template:
+            src: developer-hub/secret-secrets-rhdh.yaml.j2
+            dest: "{{ playbook_dir }}/developer-hub/secret-secrets-rhdh.generated.yaml"
+            mode: '0600'
+          when: rhdh_backend_secret is defined
+
+        - name: Display RHDH secrets summary
+          debug:
+            msg:
+              - "Developer Hub secret 'secrets-rhdh' created/updated in namespace developer-hub."
+              - "  Keycloak realm: {{ rhdh_keycloak_realm }}, client: {{ rhdh_keycloak_client_id }}"
+              - "  RHDH base URL: {{ rhdh_base_url }}"
+              - "  Manifest (do not commit): {{ playbook_dir }}/developer-hub/secret-secrets-rhdh.generated.yaml"
+          when: rhdh_backend_secret is defined
+      rescue:
+        - name: Display RHDH secrets block error
+          debug:
+            msg: "Developer Hub secrets block failed (Keycloak may not be ready or backstage realm/client missing). Ensure Keycloak is up and realm 'backstage' with client 'backstage' exists, then re-run install."
+          failed_when: false

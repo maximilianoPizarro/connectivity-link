@@ -118,8 +118,11 @@ librechat:
     auth:
       existingMasterKeySecret: librechat-secretenv
     enabled: true
+    # Chainguard image (evita límites de Docker Hub; no hay imagen Red Hat oficial de Meilisearch)
     image:
-      tag: v1.7.3
+      registry: cgr.dev
+      repository: chainguard/meilisearch
+      tag: "1.7"  # o "latest" si no existe la tag
     persistence:
       enabled: true
       storageClass: ''
@@ -134,6 +137,9 @@ librechat:
       registry: ghcr.io
       repository: bat-bs/bitnami-pgvector
       tag: pg16
+    # Init container that chowns the data dir so postgres (1001) can write
+    volumePermissions:
+      enabled: true
     # ServiceAccount configuration for OpenShift SCC anyuid
     # The ServiceAccount name must match: {{ .Release.Name }}-postgresql (i.e., librechat-postgresql)
     serviceAccount:
@@ -141,18 +147,18 @@ librechat:
       name: librechat-postgresql
       automountServiceAccountToken: true
     primary:
-      # Override securityContext - keep fsGroup for volume permissions
-      # Bitnami PostgreSQL needs fsGroup: 1001 for /bitnami/postgresql/data
+      # Bitnami PostgreSQL runs as UID/GID 1001; data dir must be writable by that user
       podSecurityContext:
-        # fsGroup is needed for volume permissions with SCC anyuid
+        runAsUser: 1001
+        runAsGroup: 1001
         fsGroup: 1001
-        fsGroupChangePolicy: Always
-        # Remove other fields to let OpenShift SCC anyuid handle them
+        fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: null
         sysctls: null
       containerSecurityContext:
-        # Disable containerSecurityContext to let OpenShift SCC anyuid handle it
-        enabled: false
+        enabled: true
+        runAsUser: 1001
+        runAsNonRoot: true
       initdb:
         scripts:
           create-librechat-db.sql: |
@@ -166,11 +172,12 @@ librechat:
             -- CREATE USER postgres WITH PASSWORD 'postgres';
             -- GRANT ALL PRIVILEGES ON DATABASE "librechat-vectordb" TO postgres;
   mongodb:
+    # Imagen Red Hat (evita límites de Docker Hub). Requiere pull secret para registry.redhat.io.
     image:
       pullPolicy: IfNotPresent
-      registry: docker.io
-      repository: mongo
-      tag: '8.0.13'
+      registry: registry.redhat.io
+      repository: rhscl/mongodb-44-rhel7
+      tag: '4.4'
     auth:
       enabled: false
     databases:

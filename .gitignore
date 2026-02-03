@@ -46,6 +46,8 @@ env/
 !*.env.example
 nexus-credentials.env
 *credentials*.yaml
+oidc-credentials-values.yaml
+developer-hub/secret-secrets-rhdh.generated.yaml
 *secrets*.yaml
 !*secret.example.yaml
 !*credentials.env.example
