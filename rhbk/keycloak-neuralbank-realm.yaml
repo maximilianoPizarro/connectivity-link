@@ -27,7 +27,17 @@ spec:
       name: Backend API Service
       publicClient: false
       bearerOnly: true
-      
+    # Confidential client for OIDCPolicy and backend; secret obtained after realm is ready via playbook
+    - clientId: neuralbank
+      name: NeuralBank OIDC (API / policy)
+      publicClient: false
+      standardFlowEnabled: true
+      directAccessGrantsEnabled: true
+      redirectUris:
+        - "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback"
+        - "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/*"
+      webOrigins: ["*"]
+
     # 2. Grupos y Roles
     groups:
     - name: US-Clients

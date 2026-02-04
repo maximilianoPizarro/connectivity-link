@@ -99,9 +99,9 @@ get_cluster_domain() {
     print_info "Application host: ${APP_HOST}"
 }
 
-# Update applicationset-instance.yaml with cluster domain
+# Update applicationset-instance.yaml and rhbk/keycloak.yaml with cluster domain
 update_applicationset_domain() {
-    print_info "Updating applicationset-instance.yaml with cluster domain..."
+    print_info "Updating applicationset-instance.yaml and rhbk/keycloak.yaml with cluster domain..."
     
     # Create backup
     cp "${APPLICATIONSET_FILE}" "${APPLICATIONSET_FILE}.backup"
@@ -119,7 +119,64 @@ update_applicationset_domain() {
         sed -i "s|app_host: neuralbank\.[^[:space:]]*|app_host: ${APP_HOST}|g" "${APPLICATIONSET_FILE}"
     fi
     
-    # Verify the update was successful
+    # Update rhbk/keycloak.yaml hostname so RHBK uses same cluster domain
+    RHBK_KEYCLOAK_YAML="${SCRIPT_DIR}/rhbk/keycloak.yaml"
+    if [ -f "${RHBK_KEYCLOAK_YAML}" ]; then
+        cp "${RHBK_KEYCLOAK_YAML}" "${RHBK_KEYCLOAK_YAML}.backup"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|hostname: rhbk\.[^[:space:]]*|hostname: ${KEYCLOAK_HOST}|g" "${RHBK_KEYCLOAK_YAML}"
+        else
+            sed -i "s|hostname: rhbk\.[^[:space:]]*|hostname: ${KEYCLOAK_HOST}|g" "${RHBK_KEYCLOAK_YAML}"
+        fi
+        if grep -q "hostname: ${KEYCLOAK_HOST}" "${RHBK_KEYCLOAK_YAML}"; then
+            print_success "Updated rhbk/keycloak.yaml hostname to ${KEYCLOAK_HOST}"
+        else
+            print_warning "Could not update rhbk/keycloak.yaml hostname; check manually"
+        fi
+    fi
+
+    # Update rhbk/keycloak-neuralbank-realm.yaml redirect URIs and URLs with cluster domain
+    RHBK_REALM_YAML="${SCRIPT_DIR}/rhbk/keycloak-neuralbank-realm.yaml"
+    if [ -f "${RHBK_REALM_YAML}" ]; then
+        cp "${RHBK_REALM_YAML}" "${RHBK_REALM_YAML}.backup"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i '' "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${RHBK_REALM_YAML}"
+        else
+            sed -i "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${RHBK_REALM_YAML}"
+        fi
+        print_success "Updated rhbk/keycloak-neuralbank-realm.yaml with Keycloak and app URLs"
+    fi
+
+    # Update servicemeshoperator3/gateway-route.yaml host with cluster domain
+    GATEWAY_ROUTE_YAML="${SCRIPT_DIR}/servicemeshoperator3/gateway-route.yaml"
+    if [ -f "${GATEWAY_ROUTE_YAML}" ]; then
+        cp "${GATEWAY_ROUTE_YAML}" "${GATEWAY_ROUTE_YAML}.backup"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|host: neuralbank\.[^[:space:]]*|host: ${APP_HOST}|g" "${GATEWAY_ROUTE_YAML}"
+        else
+            sed -i "s|host: neuralbank\.[^[:space:]]*|host: ${APP_HOST}|g" "${GATEWAY_ROUTE_YAML}"
+        fi
+        print_success "Updated servicemeshoperator3/gateway-route.yaml host to ${APP_HOST}"
+    fi
+
+    # Update neuralbank-stack/values.yaml and rhcl-operator/oidc-policy.yaml with cluster domain (secret filled by playbook later)
+    for f in "${SCRIPT_DIR}/neuralbank-stack/values.yaml" "${SCRIPT_DIR}/rhcl-operator/oidc-policy.yaml"; do
+        if [ -f "${f}" ]; then
+            cp "${f}" "${f}.backup"
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                sed -i '' "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${f}"
+                sed -i '' "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${f}"
+            else
+                sed -i "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${f}"
+                sed -i "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${f}"
+            fi
+            print_success "Updated $(basename "${f}") with cluster domain"
+        fi
+    done
+
+    # Verify the applicationset update was successful
     if grep -q "keycloak_host: ${KEYCLOAK_HOST}" "${APPLICATIONSET_FILE}" && \
        grep -q "app_host: ${APP_HOST}" "${APPLICATIONSET_FILE}"; then
         print_success "Updated applicationset-instance.yaml with cluster domain"
@@ -514,112 +571,6 @@ wait_for_argocd_server() {
     print_warning "ArgoCD server may not be fully ready, but continuing..."
 }
 
-# Enable ConsoleLinks for GitOps and Connectivity Link
-enable_consolelinks() {
-    print_info "Enabling ConsoleLinks to show GitOps and Connectivity Link in OpenShift console menu..."
-    
-    # Get cluster domain
-    local cluster_domain=$(oc get ingress.config/cluster -o jsonpath='{.spec.domain}' 2>/dev/null || echo "")
-    if [ -z "$cluster_domain" ]; then
-        print_warning "Could not detect cluster domain. ConsoleLinks may not work correctly."
-        return 1
-    fi
-    
-    # Determine apps domain
-    local apps_domain="$cluster_domain"
-    if [[ ! "$cluster_domain" =~ ^apps\. ]]; then
-        apps_domain="apps.${cluster_domain}"
-    fi
-    
-    # Get ArgoCD route
-    local argocd_route=$(oc get route -n "${GITOPS_NAMESPACE}" -o jsonpath='{.items[?(@.metadata.name=="openshift-gitops-server")].spec.host}' 2>/dev/null || echo "")
-    if [ -z "$argocd_route" ]; then
-        argocd_route=$(oc get route -n "${GITOPS_NAMESPACE}" -o jsonpath='{.items[?(@.metadata.name=="argocd-server")].spec.host}' 2>/dev/null || echo "")
-    fi
-    
-    # If route not found, construct expected route
-    if [ -z "$argocd_route" ]; then
-        argocd_route="openshift-gitops-server-${GITOPS_NAMESPACE}.${apps_domain}"
-        print_info "ArgoCD route not found, using expected route: ${argocd_route}"
-    fi
-    
-    # Get NeuralBank route (Connectivity Link app)
-    local neuralbank_route=$(oc get route -n neuralbank-stack -o jsonpath='{.items[?(@.metadata.name=="neuralbank")].spec.host}' 2>/dev/null || echo "")
-    
-    # If route not found, construct expected route
-    if [ -z "$neuralbank_route" ]; then
-        neuralbank_route="neuralbank.${apps_domain}"
-        print_info "NeuralBank route not found, using expected route: ${neuralbank_route}"
-    fi
-    
-    # Create ConsoleLink for OpenShift GitOps
-    print_info "Creating ConsoleLink for OpenShift GitOps..."
-    if oc get consolelink openshift-gitops &>/dev/null; then
-        print_info "ConsoleLink 'openshift-gitops' already exists, updating..."
-        oc patch consolelink openshift-gitops --type merge -p "{\"spec\":{\"href\":\"https://${argocd_route}\"}}" &>/dev/null
-        if [ $? -eq 0 ]; then
-            print_success "ConsoleLink for OpenShift GitOps updated"
-        else
-            print_warning "Failed to update ConsoleLink for OpenShift GitOps"
-        fi
-    else
-        cat <<EOF | oc apply -f -
-apiVersion: console.openshift.io/v1
-kind: ConsoleLink
-metadata:
-  name: openshift-gitops
-spec:
-  href: https://${argocd_route}
-  location: ApplicationMenu
-  applicationMenu:
-    section: GitOps
-  text: OpenShift GitOps
-EOF
-        if [ $? -eq 0 ]; then
-            print_success "ConsoleLink for OpenShift GitOps created"
-        else
-            print_warning "Failed to create ConsoleLink for OpenShift GitOps"
-        fi
-    fi
-    
-    # Create ConsoleLink for Connectivity Link
-    print_info "Creating ConsoleLink for Connectivity Link..."
-    if oc get consolelink connectivity-link &>/dev/null; then
-        print_info "ConsoleLink 'connectivity-link' already exists, updating..."
-        oc patch consolelink connectivity-link --type merge -p "{\"spec\":{\"href\":\"https://${neuralbank_route}\"}}" &>/dev/null
-        if [ $? -eq 0 ]; then
-            print_success "ConsoleLink for Connectivity Link updated"
-        else
-            print_warning "Failed to update ConsoleLink for Connectivity Link"
-        fi
-    else
-        cat <<EOF | oc apply -f -
-apiVersion: console.openshift.io/v1
-kind: ConsoleLink
-metadata:
-  name: connectivity-link
-spec:
-  href: https://${neuralbank_route}
-  location: ApplicationMenu
-  applicationMenu:
-    section: Connectivity Link
-  text: Connectivity Link
-EOF
-        if [ $? -eq 0 ]; then
-            print_success "ConsoleLink for Connectivity Link created"
-        else
-            print_warning "Failed to create ConsoleLink for Connectivity Link"
-        fi
-    fi
-    
-    print_info ""
-    print_success "ConsoleLinks enabled! They will appear in the OpenShift console Application Menu:"
-    print_info "  - GitOps section: OpenShift GitOps → https://${argocd_route}"
-    print_info "  - Connectivity Link section: Connectivity Link → https://${neuralbank_route}"
-    print_info ""
-    print_info "Note: ConsoleLinks are cluster-scoped resources and will be visible to all users."
-}
-
 # Wait for operators to be ready
 wait_for_operators() {
     print_info "Waiting for operators to be installed and ready..."
@@ -970,11 +921,6 @@ main() {
     print_info "  3. Apply applications ApplicationSet"
     print_info ""
     print_info "Note: This step is handled automatically by the Ansible playbook."
-    
-    # Step 3: Enable ConsoleLinks for GitOps and Connectivity Link
-    print_info ""
-    print_info "Step 3/4: Enabling ConsoleLinks for GitOps and Connectivity Link"
-    enable_consolelinks
     
     # Monitor progress
     echo ""

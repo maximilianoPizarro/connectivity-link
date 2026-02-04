@@ -4,13 +4,14 @@ metadata:
   name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
+# Domains updated by install script; clientSecret replaced by playbook after Keycloak realm is ready (client "neuralbank")
 spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank"
     clientID: neuralbank
-    clientSecret: "hg6hlG50pjVtiNpzzPpgSQxCJVPVwNLu"
-    authorizationEndpoint : "https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
-    redirectURI : "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback"
+    clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER"
+    authorizationEndpoint: "https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI: "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback"
     tokenEndpoint: "https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
    
   targetRef:

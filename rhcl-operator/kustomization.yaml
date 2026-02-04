@@ -8,6 +8,5 @@ resources:
   - kuadrant.yaml
   - neuralbank-route.yaml
   - ratelimit-policy-customers.yaml
-  - consoleplugin-connectivity-link.yaml
 
 namespace: neuralbank-stack

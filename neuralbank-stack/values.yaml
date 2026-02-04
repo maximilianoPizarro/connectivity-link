@@ -29,10 +29,11 @@ frontend:
 
 
 # --- Keycloak Configuration ---
+# Domains updated by install script; clientSecret replaced by playbook after Keycloak realm is ready (client "neuralbank")
 keycloak:
   issuerUrl: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'
-  clientSecret: 'hg6hlG50pjVtiNpzzPpgSQxCJVPVwNLu'
+  clientSecret: 'OIDC_CLIENT_SECRET_PLACEHOLDER'
   authorizationEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
   redirectUri: 'https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback'
   tokenEndpoint: 'https://rhbk.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/realms/neuralbank/protocol/openid-connect/token'

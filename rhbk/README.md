@@ -38,7 +38,10 @@ PostgreSQL is configured via:
 ### Realm Configuration
 
 - **`keycloak-devhub-realm.yaml`**: Developer Hub realm with OIDC clients
-- **`keycloak-neuralbank-realm.yaml`**: NeuralBank application realm
+- **`keycloak-neuralbank-realm.yaml`**: NeuralBank application realm with:
+  - **neuralbank-frontend** (public client): frontend PKCE
+  - **neuralbank-backend** (bearer only): API
+  - **neuralbank** (confidential): OIDCPolicy and backend; client secret is obtained by the install playbook from Keycloak once the realm is ready, then used to update `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, and to patch the OIDCPolicy in-cluster.
 
 ### Initial Admin
 

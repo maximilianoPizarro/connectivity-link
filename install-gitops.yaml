@@ -1006,7 +1006,13 @@
                   - "  - Action taken: {{ 'Recreated with targetNamespaces' if has_allnamespaces | default(false) else 'No action needed' }}"
                   - "Note: If the operator CSV still shows AllNamespaces error, you may need to delete the Subscription and let it recreate"
 
-        - name: Enable console plugins for GitOps and Connectivity Link (barra vertical / sidebar)
+        - name: Remove Connectivity Link ConsoleLink (use dynamic plugin via spec.plugins instead; ConsoleLink can block sync)
+          command: oc delete consolelink connectivity-link --ignore-not-found=true
+          register: delete_cl_consolelink
+          changed_when: delete_cl_consolelink.rc == 0 and 'deleted' in (delete_cl_consolelink.stdout | default(''))
+          failed_when: false
+
+        - name: Enable console plugins for GitOps and Connectivity Link (dynamic plugin – Administration → spec.plugins)
           block:
             - name: Create or update GitOps ConsolePlugin (dynamic plugin)
               k8s:
@@ -1091,18 +1097,185 @@
               changed_when: false
               failed_when: false
 
-            - name: Display console plugins status (barra vertical / dynamic plugin)
+            - name: Display console plugins status (dynamic plugin – activar desde Administration)
               debug:
                 msg:
-                  - "Plugins de consola (barra vertical / sidebar) configurados:"
-                  - "  - GitOps: gitops-plugin (objetos Argo CD desde la barra)"
-                  - "  - Connectivity Link: connectivity-link-plugin (objetos y topología desde la barra)"
-                  - "  - Console spec.plugins actual: {{ console_plugins_actual.stdout | default('(no leído)') }}"
-                  - "Para que se vean objetos y topología, los backends deben estar levantados (openshift-gitops-server, neuralbank)."
-                  - "Si no aparecen en la barra: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
+                  - "Connectivity Link se activa con el dynamic plugin (no ConsoleLink)."
+                  - "Ver plugins actuales: oc get console.operator.openshift.io cluster -o jsonpath='{.spec.plugins}'"
+                  - "Console spec.plugins actual: {{ console_plugins_actual.stdout | default('(no leído)') }}"
+                  - "Para activar desde consola: Administration → Cluster Settings → Console → spec.plugins (añadir connectivity-link-plugin)."
+                  - "O por CLI: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
               when: console_plugins_actual is defined
 
-    - name: Create OIDC client credentials for OIDCPolicy and frontend
+    - name: Get NeuralBank OIDC client secret from Keycloak when operational (realm neuralbank, client neuralbank)
+      block:
+        - name: Get Keycloak admin credentials for NeuralBank realm
+          command: >
+            oc get secret keycloak-initial-admin -n rhbk-operator
+            -o "jsonpath={{ '{.data.username}' }}" | base64 -d
+          register: kc_nb_admin_user
+          changed_when: false
+          failed_when: false
+
+        - name: Get Keycloak admin password for NeuralBank realm
+          command: >
+            oc get secret keycloak-initial-admin -n rhbk-operator
+            -o "jsonpath={{ '{.data.password}' }}" | base64 -d
+          register: kc_nb_admin_pass
+          changed_when: false
+          failed_when: false
+          no_log: true
+
+        - name: Get Keycloak admin token for NeuralBank API calls
+          uri:
+            url: "https://{{ keycloak_host }}/realms/master/protocol/openid-connect/token"
+            method: POST
+            body_format: form-urlencoded
+            body:
+              grant_type: password
+              client_id: admin-cli
+              username: "{{ kc_nb_admin_user.stdout }}"
+              password: "{{ kc_nb_admin_pass.stdout }}"
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_nb_token_result
+          retries: 12
+          delay: 10
+          until: kc_nb_token_result.status == 200 and (kc_nb_token_result.json | default({})).access_token | length > 0
+          failed_when: false
+
+        - name: Set Keycloak admin token for NeuralBank
+          set_fact:
+            kc_nb_access_token: "{{ kc_nb_token_result.json.access_token }}"
+          when: kc_nb_token_result.status | default(0) == 200 and (kc_nb_token_result.json | default({})).access_token is defined
+
+        - name: Get neuralbank client UUID from Keycloak realm neuralbank
+          uri:
+            url: "https://{{ keycloak_host }}/admin/realms/neuralbank/clients?clientId=neuralbank"
+            method: GET
+            headers:
+              Authorization: "Bearer {{ kc_nb_access_token }}"
+              Content-Type: application/json
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_nb_clients_result
+          when: kc_nb_access_token is defined
+
+        - name: Set neuralbank client internal ID
+          set_fact:
+            kc_nb_client_id: "{{ (kc_nb_clients_result.json | default([{}])[0]).id }}"
+          when: >
+            kc_nb_clients_result is defined and
+            kc_nb_clients_result.json is defined and
+            (kc_nb_clients_result.json | length) > 0
+
+        - name: Get neuralbank client secret from Keycloak
+          uri:
+            url: "https://{{ keycloak_host }}/admin/realms/neuralbank/clients/{{ kc_nb_client_id }}/client-secret"
+            method: GET
+            headers:
+              Authorization: "Bearer {{ kc_nb_access_token }}"
+              Content-Type: application/json
+            return_content: true
+            status_code: [200]
+            validate_certs: false
+          register: kc_nb_client_secret_result
+          when: kc_nb_client_id is defined
+
+        - name: Set NeuralBank OIDC credentials from Keycloak
+          set_fact:
+            neuralbank_oidc_secret_from_keycloak: true
+            oidc_client_id: "neuralbank"
+            oidc_client_secret: "{{ kc_nb_client_secret_result.json.value }}"
+          when: kc_nb_client_secret_result.json.value is defined
+
+        - name: Replace OIDC_CLIENT_SECRET_PLACEHOLDER in neuralbank-stack/values.yaml
+          replace:
+            path: "{{ playbook_dir }}/neuralbank-stack/values.yaml"
+            replace: "OIDC_CLIENT_SECRET_PLACEHOLDER"
+            with: "{{ oidc_client_secret }}"
+          when: oidc_client_secret is defined
+
+        - name: Replace OIDC_CLIENT_SECRET_PLACEHOLDER in rhcl-operator/oidc-policy.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhcl-operator/oidc-policy.yaml"
+            replace: "OIDC_CLIENT_SECRET_PLACEHOLDER"
+            with: "{{ oidc_client_secret }}"
+          when: oidc_client_secret is defined
+
+        - name: Ensure neuralbank-stack namespace exists for OIDC Secret
+          k8s:
+            api_version: v1
+            kind: Namespace
+            name: neuralbank-stack
+            state: present
+          when: oidc_client_secret is defined
+
+        - name: Create Secret with OIDC credentials in neuralbank-stack (from Keycloak)
+          k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: oidc-client-credentials
+                namespace: neuralbank-stack
+              type: Opaque
+              stringData:
+                client_id: "{{ oidc_client_id }}"
+                client_secret: "{{ oidc_client_secret }}"
+          when: oidc_client_secret is defined
+
+        - name: Patch OIDCPolicy with full provider (from Keycloak)
+          command: >
+            oc patch oidcpolicy neuralbank-oidc -n neuralbank-stack --type merge
+            -p '{"spec":{"provider":{
+              "issuerURL":"https://{{ keycloak_host }}/realms/neuralbank",
+              "clientID":"{{ oidc_client_id }}",
+              "clientSecret":"{{ oidc_client_secret }}",
+              "authorizationEndpoint":"https://{{ keycloak_host }}/realms/neuralbank/protocol/openid-connect/auth",
+              "redirectURI":"https://{{ app_host }}/auth/callback",
+              "tokenEndpoint":"https://{{ keycloak_host }}/realms/neuralbank/protocol/openid-connect/token"
+            }}}'
+          register: oidc_policy_patch_kc
+          failed_when: false
+          changed_when: oidc_policy_patch_kc.rc == 0
+          when: oidc_client_secret is defined
+
+        - name: Write OIDC credentials and keycloak URLs for frontend (from Keycloak)
+          copy:
+            content: |
+              # OIDC credentials for NeuralBank (client secret from Keycloak realm neuralbank, client neuralbank)
+              keycloak:
+                issuerUrl: 'https://{{ keycloak_host }}/realms/neuralbank'
+                clientId: 'neuralbank-frontend'
+                clientSecret: '{{ oidc_client_secret }}'
+                authorizationEndpoint: 'https://{{ keycloak_host }}/realms/neuralbank/protocol/openid-connect/auth'
+                redirectUri: 'https://{{ app_host }}/auth/callback'
+                tokenEndpoint: 'https://{{ keycloak_host }}/realms/neuralbank/protocol/openid-connect/token'
+                postLogoutRedirectUri: 'https://{{ app_host }}'
+            dest: "{{ playbook_dir }}/oidc-credentials-values.yaml"
+            mode: '0600'
+          when: oidc_client_secret is defined
+
+        - name: Display NeuralBank OIDC from Keycloak summary
+          debug:
+            msg:
+              - "NeuralBank OIDC: client secret obtained from Keycloak (realm neuralbank, client neuralbank)."
+              - "  values.yaml and oidc-policy.yaml updated; OIDCPolicy patched; Secrets and oidc-credentials-values.yaml written."
+              - "  Commit and push so ArgoCD syncs the updated values."
+          when: oidc_client_secret is defined
+      rescue:
+        - name: NeuralBank OIDC from Keycloak not available
+          debug:
+            msg: "Keycloak or realm neuralbank not ready yet. Fallback OIDC block will use env OIDC_CLIENT_ID/OIDC_CLIENT_SECRET or generate; re-run playbook after Keycloak is up to get secret from Keycloak."
+          failed_when: false
+      when: keycloak_host is defined and app_host is defined
+
+    - name: Create OIDC client credentials for OIDCPolicy and frontend (fallback when Keycloak secret not used)
+      when: neuralbank_oidc_secret_from_keycloak is not defined
       block:
         - name: Set OIDC client ID from env or default
           set_fact:
@@ -1139,7 +1312,7 @@
                 client_id: "{{ oidc_client_id }}"
                 client_secret: "{{ oidc_client_secret }}"
 
-        - name: Create Secret with OIDC credentials in openshift-operators (OIDCPolicy)
+        - name: Create Secret with OIDC credentials in neuralbank-stack (OIDCPolicy fallback)
           k8s:
             state: present
             definition:
@@ -1147,7 +1320,7 @@
               kind: Secret
               metadata:
                 name: oidc-client-credentials
-                namespace: openshift-operators
+                namespace: neuralbank-stack
               type: Opaque
               stringData:
                 client_id: "{{ oidc_client_id }}"
@@ -1155,7 +1328,7 @@
 
         - name: Patch OIDCPolicy with client ID and client secret
           command: >
-            oc patch oidcpolicy neuralbank-oidc -n openshift-operators --type merge
+            oc patch oidcpolicy neuralbank-oidc -n neuralbank-stack --type merge
             -p '{"spec":{"provider":{"clientID":"{{ oidc_client_id }}","clientSecret":"{{ oidc_client_secret }}"}}}'
           register: oidc_policy_patch
           failed_when: false
@@ -1179,8 +1352,8 @@
               - "OIDC client credentials created/updated:"
               - "  Client ID: {{ oidc_client_id }}"
               - "  Client secret: (stored in Secrets and oidc-credentials-values.yaml)"
-              - "  Secret 'oidc-client-credentials' in namespaces: neuralbank-stack, openshift-operators"
-              - "  OIDCPolicy neuralbank-oidc (openshift-operators): {{ 'patched' if oidc_policy_patch.rc == 0 else 'not found or patch failed (sync OIDCPolicy first)' }}"
+              - "  Secret 'oidc-client-credentials' in namespace: neuralbank-stack"
+              - "  OIDCPolicy neuralbank-oidc (neuralbank-stack): {{ 'patched' if oidc_policy_patch.rc == 0 else 'not found or patch failed (sync OIDCPolicy first)' }}"
               - "  Frontend: use keycloak.clientId and keycloak.clientSecret from {{ playbook_dir }}/oidc-credentials-values.yaml in neuralbank-stack values"
               - "  To provide your own: set env OIDC_CLIENT_ID and OIDC_CLIENT_SECRET before running install"
       rescue:
