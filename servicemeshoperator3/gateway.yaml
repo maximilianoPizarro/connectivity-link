@@ -5,8 +5,12 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: neuralbank-gateway
+  namespace: istio-system
   annotations:
-    argocd.argoproj.io/sync-wave: "4"  
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/name: neuralbank-gateway
+    connectivity-link.redhat.com/gateway: "neuralbank"
 spec:
   gatewayClassName: istio
   listeners:

@@ -19,6 +19,7 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-api-route
+    namespace: neuralbank-stack
 
   auth:
     tokenSource:
