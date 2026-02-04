@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: observability-stack
+  namespace: observability
+  description: Cluster Observability - Prometheus monitoring stack (COO)
+  annotations:
+    argocd/app-name: observability
+    argocd/app-namespace: openshift-gitops
+  tags:
+    - observability
+    - prometheus
+    - monitoring
+spec:
+  type: service
+  lifecycle: production
+  owner: maximilianopizarro
+  system: connectivity-link

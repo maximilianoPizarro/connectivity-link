@@ -1,0 +1,16 @@
+# MonitoringStack managed by Cluster Observability Operator (COO).
+# Deploys Prometheus for metrics; optional Alertmanager and Thanos.
+# Requires: Cluster Observability Operator installed (operators/helm-values).
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  name: connectivity-link-stack
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  logLevel: info
+  retention: 7d
+  # Monitor cluster and workload metrics (ServiceMonitor/PodMonitor from any namespace)
+  # Omit resourceSelector to allow scraping all selected metrics, or scope as needed.
+  # resourceSelector: {}

@@ -59,6 +59,9 @@ declare -a NAMESPACES_TO_CLEAN=(
     "rhbk-operator"
     "rhdh-operator"
     "kuadrant-operator"
+    "kuadrant-system"
+    "observability"
+    "openshift-cluster-observability-operator"
     "istio-system"
     "dotnet-demo"
     "librechat"
@@ -70,6 +73,7 @@ declare -a NAMESPACES_TO_CLEAN=(
 declare -a SUBSCRIPTIONS=(
     "rhcl-operator"
     "servicemeshoperator3"
+    "cluster-observability-operator"
     "devspaces"
     "openshift-pipelines-operator-rh"
     "rhbk-operator"

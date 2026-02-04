@@ -96,7 +96,7 @@ chmod +x install.sh
 3. **Ansible playbook** (`install-gitops.yaml`)
    - If GitOps is already installed and ArgoCD is Available, skips operator installation
    - Installs OpenShift GitOps Operator (subscription with channel only, no `startingCSV`; `installPlanApproval: Automatic`)
-   - Applies ApplicationSet and waits for applications
+   - Applies ApplicationSet and waits for applications (includes **observability** app: Cluster Observability Operator + MonitoringStack for Prometheus)
    - Removes any Connectivity Link ConsoleLink; enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins`
    - When Keycloak and realm `neuralbank` are ready: gets client secret for client `neuralbank`, updates values/oidc-policy files, patches OIDCPolicy, creates Secrets
    - Fixes operator configurations (e.g. rhbk-operator OperatorGroup, duplicate devspaces subscriptions)
@@ -214,6 +214,26 @@ oc get deployment argocd-server -n openshift-gitops
 oc get pods -n openshift-gitops
 oc get argocd openshift-gitops -n openshift-gitops -o yaml
 ```
+
+### "Gateway API provider (istio / envoy gateway) is not installed" / Kuadrant
+
+The playbook waits for the Gateway in `istio-system` and then restarts the Kuadrant controller so it detects the Istio Gateway API provider. **Kuadrant is included in the RHCL operator** (no separate Kuadrant operator install); RHCL deploys it in **`kuadrant-system`**. If you still see this message or neuralbank-authorino fails to sync:
+
+1. Ensure the **servicemeshoperator3** application is **Synced** and the Gateway exists:
+   ```bash
+   oc get gateway -n istio-system
+   ```
+2. Find and restart the Kuadrant controller (part of RHCL; runs in `kuadrant-system`):
+   ```bash
+   oc get deployment -A | grep -i kuadrant
+   # Then restart (replace <namespace> and <name> with the values from above):
+   oc rollout restart deployment <name> -n <namespace>
+   ```
+   Example if the deployment is in `kuadrant-system`:
+   ```bash
+   oc rollout restart deployment -n kuadrant-system $(oc get deployment -n kuadrant-system -o jsonpath='{.items[0].metadata.name}')
+   ```
+3. In ArgoCD, refresh and sync the **rhcl-operator** application again.
 
 ## Uninstallation
 

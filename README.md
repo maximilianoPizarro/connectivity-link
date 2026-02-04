@@ -47,7 +47,7 @@ This repository contains a comprehensive demo of **Connectivity Link** using a G
 - **Service Mesh**: Istio-based service mesh for traffic management and security
 - **API Gateway**: Kubernetes Gateway API implementation with Istio
 - **Authentication**: Keycloak for identity and access management
-- **Authorization**: Kuadrant/Authorino for OIDC-based API protection via OIDCPolicy
+- **Authorization**: Kuadrant/Authorino (included in RHCL operator) for OIDC-based API protection via OIDCPolicy
 - **Application Stack**: NeuralBank demo application (frontend, backend, database)
 - **Developer Hub**: Red Hat Developer Hub (Backstage) integration
 - **Automated Installation**: Ansible playbook for complete infrastructure provisioning
@@ -170,6 +170,10 @@ spec:
             namespace: openshift-operators
             path: rhcl-operator
             sync_wave: "3"
+          - name: observability
+            namespace: observability
+            path: observability
+            sync_wave: "5"
   template:
     metadata:
       name: '{{.name}}'
@@ -600,6 +604,7 @@ Helm charts for operators used in the demo:
   - `rhcl-operator.yaml` — Red Hat Connectivity Link operator subscription
   - `rhdh.yaml` — Red Hat Developer Hub operator subscription
   - `servicemeshoperator3.yaml` — Service Mesh Operator (Istio) subscription
+  - Cluster Observability Operator (via `helm-values.yaml` subscriptions)
   - `subscriptions.yaml` — Operator subscription definitions
 - [`operators/tests/`](operators/tests/) — Helm chart tests
 
@@ -617,7 +622,7 @@ Keycloak and related secrets/realm setup used for authentication in the demo:
 
 ### RHCL Operator (`rhcl-operator/`)
 
-Red Hat Connectivity Link operator configurations for API gateway, OIDC authentication, and authorization policies:
+Red Hat Connectivity Link (RHCL) operator configurations for API gateway, OIDC authentication, and authorization policies. **Kuadrant/Authorino is included in the RHCL operator** — you do not install a separate Kuadrant operator; RHCL deploys the Kuadrant controller in the `kuadrant-system` namespace.
 
 - [`rhcl-operator/kustomization.yaml`](rhcl-operator/kustomization.yaml) — Kustomize configuration for RHCL resources
 - [`rhcl-operator/kuadrant.yaml`](rhcl-operator/kuadrant.yaml) — Kuadrant CR (manages Authorino for OIDC authentication)
@@ -753,6 +758,18 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 - Kubernetes Gateway API implementation
 - Multi-protocol support (HTTP/HTTPS)
 - Cross-namespace route support
+
+### Observability (`observability/`)
+
+Metrics and monitoring via the **Red Hat OpenShift Cluster Observability Operator (COO)**:
+
+- [`observability/namespace.yaml`](observability/namespace.yaml) — Namespace for the monitoring stack
+- [`observability/monitoring-stack.yaml`](observability/monitoring-stack.yaml) — `MonitoringStack` CR that deploys Prometheus (7-day retention) in the `observability` namespace
+- [`observability/kustomization.yaml`](observability/kustomization.yaml) — Kustomize configuration
+
+**Prerequisites:** The Cluster Observability Operator must be installed (included in `operators` Helm values; operator runs in `openshift-cluster-observability-operator`). The **observability** application syncs after operators (sync_wave: 5).
+
+**Usage:** After syncing, the COO creates Prometheus and related resources in `observability`. You can add Grafana (e.g. via Grafana Operator) and use the Prometheus service as a data source for dashboards.
 
 ### Namespaces (`namespaces/`)
 
@@ -1001,8 +1018,8 @@ The uninstallation script performs the following operations in reverse order of 
 2. **Removes the ApplicationSet** instance
 
 3. **Optional cleanup** (with `--clean-all` flag):
-   - Removes operator subscriptions (rhcl-operator, servicemeshoperator3, devspaces, openshift-pipelines-operator-rh)
-   - Deletes namespaces (neuralbank-stack, workshop-pipelines, developer-hub, rhbk-operator, kuadrant-operator, rhdh-operator, istio-system)
+   - Removes operator subscriptions (rhcl-operator, servicemeshoperator3, cluster-observability-operator, devspaces, openshift-pipelines-operator-rh)
+   - Deletes namespaces (neuralbank-stack, workshop-pipelines, developer-hub, rhbk-operator, kuadrant-operator, kuadrant-system, observability, rhdh-operator, istio-system). With RHCL, only `kuadrant-system` is used (Kuadrant is part of RHCL); `kuadrant-operator` is for standalone upstream Kuadrant.
 
 ### Important Notes
 

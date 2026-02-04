@@ -8,6 +8,13 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: kuadrant-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: rhbk-operator
   annotations:
     argocd.argoproj.io/sync-wave: "1"

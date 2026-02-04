@@ -1,6 +1,6 @@
 # Red Hat Connectivity Link Operator
 
-This ArgoCD Application deploys and configures the Red Hat Connectivity Link (RHCL) Operator, which provides API gateway, OIDC authentication, and authorization policies using Kuadrant and Authorino.
+This ArgoCD Application deploys and configures the Red Hat Connectivity Link (RHCL) Operator, which provides API gateway, OIDC authentication, and authorization policies using Kuadrant and Authorino. **Kuadrant is included in the RHCL operator** (no separate Kuadrant operator install); RHCL deploys the Kuadrant controller in `kuadrant-system`.
 
 ## Overview
 

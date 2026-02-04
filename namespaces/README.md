@@ -59,7 +59,8 @@ This application is managed by ArgoCD:
 ### Operator Namespaces
 
 - **`rhbk-operator`**: Keycloak operator and instances
-- **`kuadrant-operator`**: Kuadrant/Authorino operator
+- **`kuadrant-operator`**: Solo si usas Kuadrant **upstream** por separado (opcional). Con RHCL no se usa.
+- **`kuadrant-system`**: Controlador de Kuadrant/Authorino **incluido en el operador RHCL** (Red Hat Connectivity Link). No hay que instalar un operador de Kuadrant aparte; RHCL lo despliega aquí.
 - **`rhdh-operator`**: Developer Hub operator
 
 ## Best Practices

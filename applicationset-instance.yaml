@@ -35,6 +35,11 @@ spec:
             path: rhcl-operator
             sync_wave: "6"
             app_type: plain
+          - name: observability
+            namespace: observability
+            path: observability
+            sync_wave: "5"
+            app_type: plain
           - name: rhbk-operator
             namespace: rhbk-operator
             path: rhbk-operator

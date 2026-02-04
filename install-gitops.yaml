@@ -931,6 +931,54 @@
           debug:
             msg: "All required operators are installed and ready!"
 
+        - name: Wait for Gateway API (Istio) and restart Kuadrant operator so it detects provider
+          block:
+            - name: Wait for Gateway to exist in istio-system (Gateway API provider from Service Mesh)
+              command: oc get gateway -n istio-system -o name
+              register: gateway_check
+              until: gateway_check.rc == 0 and (gateway_check.stdout | default('') | length > 0)
+              retries: 30
+              delay: 10
+              failed_when: false
+
+            - name: Restart Kuadrant operator so it detects Gateway API provider (istio)
+              block:
+                # RHCL deploys in kuadrant-system; upstream uses kuadrant-operator
+                - name: Get Kuadrant operator deployment (try kuadrant-system then kuadrant-operator)
+                  shell: |
+                    for ns in kuadrant-system kuadrant-operator; do
+                      name=$(oc get deployment -n "$ns" -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+                      if [ -n "$name" ]; then echo "$ns $name"; exit 0; fi
+                    done
+                    exit 1
+                  register: kuadrant_deploy
+                  failed_when: false
+                  changed_when: false
+
+                - name: Restart Kuadrant operator deployment
+                  command:
+                    - oc
+                    - rollout
+                    - restart
+                    - deployment
+                    - "{{ kuadrant_deploy.stdout.split()[-1] }}"
+                    - -n
+                    - "{{ kuadrant_deploy.stdout.split()[0] }}"
+                  when: kuadrant_deploy.rc == 0 and kuadrant_deploy.stdout | length > 0
+                  register: kuadrant_restart
+                  failed_when: false
+                  changed_when: kuadrant_restart.rc == 0
+
+                - name: Display Kuadrant restart status
+                  debug:
+                    msg: "Kuadrant operator restarted so it can detect Gateway API provider (Istio). If neuralbank-authorino was failing, sync rhcl-operator again."
+                  when: kuadrant_restart.rc == 0
+              when: gateway_check.rc == 0
+          rescue:
+            - name: Note – Gateway or Kuadrant not ready for restart
+              debug:
+                msg: "Gateway API (Istio) or Kuadrant operator not ready. If you see 'Gateway API provider is not installed', after servicemeshoperator3 is Synced find and restart the Kuadrant deployment (RHCL uses kuadrant-system): oc get deployment -A | grep -i kuadrant ; then oc rollout restart deployment <name> -n <namespace>"
+
         - name: Clean up duplicate devspaces subscription if exists
           block:
             - name: Check for duplicate devspaces subscriptions
