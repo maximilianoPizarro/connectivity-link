@@ -29,10 +29,11 @@ spec:
             path: servicemeshoperator3
             sync_wave: "3"
             app_type: plain
+          # After servicemeshoperator3 so Gateway API provider (Istio) is installed before Kuadrant/Authorino
           - name: rhcl-operator
             namespace: openshift-operators
             path: rhcl-operator
-            sync_wave: "3"
+            sync_wave: "6"
             app_type: plain
           - name: rhbk-operator
             namespace: rhbk-operator
