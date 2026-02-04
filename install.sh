@@ -108,15 +108,15 @@ update_applicationset_domain() {
     print_info "Backup created: ${APPLICATIONSET_FILE}.backup"
     
     # Update domain references in applicationset-instance.yaml
-    # Update keycloak_host and app_host values
+    # Update keycloak_host and app_host values (match any existing domain: cluster-*, rosa.*, etc.)
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
-        sed -i '' "s|keycloak_host: rhbk\.apps\.cluster-[^ ]*|keycloak_host: ${KEYCLOAK_HOST}|g" "${APPLICATIONSET_FILE}"
-        sed -i '' "s|app_host: neuralbank\.apps\.cluster-[^ ]*|app_host: ${APP_HOST}|g" "${APPLICATIONSET_FILE}"
+        sed -i '' "s|keycloak_host: rhbk\.[^[:space:]]*|keycloak_host: ${KEYCLOAK_HOST}|g" "${APPLICATIONSET_FILE}"
+        sed -i '' "s|app_host: neuralbank\.[^[:space:]]*|app_host: ${APP_HOST}|g" "${APPLICATIONSET_FILE}"
     else
         # Linux
-        sed -i "s|keycloak_host: rhbk\.apps\.cluster-[^ ]*|keycloak_host: ${KEYCLOAK_HOST}|g" "${APPLICATIONSET_FILE}"
-        sed -i "s|app_host: neuralbank\.apps\.cluster-[^ ]*|app_host: ${APP_HOST}|g" "${APPLICATIONSET_FILE}"
+        sed -i "s|keycloak_host: rhbk\.[^[:space:]]*|keycloak_host: ${KEYCLOAK_HOST}|g" "${APPLICATIONSET_FILE}"
+        sed -i "s|app_host: neuralbank\.[^[:space:]]*|app_host: ${APP_HOST}|g" "${APPLICATIONSET_FILE}"
     fi
     
     # Verify the update was successful
