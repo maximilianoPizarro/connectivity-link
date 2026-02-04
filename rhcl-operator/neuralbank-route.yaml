@@ -10,7 +10,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "APP_HOST_PLACEHOLDER"
+    - "neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com"
 
   rules:
     - matches:
@@ -36,7 +36,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "APP_HOST_PLACEHOLDER"
+    - "neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com"
 
   rules:
     - matches:
@@ -67,7 +67,7 @@ spec:
 #      namespace: istio-system
 #  
 #  hostnames:
-#    - "APP_HOST_PLACEHOLDER"
+#    - "neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com"
 #
 #  rules:
 #    - matches:

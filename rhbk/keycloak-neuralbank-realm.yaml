@@ -22,8 +22,8 @@ spec:
       publicClient: true
       standardFlowEnabled: true
       redirectUris:
-        - "https://APP_HOST_PLACEHOLDER/*"
-        - "https://APP_HOST_PLACEHOLDER/auth/callback"
+        - "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/*"
+        - "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/auth/callback"
       webOrigins: ["*"]
       attributes:
         pkce.code.challenge.method: S256
@@ -38,8 +38,8 @@ spec:
       standardFlowEnabled: true
       directAccessGrantsEnabled: true
       redirectUris:
-        - "https://APP_HOST_PLACEHOLDER/*"
-        - "https://APP_HOST_PLACEHOLDER/auth/callback"
+        - "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/*"
+        - "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/auth/callback"
       webOrigins: ["*"]
 
     # 2. Grupos y Roles

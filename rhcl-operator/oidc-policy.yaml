@@ -4,15 +4,15 @@ metadata:
   name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
-# KEYCLOAK_HOST_PLACEHOLDER / APP_HOST_PLACEHOLDER replaced by install.sh or Ansible; clientSecret by playbook (client "neuralbank")
+# rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com / neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com replaced by install.sh or Ansible; clientSecret by playbook (client "neuralbank")
 spec:
   provider:
-    issuerURL: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank"
+    issuerURL: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER"
-    authorizationEndpoint: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank/protocol/openid-connect/auth"
-    redirectURI: "https://APP_HOST_PLACEHOLDER/auth/callback"
-    tokenEndpoint: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank/protocol/openid-connect/token"
+    authorizationEndpoint: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI: "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/auth/callback"
+    tokenEndpoint: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
    
   targetRef:
     group: gateway.networking.k8s.io
