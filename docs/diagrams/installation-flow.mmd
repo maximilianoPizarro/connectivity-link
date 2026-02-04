@@ -1,0 +1,26 @@
+graph TD
+    Start[Start Installation] --> InstallScript[./install.sh]
+
+    InstallScript --> Preflight[Pre-flight: oc, auth, cluster-admin, Ansible]
+    Preflight --> DetectDomain[Detect cluster domain<br/>KEYCLOAK_HOST, APP_HOST]
+    DetectDomain --> UpdateDomains[Update domain in manifests<br/>applicationset, keycloak, realm, values, oidc-policy, gateway-route]
+    UpdateDomains --> RunPlaybook[Run Ansible playbook<br/>install-gitops.yaml]
+
+    RunPlaybook --> CheckGitOps{GitOps already<br/>installed?}
+    CheckGitOps -->|Yes| ApplyAppSet[Apply ApplicationSet]
+    CheckGitOps -->|No| InstallGitOps[Install OpenShift GitOps Operator<br/>channel only, Automatic]
+    InstallGitOps --> WaitGitOps[Wait for GitOps & ArgoCD]
+    WaitGitOps --> ApplyAppSet
+
+    ApplyAppSet --> SyncWaves[Sync Waves 0-7:<br/>Operators, Infra, Apps]
+    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins - no ConsoleLink]
+    ConsolePlugins --> OIDCFromKC[OIDC: get client secret from Keycloak<br/>realm neuralbank, client neuralbank]
+    OIDCFromKC --> UpdateValues[Update values.yaml & oidc-policy.yaml<br/>Patch OIDCPolicy in-cluster]
+    UpdateValues --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]
+    FixConfig --> Complete[Installation Complete]
+
+    style Start fill:#e1f5ff
+    style InstallScript fill:#fff3e0
+    style UpdateDomains fill:#e8eaf6
+    style OIDCFromKC fill:#ffebee
+    style Complete fill:#e8f5e9

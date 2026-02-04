@@ -216,7 +216,7 @@
             msg: "Target CSV: {{ gitops_starting_csv }}"
           when: gitops_starting_csv is defined
 
-        - name: Create or update Subscription with gitops-1.19 channel
+        - name: Create or update Subscription (channel only, no startingCSV – OLM picks version; installPlanApproval Automatic)
           k8s:
             api_version: operators.coreos.com/v1alpha1
             kind: Subscription
@@ -225,12 +225,11 @@
             state: present
             definition:
               spec:
-                channel: gitops-1.19
+                channel: "{{ gitops_channel }}"
                 name: "{{ gitops_operator_name }}"
                 source: redhat-operators
                 sourceNamespace: openshift-marketplace
                 installPlanApproval: Automatic
-                startingCSV: "{{ gitops_starting_csv | default(omit) }}"
 
         - name: Check subscription status
           k8s_info:

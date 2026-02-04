@@ -1,0 +1,73 @@
+graph TB
+    subgraph "GitOps Layer"
+        GitRepo[Git Repository<br/>connectivity-link]
+        ArgoCD[ArgoCD<br/>OpenShift GitOps]
+        AppSet[ApplicationSet<br/>connectivity-infra-all-in-one]
+    end
+
+    subgraph "Operator Layer"
+        GitOpsOp[OpenShift GitOps Operator]
+        SMOperator[Service Mesh Operator]
+        RHCLOp[RHCL Operator]
+        RHBKOp[Keycloak Operator]
+        RHDHOp[Developer Hub Operator]
+    end
+
+    subgraph "Infrastructure Layer"
+        SMCP[Service Mesh Control Plane<br/>Istio]
+        Gateway[Kubernetes Gateway<br/>neuralbank-gateway]
+        Kuadrant[Kuadrant<br/>Authorino Manager]
+    end
+
+    subgraph "Authentication & Authorization"
+        Keycloak[Keycloak<br/>OIDC Provider]
+        Authorino[Authorino<br/>AuthN/AuthZ Engine]
+        OIDCPolicy[OIDCPolicy<br/>OIDC Configuration]
+        AuthPolicy[AuthPolicy<br/>Advanced Auth Rules]
+    end
+
+    subgraph "Application Layer"
+        Frontend[NeuralBank Frontend]
+        Backend[NeuralBank Backend]
+        DB[(PostgreSQL)]
+    end
+
+    subgraph "Developer Tools"
+        DevHub[Developer Hub<br/>Backstage]
+        DevSpaces[DevSpaces]
+    end
+
+    GitRepo --> ArgoCD
+    ArgoCD --> AppSet
+    AppSet --> GitOpsOp
+    AppSet --> SMOperator
+    AppSet --> RHCLOp
+    AppSet --> RHBKOp
+    AppSet --> RHDHOp
+
+    SMOperator --> SMCP
+    SMCP --> Gateway
+    RHCLOp --> Kuadrant
+    Kuadrant --> Authorino
+    RHCLOp --> OIDCPolicy
+    RHCLOp --> AuthPolicy
+
+    RHBKOp --> Keycloak
+    OIDCPolicy --> Keycloak
+    AuthPolicy --> Authorino
+    Authorino --> Gateway
+
+    Gateway --> Frontend
+    Gateway --> Backend
+    Backend --> DB
+
+    RHDHOp --> DevHub
+    AppSet --> DevSpaces
+
+    style GitRepo fill:#e1f5ff
+    style ArgoCD fill:#e1f5ff
+    style Keycloak fill:#ffebee
+    style Authorino fill:#ffebee
+    style Gateway fill:#f3e5f5
+    style Frontend fill:#e8f5e9
+    style Backend fill:#e8f5e9

@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Gateway as Istio Gateway
+    participant Authorino
+    participant Keycloak
+    participant Backend
+
+    User->>Frontend: 1. Access protected resource (/api/*)
+    Frontend->>Gateway: 2. HTTP Request
+    Gateway->>Authorino: 3. Check AuthPolicy/OIDCPolicy
+    Authorino->>Authorino: 4. No valid token found
+
+    alt User not authenticated
+        Authorino->>Gateway: 5. 302 Redirect to Keycloak
+        Gateway->>User: 6. Redirect to Keycloak login
+        User->>Keycloak: 7. Authenticate (username/password)
+        Keycloak->>Keycloak: 8. Validate credentials
+        Keycloak->>User: 9. Authorization code (redirect to /auth/callback)
+        User->>Gateway: 10. GET /auth/callback?code=xxx
+        Gateway->>Authorino: 11. Forward callback request
+        Authorino->>Keycloak: 12. Exchange code for token (POST /token)
+        Keycloak->>Authorino: 13. Return ID token + Access token
+        Authorino->>Authorino: 14. Validate JWT token
+        Authorino->>Gateway: 15. Set cookie (jwt=token) + redirect to /
+        Gateway->>User: 16. Redirect to application root
+    end
+
+    User->>Frontend: 17. Access protected resource (with cookie)
+    Frontend->>Gateway: 18. HTTP Request (Cookie: jwt=token)
+    Gateway->>Authorino: 19. Check AuthPolicy with token
+    Authorino->>Authorino: 20. Validate JWT from cookie
+    Authorino->>Keycloak: 21. Verify token signature (optional)
+    Keycloak->>Authorino: 22. Token valid
+    Authorino->>Gateway: 23. Authentication successful
+    Gateway->>Backend: 24. Forward request with Bearer token
+    Backend->>Backend: 25. Process request
+    Backend->>Gateway: 26. Response
+    Gateway->>Frontend: 27. Response
+    Frontend->>User: 28. Display data

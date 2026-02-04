@@ -36,11 +36,11 @@ After forking, update the repository references in `applicationset-instance.yaml
 
 ## 📋 TL;DR
 
-- **Requirements**: OpenShift 4.20+ with cluster-admin privileges
-- **Installation Method**: Automated installation using Ansible playbook
-- **Quick Start**: Run `ansible-playbook install-gitops.yaml` to install GitOps operator and deploy all applications
-- **Manual Alternative**: Install OpenShift GitOps operator, then `oc apply -f applicationset-instance.yaml`
-- **Outcome**: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository
+- **Requirements**: OpenShift 4.20+, **Python 3.11+**, **OpenShift CLI (`oc`)**, **Ansible Core**, cluster-admin privileges
+- **Installation Method**: Automated via `install.sh` (updates cluster domain in all manifests, then runs Ansible playbook)
+- **Quick Start**: Run `./install.sh` to install GitOps operator and deploy all applications (or run `ansible-playbook install-gitops.yaml` after updating domain references)
+- **Manual Alternative**: Install OpenShift GitOps operator, update cluster domain in manifests, then `oc apply -f applicationset-instance.yaml`
+- **Outcome**: ArgoCD manages all components; Connectivity Link via **dynamic console plugin** (Administration → spec.plugins); OIDC client secret obtained from Keycloak by the playbook
 
 ## 📖 Overview
 
@@ -80,11 +80,10 @@ The architecture follows a **consolidated ApplicationSet approach** where all in
 ## ⚙️ Important Requirements
 
 - **OpenShift version**: **4.20+** (this demo and manifests are validated against this version)
-- **Permissions**: **cluster-admin** privileges are required to:
-  - Install the OpenShift GitOps operator
-  - Allow the ApplicationSet/instance to create/manage cluster-scoped objects
-  - Install and configure service mesh operators
-  - Set up RBAC for ArgoCD to manage resources across namespaces
+- **Python**: **3.11+** (required for Ansible Core and collection dependencies)
+- **OpenShift CLI (`oc`)**: Installed and logged in to the target cluster (`oc version`, `oc whoami`)
+- **Ansible**: **Ansible Core** plus collections `kubernetes.core` and `community.kubernetes` (see [README-INSTALL.md](https://github.com/maximilianoPizarro/connectivity-link/blob/main/README-INSTALL.md))
+- **Permissions**: **cluster-admin** privileges are required to install the GitOps operator, create namespaces, and let ArgoCD manage cluster resources
 
 ## 🔧 Configuration: Pre-configure DNS with ApplicationSets
 
@@ -376,47 +375,21 @@ spec:
 
 ## 🚀 Getting Started
 
-### Automated Installation with Ansible (Recommended)
+### Automated Installation (Recommended)
 
-The easiest way to install Connectivity Link is using the provided Ansible playbook, which automates the entire installation process:
+Use the **`install.sh`** script: it updates all cluster domain references and then runs the Ansible playbook.
 
-**Prerequisites:**
-```bash
-# Install Ansible and required Python packages
-pip install -r requirements.txt
-
-# Or using system package manager
-dnf install ansible python3-kubernetes
-```
+**Prerequisites:** Python 3.11+, OpenShift CLI (`oc`), Ansible Core and collections (see [README-INSTALL.md](https://github.com/maximilianoPizarro/connectivity-link/blob/main/README-INSTALL.md)).
 
 **Run the installation:**
 ```bash
-ansible-playbook install-gitops.yaml
+chmod +x install.sh
+./install.sh
 ```
 
-**What the Ansible playbook does:**
-1. **Installs OpenShift GitOps Operator** (version 1.19.1)
-   - Creates CatalogSource if needed
-   - Creates OperatorGroup
-   - Creates/updates Subscription
-   - Waits for InstallPlan and CSV to be ready
-   - Verifies ArgoCD CRD is available
+**What `install.sh` does:** Pre-flight checks → detects cluster domain → updates domain in `applicationset-instance.yaml`, `rhbk/keycloak.yaml`, `rhbk/keycloak-neuralbank-realm.yaml`, `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, `servicemeshoperator3/gateway-route.yaml` → runs `install-gitops.yaml`.
 
-2. **Applies ApplicationSet**
-   - Applies `applicationset-instance.yaml` to deploy all components
-   - Waits for operators to be installed and ready
-   - Verifies operator installations before proceeding
-
-3. **Enables Console Plugins**
-   - Enables GitOps console plugin
-   - Enables Connectivity Link console plugin
-   - Patches ConsoleOperator to activate plugins
-
-4. **Fixes Operator Configurations**
-   - Fixes `rhbk-operator` OperatorGroup (ensures SingleNamespace installation)
-   - Cleans up duplicate `devspaces` subscriptions
-
-The playbook ensures proper installation order and handles common configuration issues automatically.
+**What the playbook does:** Skips GitOps install if already available → Installs OpenShift GitOps (channel only, no version pin; Automatic) → Applies ApplicationSet → Enables **dynamic console plugins** (no ConsoleLink) via `spec.plugins` → Obtains OIDC client secret from Keycloak (realm `neuralbank`, client `neuralbank`) and updates values/oidc-policy and patches OIDCPolicy → Fixes operator configs (rhbk-operator, devspaces).
 
 ### Manual Installation (Alternative)
 
@@ -453,13 +426,15 @@ oc apply -f applicationset-instance.yaml
 </div>
 
 
-### Step 4: Configure Keycloak Client Settings (Manual)
+### Step 4: Keycloak and OIDC (Automated or Manual)
 
-After Keycloak is deployed and the realm is imported, you need to manually configure the client settings in the Red Hat Build of Keycloak console. This step is required for proper OIDC authentication flow.
+If you use **`install.sh`** and the playbook, the realm `neuralbank` includes the client **`neuralbank`** (confidential). The playbook **obtains the client secret** from Keycloak and updates `values.yaml`, `oidc-policy.yaml`, and patches the OIDCPolicy. Commit and push the updated files so ArgoCD syncs.
+
+**If installing manually**, configure the client in the Keycloak console after the realm is imported:
 
 **Access Keycloak Console:**
-1. Navigate to the Keycloak route in OpenShift (typically `rhbk.apps.<your-cluster-domain>`)
-2. Log in with the admin credentials (configured in `rhbk/keycloak-initial-admin.yaml`)
+1. Navigate to the Keycloak route (e.g. `rhbk.apps.<your-cluster-domain>`)
+2. Log in with admin credentials (`rhbk/keycloak-initial-admin.yaml`)
 3. Select the `neuralbank` realm
 
 **Configure Client Settings:**
@@ -755,160 +730,31 @@ Service Mesh Operator (Istio) configurations for service mesh control plane and 
 
 The following diagram illustrates the complete system architecture, showing how all components interact:
 
-```mermaid
-graph TB
-    subgraph "GitOps Layer"
-        GitRepo[Git Repository<br/>connectivity-link]
-        ArgoCD[ArgoCD<br/>OpenShift GitOps]
-        AppSet[ApplicationSet<br/>connectivity-infra-all-in-one]
-    end
+<div align="center">
+  <img src="{{ site.baseurl }}/system-architecture.png" alt="System architecture diagram" width="900"/>
+</div>
 
-    subgraph "Operator Layer"
-        GitOpsOp[OpenShift GitOps Operator]
-        SMOperator[Service Mesh Operator]
-        RHCLOp[RHCL Operator]
-        RHBKOp[Keycloak Operator]
-        RHDHOp[Developer Hub Operator]
-    end
-
-    subgraph "Infrastructure Layer"
-        SMCP[Service Mesh Control Plane<br/>Istio]
-        Gateway[Kubernetes Gateway<br/>neuralbank-gateway]
-        Kuadrant[Kuadrant<br/>Authorino Manager]
-    end
-
-    subgraph "Authentication & Authorization"
-        Keycloak[Keycloak<br/>OIDC Provider]
-        Authorino[Authorino<br/>AuthN/AuthZ Engine]
-        OIDCPolicy[OIDCPolicy<br/>OIDC Configuration]
-        AuthPolicy[AuthPolicy<br/>Advanced Auth Rules]
-    end
-
-    subgraph "Application Layer"
-        Frontend[NeuralBank Frontend]
-        Backend[NeuralBank Backend]
-        DB[(PostgreSQL)]
-    end
-
-    subgraph "Developer Tools"
-        DevHub[Developer Hub<br/>Backstage]
-        DevSpaces[DevSpaces]
-    end
-
-    GitRepo --> ArgoCD
-    ArgoCD --> AppSet
-    AppSet --> GitOpsOp
-    AppSet --> SMOperator
-    AppSet --> RHCLOp
-    AppSet --> RHBKOp
-    AppSet --> RHDHOp
-
-    SMOperator --> SMCP
-    SMCP --> Gateway
-    RHCLOp --> Kuadrant
-    Kuadrant --> Authorino
-    RHCLOp --> OIDCPolicy
-    RHCLOp --> AuthPolicy
-
-    RHBKOp --> Keycloak
-    OIDCPolicy --> Keycloak
-    AuthPolicy --> Authorino
-    Authorino --> Gateway
-
-    Gateway --> Frontend
-    Gateway --> Backend
-    Backend --> DB
-
-    RHDHOp --> DevHub
-    AppSet --> DevSpaces
-
-    style GitRepo fill:#e1f5ff
-    style ArgoCD fill:#e1f5ff
-    style Keycloak fill:#ffebee
-    style Authorino fill:#ffebee
-    style Gateway fill:#f3e5f5
-    style Frontend fill:#e8f5e9
-    style Backend fill:#e8f5e9
-```
+*Source: `docs/diagrams/system-architecture.mmd`. Regenerate PNG with `./docs/generate-diagrams.sh`.*
 
 ### OIDC Authentication Flow
 
 The following sequence diagram illustrates the complete OIDC authentication flow using Keycloak and Authorino:
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant Gateway as Istio Gateway
-    participant Authorino
-    participant Keycloak
-    participant Backend
+<div align="center">
+  <img src="{{ site.baseurl }}/oidc-auth-flow.png" alt="OIDC authentication flow sequence diagram" width="900"/>
+</div>
 
-    User->>Frontend: 1. Access protected resource (/api/*)
-    Frontend->>Gateway: 2. HTTP Request
-    Gateway->>Authorino: 3. Check AuthPolicy/OIDCPolicy
-    Authorino->>Authorino: 4. No valid token found
-    
-    alt User not authenticated
-        Authorino->>Gateway: 5. 302 Redirect to Keycloak
-        Gateway->>User: 6. Redirect to Keycloak login
-        User->>Keycloak: 7. Authenticate (username/password)
-        Keycloak->>Keycloak: 8. Validate credentials
-        Keycloak->>User: 9. Authorization code (redirect to /auth/callback)
-        User->>Gateway: 10. GET /auth/callback?code=xxx
-        Gateway->>Authorino: 11. Forward callback request
-        Authorino->>Keycloak: 12. Exchange code for token (POST /token)
-        Keycloak->>Authorino: 13. Return ID token + Access token
-        Authorino->>Authorino: 14. Validate JWT token
-        Authorino->>Gateway: 15. Set cookie (jwt=token) + redirect to /
-        Gateway->>User: 16. Redirect to application root
-    end
-
-    User->>Frontend: 17. Access protected resource (with cookie)
-    Frontend->>Gateway: 18. HTTP Request (Cookie: jwt=token)
-    Gateway->>Authorino: 19. Check AuthPolicy with token
-    Authorino->>Authorino: 20. Validate JWT from cookie
-    Authorino->>Keycloak: 21. Verify token signature (optional)
-    Keycloak->>Authorino: 22. Token valid
-    Authorino->>Gateway: 23. Authentication successful
-    Gateway->>Backend: 24. Forward request with Bearer token
-    Backend->>Backend: 25. Process request
-    Backend->>Gateway: 26. Response
-    Gateway->>Frontend: 27. Response
-    Frontend->>User: 28. Display data
-```
+*Source: `docs/diagrams/oidc-auth-flow.mmd`. Regenerate PNG with `./docs/generate-diagrams.sh`.*
 
 ### Installation Flow
 
-The following diagram shows the automated installation process using Ansible:
+The following diagram shows the automated installation process (`install.sh` and Ansible playbook):
 
-```mermaid
-graph TD
-    Start[Start Installation] --> Ansible[Run Ansible Playbook<br/>install-gitops.yaml]
-    
-    Ansible --> InstallGitOps[Install OpenShift GitOps Operator]
-    InstallGitOps --> WaitGitOps[Wait for GitOps Operator Ready]
-    WaitGitOps --> VerifyCRD[Verify ArgoCD CRD Available]
-    
-    VerifyCRD --> ApplyAppSet[Apply ApplicationSet<br/>applicationset-instance.yaml]
-    
-    ApplyAppSet --> SyncWave0[Sync Wave 0:<br/>GitOps Operator]
-    SyncWave0 --> SyncWave1[Sync Wave 1:<br/>Namespaces]
-    SyncWave1 --> SyncWave2[Sync Wave 2:<br/>Operators & RBAC]
-    
-    SyncWave2 --> VerifyOps[Verify Operators Installed]
-    VerifyOps --> SyncWave3[Sync Wave 3:<br/>Infrastructure]
-    SyncWave3 --> SyncWave4[Sync Wave 4-7:<br/>Applications]
-    
-    SyncWave4 --> EnablePlugins[Enable Console Plugins<br/>GitOps & Connectivity Link]
-    EnablePlugins --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]
-    FixConfig --> Complete[Installation Complete]
-    
-    style Start fill:#e1f5ff
-    style Ansible fill:#fff3e0
-    style VerifyOps fill:#ffebee
-    style Complete fill:#e8f5e9
-```
+<div align="center">
+  <img src="{{ site.baseurl }}/installation-flow.png" alt="Installation flow diagram" width="900"/>
+</div>
+
+*Source: `docs/diagrams/installation-flow.mmd`. Regenerate PNG with `./docs/generate-diagrams.sh`.*
 
 ### The Application Solution without Auth 🙌:
 

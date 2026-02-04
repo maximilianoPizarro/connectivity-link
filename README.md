@@ -30,11 +30,11 @@ After forking, update the repository references in `applicationset-instance.yaml
 
 ## 📋 TL;DR
 
-- **Requirements**: OpenShift 4.20+ with cluster-admin privileges
-- **Installation Method**: Automated installation using Ansible playbook
-- **Quick Start**: Run `ansible-playbook install-gitops.yaml` to install GitOps operator and deploy all applications
-- **Manual Alternative**: Install OpenShift GitOps operator, then `oc apply -f applicationset-instance.yaml`
-- **Outcome**: ArgoCD (OpenShift GitOps) will detect and manage the resources declared in this repository
+- **Requirements**: OpenShift 4.20+, **Python 3.11+**, **OpenShift CLI (`oc`)**, **Ansible Core**, cluster-admin privileges
+- **Installation Method**: Automated via `install.sh` (updates cluster domain in all manifests, then runs Ansible playbook)
+- **Quick Start**: Run `./install.sh` to install GitOps operator and deploy all applications (or run `ansible-playbook install-gitops.yaml` after updating domain references)
+- **Manual Alternative**: Install OpenShift GitOps operator, update cluster domain in manifests, then `oc apply -f applicationset-instance.yaml`
+- **Outcome**: ArgoCD (OpenShift GitOps) manages all components; Connectivity Link is enabled via **dynamic console plugin** (Administration → spec.plugins); OIDC client secret is obtained from Keycloak by the playbook
 
 ## 📖 Overview
 
@@ -74,6 +74,17 @@ The architecture follows a **consolidated ApplicationSet approach** where all in
 ## ⚙️ Important Requirements
 
 - **OpenShift version**: **4.20+** (this demo and manifests are validated against this version)
+- **Python**: **3.11+** (required for Ansible Core and collection dependencies)
+- **OpenShift CLI (`oc`)**: Installed and logged in to the target cluster
+  ```bash
+  oc version
+  oc whoami
+  ```
+- **Ansible**: **Ansible Core** (or `ansible-core`) plus collections `kubernetes.core` and `community.kubernetes` (see [Installation Guide](README-INSTALL.md))
+  ```bash
+  pip install ansible-core  # Python 3.11+ required
+  ansible-galaxy collection install kubernetes.core community.kubernetes
+  ```
 - **Permissions**: **cluster-admin** privileges are required to:
   - Install the OpenShift GitOps operator
   - Allow the ApplicationSet/instance to create/manage cluster-scoped objects
@@ -370,47 +381,49 @@ spec:
 
 ## 🚀 Getting Started
 
-### Automated Installation with Ansible (Recommended)
+### Automated Installation (Recommended)
 
-The easiest way to install Connectivity Link is using the provided Ansible playbook, which automates the entire installation process:
+The recommended way to install Connectivity Link is using the **`install.sh`** script, which updates all cluster domain references and then runs the Ansible playbook.
 
 **Prerequisites:**
-```bash
-# Install Ansible and required Python packages
-pip install -r requirements.txt
-
-# Or using system package manager
-dnf install ansible python3-kubernetes
-```
+- **Python 3.11+** (required for Ansible Core)
+- **OpenShift CLI (`oc`)** installed and authenticated with cluster-admin
+- **Ansible Core** and collections (see [README-INSTALL.md](README-INSTALL.md)):
+  ```bash
+  pip install -r requirements.txt   # Python 3.11+
+  ansible-galaxy collection install kubernetes.core community.kubernetes
+  ```
 
 **Run the installation:**
 ```bash
-ansible-playbook install-gitops.yaml
+chmod +x install.sh
+./install.sh
 ```
 
+**What `install.sh` does:**
+1. **Pre-flight**: Checks `oc`, authentication, cluster-admin, Ansible
+2. **Cluster domain**: Detects cluster domain and sets Keycloak/app hosts
+3. **Domain update**: Replaces domain references in:
+   - `applicationset-instance.yaml`
+   - `rhbk/keycloak.yaml`
+   - `rhbk/keycloak-neuralbank-realm.yaml`
+   - `neuralbank-stack/values.yaml`
+   - `rhcl-operator/oidc-policy.yaml`
+   - `servicemeshoperator3/gateway-route.yaml`
+4. **Ansible playbook**: Runs `install-gitops.yaml` to install GitOps and deploy components
+
 **What the Ansible playbook does:**
-1. **Installs OpenShift GitOps Operator** (version 1.19.1)
-   - Creates CatalogSource if needed
-   - Creates OperatorGroup
-   - Creates/updates Subscription
-   - Waits for InstallPlan and CSV to be ready
-   - Verifies ArgoCD CRD is available
+1. **Skips if GitOps already installed**: Detects existing ArgoCD instance and skips operator installation when already available
+2. **Installs OpenShift GitOps Operator** (channel-based, no version pin)
+   - Creates/updates Subscription with `installPlanApproval: Automatic` and channel only (no `startingCSV`)
+   - Waits for InstallPlan and CSV; fallback to other channels if needed
+   - Verifies ArgoCD CRD and instance
+3. **Applies ApplicationSet**: Applies `applicationset-instance.yaml` to deploy all components; waits for operators and applications
+4. **Console**: Removes any Connectivity Link ConsoleLink; enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins` (Administration → Cluster Settings → Console)
+5. **OIDC**: When Keycloak and realm `neuralbank` are ready, obtains the client secret for client `neuralbank` from Keycloak and updates `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, and patches the OIDCPolicy in-cluster
+6. **Operator fixes**: Fixes `rhbk-operator` OperatorGroup; cleans up duplicate `devspaces` subscriptions
 
-2. **Applies ApplicationSet**
-   - Applies `applicationset-instance.yaml` to deploy all components
-   - Waits for operators to be installed and ready
-   - Verifies operator installations before proceeding
-
-3. **Enables Console Plugins**
-   - Enables GitOps console plugin
-   - Enables Connectivity Link console plugin
-   - Patches ConsoleOperator to activate plugins
-
-4. **Fixes Operator Configurations**
-   - Fixes `rhbk-operator` OperatorGroup (ensures SingleNamespace installation)
-   - Cleans up duplicate `devspaces` subscriptions
-
-The playbook ensures proper installation order and handles common configuration issues automatically.
+See [README-INSTALL.md](README-INSTALL.md) for detailed prerequisites and troubleshooting.
 
 ### Manual Installation (Alternative)
 
@@ -456,9 +469,11 @@ oc apply -f applicationset-instance.yaml
 </div>
 
 
-### Step 4: Configure Keycloak Client Settings (Manual)
+### Step 4: Keycloak and OIDC Client (Automated or Manual)
 
-After Keycloak is deployed and the realm is imported, you need to manually configure the client settings in the Red Hat Build of Keycloak console. This step is required for proper OIDC authentication flow.
+If you use **`install.sh`** and the Ansible playbook, the realm `neuralbank` is imported with clients `neuralbank-frontend`, `neuralbank-backend`, and **`neuralbank`** (confidential, for OIDCPolicy). Once Keycloak is ready, the playbook **obtains the client secret** from Keycloak and updates `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, and patches the OIDCPolicy in-cluster. Commit and push the updated files so ArgoCD syncs.
+
+**If installing manually**, after Keycloak is deployed and the realm is imported, configure the client in the Keycloak console:
 
 **Access Keycloak Console:**
 1. Navigate to the Keycloak route in OpenShift (typically `rhbk.apps.<your-cluster-domain>`)
@@ -896,33 +911,34 @@ sequenceDiagram
 
 ### Installation Flow
 
-The following diagram shows the automated installation process using Ansible:
+The following diagram shows the automated installation process (recommended: `install.sh`; alternative: run playbook after updating domains):
 
 ```mermaid
 graph TD
-    Start[Start Installation] --> Ansible[Run Ansible Playbook<br/>install-gitops.yaml]
+    Start[Start Installation] --> InstallScript[./install.sh]
     
-    Ansible --> InstallGitOps[Install OpenShift GitOps Operator]
-    InstallGitOps --> WaitGitOps[Wait for GitOps Operator Ready]
-    WaitGitOps --> VerifyCRD[Verify ArgoCD CRD Available]
+    InstallScript --> Preflight[Pre-flight: oc, auth, cluster-admin, Ansible]
+    Preflight --> DetectDomain[Detect cluster domain<br/>KEYCLOAK_HOST, APP_HOST]
+    DetectDomain --> UpdateDomains[Update domain in manifests<br/>applicationset, keycloak, realm, values, oidc-policy, gateway-route]
+    UpdateDomains --> RunPlaybook[Run Ansible playbook<br/>install-gitops.yaml]
     
-    VerifyCRD --> ApplyAppSet[Apply ApplicationSet<br/>applicationset-instance.yaml]
+    RunPlaybook --> CheckGitOps{GitOps already<br/>installed?}
+    CheckGitOps -->|Yes| ApplyAppSet[Apply ApplicationSet]
+    CheckGitOps -->|No| InstallGitOps[Install OpenShift GitOps Operator<br/>channel only, Automatic]
+    InstallGitOps --> WaitGitOps[Wait for GitOps & ArgoCD]
+    WaitGitOps --> ApplyAppSet
     
-    ApplyAppSet --> SyncWave0[Sync Wave 0:<br/>GitOps Operator]
-    SyncWave0 --> SyncWave1[Sync Wave 1:<br/>Namespaces]
-    SyncWave1 --> SyncWave2[Sync Wave 2:<br/>Operators & RBAC]
-    
-    SyncWave2 --> VerifyOps[Verify Operators Installed]
-    VerifyOps --> SyncWave3[Sync Wave 3:<br/>Infrastructure]
-    SyncWave3 --> SyncWave4[Sync Wave 4-7:<br/>Applications]
-    
-    SyncWave4 --> EnablePlugins[Enable Console Plugins<br/>GitOps & Connectivity Link]
-    EnablePlugins --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]
+    ApplyAppSet --> SyncWaves[Sync Waves 0-7:<br/>Operators, Infra, Apps]
+    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins - no ConsoleLink]
+    ConsolePlugins --> OIDCFromKC[OIDC: get client secret from Keycloak<br/>realm neuralbank, client neuralbank]
+    OIDCFromKC --> UpdateValues[Update values.yaml & oidc-policy.yaml<br/>Patch OIDCPolicy in-cluster]
+    UpdateValues --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]
     FixConfig --> Complete[Installation Complete]
     
     style Start fill:#e1f5ff
-    style Ansible fill:#fff3e0
-    style VerifyOps fill:#ffebee
+    style InstallScript fill:#fff3e0
+    style UpdateDomains fill:#e8eaf6
+    style OIDCFromKC fill:#ffebee
     style Complete fill:#e8f5e9
 ```
 

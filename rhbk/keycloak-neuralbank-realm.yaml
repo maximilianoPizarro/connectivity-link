@@ -21,7 +21,7 @@ spec:
       name: Frontend Web App
       publicClient: true
       standardFlowEnabled: true
-      redirectUris: ["https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/*"]
+      redirectUris: ["https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"]
       webOrigins: ["*"]
     - clientId: neuralbank-backend
       name: Backend API Service
@@ -34,8 +34,8 @@ spec:
       standardFlowEnabled: true
       directAccessGrantsEnabled: true
       redirectUris:
-        - "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/auth/callback"
-        - "https://neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/*"
+        - "https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
+        - "https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
       webOrigins: ["*"]
 
     # 2. Grupos y Roles
