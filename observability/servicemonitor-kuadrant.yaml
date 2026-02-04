@@ -1,5 +1,5 @@
 # ServiceMonitor so Cluster Observability Operator (COO) Prometheus discovers and scrapes Kuadrant/Authorino metrics.
-# Kuadrant (RHCL) runs in kuadrant-system; this monitor targets that namespace.
+# Kuadrant (RHCL) runs in istio-system; this monitor targets that namespace.
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -13,7 +13,7 @@ metadata:
 spec:
   namespaceSelector:
     matchNames:
-      - kuadrant-system
+      - istio-system
   selector:
     matchExpressions:
       - key: app.kubernetes.io/name

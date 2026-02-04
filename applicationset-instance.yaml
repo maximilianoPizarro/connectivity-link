@@ -29,9 +29,9 @@ spec:
             path: servicemeshoperator3
             sync_wave: "3"
             app_type: plain
-          # Kuadrant CR in kuadrant-system so RHCL operator creates Limitador (required for RateLimitPolicy)
-          - name: kuadrant-system
-            namespace: kuadrant-system
+          # Kuadrant CR in istio-system so RHCL operator creates Limitador (required for RateLimitPolicy)
+          - name: kuadrant-istio
+            namespace: istio-system
             path: rhcl-operator/kuadrant-system
             sync_wave: "5"
             app_type: plain
