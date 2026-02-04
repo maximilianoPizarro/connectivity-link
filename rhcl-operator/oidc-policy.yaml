@@ -11,7 +11,7 @@ spec:
     clientID: neuralbank-frontend
     # clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER" 
     clientSecret: "FPmKKyBnFaQjgnMM0xFXukTashI79wjI" 
-    authorizationEndpoint: "https://rhbk.apps.ccluster-qmshk.qmshk.sandbox3260.opentlc.com"
+    authorizationEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
     redirectURI: "https://neuralbank.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
     tokenEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
    

@@ -217,23 +217,17 @@ oc get argocd openshift-gitops -n openshift-gitops -o yaml
 
 ### "Gateway API provider (istio / envoy gateway) is not installed" / Kuadrant
 
-The playbook waits for the Gateway in `istio-system` and then restarts the Kuadrant controller so it detects the Istio Gateway API provider. **Kuadrant is included in the RHCL operator** (no separate Kuadrant operator install); RHCL deploys it in **`kuadrant-system`**. If you still see this message or neuralbank-authorino fails to sync:
+The playbook **does not** wait for or restart Kuadrant. Installation order is: **Service Mesh first** (sync_wave 3), then **Connectivity Link** (sync_wave 6), so the Istio Gateway and Gateway API provider should exist before RHCL syncs. If you still see this message or `neuralbank-authorino` fails to sync:
 
-1. Ensure the **servicemeshoperator3** application is **Synced** and the Gateway exists:
+1. Ensure **servicemeshoperator3** is **Synced** and the Gateway exists:
    ```bash
    oc get gateway -n istio-system
    ```
-2. Find and restart the Kuadrant controller (part of RHCL; runs in `kuadrant-system`):
-   ```bash
-   oc get deployment -A | grep -i kuadrant
-   # Then restart (replace <namespace> and <name> with the values from above):
-   oc rollout restart deployment <name> -n <namespace>
-   ```
-   Example if the deployment is in `kuadrant-system`:
+2. If the Gateway exists but Kuadrant (RHCL) started before it, restart the Kuadrant controller in `kuadrant-system`:
    ```bash
    oc rollout restart deployment -n kuadrant-system $(oc get deployment -n kuadrant-system -o jsonpath='{.items[0].metadata.name}')
    ```
-3. In ArgoCD, refresh and sync the **rhcl-operator** application again.
+3. In ArgoCD, refresh and sync **rhcl-operator** again.
 
 ## Uninstallation
 
