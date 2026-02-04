@@ -7,12 +7,12 @@ metadata:
 # Domains updated by install script; clientSecret replaced by playbook after Keycloak realm is ready (client "neuralbank")
 spec:
   provider:
-    issuerURL: "https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
+    issuerURL: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
     clientID: neuralbank
     clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER"
-    authorizationEndpoint: "https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
-    redirectURI: "https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
-    tokenEndpoint: "https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com"
+    authorizationEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
+    redirectURI: "https://neuralbank.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
+    tokenEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
    
   targetRef:
     group: gateway.networking.k8s.io

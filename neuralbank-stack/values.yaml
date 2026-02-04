@@ -31,13 +31,13 @@ frontend:
 # --- Keycloak Configuration ---
 # Domains updated by install script; clientSecret replaced by playbook after Keycloak realm is ready (client "neuralbank")
 keycloak:
-  issuerUrl: 'https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com'
+  issuerUrl: 'https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com'
   clientId: 'neuralbank-frontend'
   clientSecret: 'OIDC_CLIENT_SECRET_PLACEHOLDER'
-  authorizationEndpoint: 'https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com'
-  redirectUri: 'https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com'
-  tokenEndpoint: 'https://rhbk.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com'
-  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-7cnvn.7cnvn.sandbox5547.opentlc.com'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com'
+  redirectUri: 'https://neuralbank.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com'
+  tokenEndpoint: 'https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com'
 
 # --- API Configuration ---
 api:

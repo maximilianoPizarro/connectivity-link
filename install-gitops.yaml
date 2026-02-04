@@ -325,8 +325,8 @@
                 (subscription_status_final.resources[0].status is defined) and
                 (subscription_status_final.resources[0].status.installPlanRef is defined and
                  subscription_status_final.resources[0].status.installPlanRef.name is defined)
-              retries: 20
-              delay: 10
+              retries: 45
+              delay: 15
               failed_when: false
 
             - name: Display subscription status for debugging
@@ -379,8 +379,10 @@
             - name: Fail if InstallPlan not created after retries
               fail:
                 msg: >
-                  InstallPlan was not created after 20 retries (~3.3 minutes).
-                  This usually indicates:
+                  InstallPlan was not created after 45 retries (~11 minutes).
+                  If you see "resolving" with status "Unknown" in subscription/InstallPlan output, OLM may still be
+                  resolving dependencies—wait 5–10 minutes and re-run the playbook (./install.sh).
+                  Other causes:
                   - CatalogSource is not ready or unhealthy
                   - Operator is not available in the specified channel ({{ gitops_channel }})
                   - Network issues preventing access to the operator catalog
@@ -453,8 +455,8 @@
                 (subscription_status_final.resources[0].status is defined) and
                 (subscription_status_final.resources[0].status.installPlanRef is defined and
                  subscription_status_final.resources[0].status.installPlanRef.name is defined)
-              retries: 30
-              delay: 10
+              retries: 45
+              delay: 15
               failed_when: false
 
             - name: Set install_plan_name from fallback subscription
@@ -512,7 +514,8 @@
             - name: Fail if InstallPlan still not created after fallback
               fail:
                 msg: >
-                  InstallPlan was not created even after fallback (subscription without version pin, waited ~5 min).
+                  InstallPlan was not created even after fallback (subscription without version pin, waited ~11 min).
+                  If output shows "resolving" with status "Unknown", OLM may still be resolving—wait and re-run ./install.sh.
                   Check subscription conditions and catalog:
                   oc get subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }} -o yaml
                   oc describe subscription {{ gitops_subscription_name }} -n {{ gitops_namespace }}
@@ -556,6 +559,21 @@
           register: installplan_patch_result
           changed_when: installplan_patch_result.rc == 0
 
+        - name: Wait for InstallPlan to complete (OLM finished applying resources)
+          k8s_info:
+            api_version: operators.coreos.com/v1alpha1
+            kind: InstallPlan
+            namespace: "{{ gitops_namespace }}"
+            name: "{{ install_plan_name }}"
+          register: installplan_complete
+          until: >
+            (installplan_complete.resources | default([]) | length > 0) and
+            ((installplan_complete.resources[0].status.phase | default('')) == 'Complete')
+          retries: 60
+          delay: 10
+          failed_when: false
+          when: install_plan_name is defined
+
         - name: Wait for CSV to be installed and ready
           k8s_info:
             api_version: operators.coreos.com/v1alpha1
@@ -568,8 +586,8 @@
              selectattr('metadata.name', 'search', gitops_csv_prefix) |
              selectattr('status.phase', 'equalto', 'Succeeded') |
              list | length > 0)
-          retries: 60
-          delay: 5
+          retries: 90
+          delay: 10
           failed_when: false
 
         - name: Get CSV name
@@ -589,7 +607,11 @@
 
         - name: Check if CSV installation failed
           fail:
-            msg: "CSV from channel {{ gitops_channel }} failed to install. Check the CSV status with: oc get csv -n {{ gitops_namespace }} | grep {{ gitops_csv_prefix }}"
+            msg: >
+              CSV from channel {{ gitops_channel }} did not reach Succeeded after 90 retries (~15 min).
+              If OLM was still "resolving" (status Unknown), wait 5–10 minutes and re-run ./install.sh.
+              Check CSV status: oc get csv -n {{ gitops_namespace }} | grep {{ gitops_csv_prefix }}
+              Check InstallPlan: oc get installplan -n {{ gitops_namespace }} -o wide
           when: >
             (csv_list.resources | default([]) | length == 0) or
             ((csv_list.resources | default([])) |
@@ -1051,22 +1073,6 @@
               register: connectivity_plugin_result
               failed_when: false
 
-            - name: Wait for ConsolePlugin CRs to exist before enabling in console
-              k8s_info:
-                api_version: console.openshift.io/v1
-                kind: ConsolePlugin
-                name: "{{ item }}"
-              register: consoleplugin_check
-              until: consoleplugin_check.resources | length > 0
-              retries: 24
-              delay: 5
-              failed_when: false
-              loop:
-                - gitops-plugin
-                - connectivity-link-plugin
-              loop_control:
-                label: "{{ item }}"
-
             - name: Patch Console operator to enable plugins in sidebar (barra vertical)
               command: >
                 oc patch console.operator.openshift.io cluster --type merge
@@ -1108,6 +1114,18 @@
 
     - name: Get NeuralBank OIDC client secret from Keycloak when operational (realm neuralbank, client neuralbank)
       block:
+        - name: Patch Keycloak CR with correct cluster hostname (so RHBK instance uses cluster_domain)
+          command: >
+            oc patch keycloaks.k8s.keycloak.org rhbk -n rhbk-operator --type=merge
+            -p '{"spec":{"hostname":{"hostname":"{{ keycloak_host }}"}}}'
+          register: keycloak_cr_patch
+          changed_when: keycloak_cr_patch.rc == 0
+          failed_when: false
+
+        - name: Display Keycloak host used for token (cluster_domain from ingress)
+          debug:
+            msg: "Using Keycloak host for token: {{ keycloak_host }} (from cluster domain)"
+
         - name: Get Keycloak admin credentials for NeuralBank realm
           command: >
             oc get secret keycloak-initial-admin -n rhbk-operator
