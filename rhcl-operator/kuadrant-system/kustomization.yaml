@@ -1,0 +1,8 @@
+# Deploys the Kuadrant CR to kuadrant-system so the RHCL operator
+# creates Limitador there (required for RateLimitPolicy). Policies and
+# routes remain in neuralbank-stack (rhcl-operator app).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../kuadrant.yaml
+namespace: kuadrant-system

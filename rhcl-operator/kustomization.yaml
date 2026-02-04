@@ -5,7 +5,7 @@ resources:
   #- neuralbank-oidc-callback.yaml
   - rolebinding.yaml
   - oidc-policy.yaml
-  - kuadrant.yaml
+  # Kuadrant CR is deployed to kuadrant-system via rhcl-operator/kuadrant-system app
   - neuralbank-route.yaml
   - ratelimit-policy-customers.yaml
 

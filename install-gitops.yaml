@@ -936,9 +936,8 @@
               debug:
                 msg:
                   - "Operator {{ item.item.name }} ({{ item.item.namespace }}) CSV not Succeeded:"
-                  - "  Phase: {{ matching_csv.get('status', {}).get('phase', 'No CSV found') }}"
-                  - "  Conditions: {{ matching_csv.get('status', {}).get('conditions', []) | map(attribute='type') | list | join(', ') }}"
-                  - "  Messages: {{ matching_csv.get('status', {}).get('conditions', []) | map(attribute='message') | list | join(' | ') }}"
+                  - "  Phase: {{ (matching_csv.get('status') or {}).get('phase', 'No CSV found') }}"
+                  - "  Conditions: {{ (matching_csv.get('status') or {}).get('conditions', []) | default([]) | to_nice_json }}"
                   - "  Run: oc get csv -n {{ item.item.namespace }}; oc describe csv -n {{ item.item.namespace }} <csv-name>"
               loop: "{{ csv_final_check.results }}"
               loop_control:
@@ -953,7 +952,7 @@
                 msg: >
                   Operator {{ item.item.name }} in namespace {{ item.item.namespace }} did not reach CSV phase Succeeded (waited up to 10 min).
                   Current phase: {{ item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('Not found') }}
-                  Condition messages: {{ ((item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | list | first) | default({})).get('status', {}).get('conditions', []) | default([]) | map(attribute='message') | list | join('; ') }}
+                  Conditions: {{ ((item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | list | first) | default({})).get('status', {}) or {} | to_nice_json }}
                   Check: oc get csv -n {{ item.item.namespace }}; oc describe csv -n {{ item.item.namespace }} <csv-name>
               when: >
                 item.resources | selectattr('metadata.name', 'match', '.*' + item.item.name + '.*') | map(attribute='status.phase') | list | first | default('') != 'Succeeded'
