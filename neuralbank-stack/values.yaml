@@ -28,8 +28,8 @@ frontend:
   replicaCount: 1
 
 
-# --- Keycloak Configuration ---
-# rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com / neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com replaced by install.sh or Ansible (cluster domain); clientSecret by playbook (client "neuralbank")
+# --- Keycloak Configuration (frontend Helm) ---
+# Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 keycloak:
   issuerUrl: 'https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'

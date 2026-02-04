@@ -974,6 +974,24 @@
           debug:
             msg: "All required operators are installed and ready! Service Mesh (Istio) is installed first; Connectivity Link (rhcl-operator) syncs later (sync_wave 6) so the Gateway API provider is available."
 
+        - name: Ensure istio-system namespace exists (for Kuadrant CR)
+          k8s:
+            api_version: v1
+            kind: Namespace
+            name: istio-system
+            state: present
+
+        - name: Apply Kuadrant CR to istio-system (so RHCL creates Limitador for RateLimitPolicy)
+          command: oc apply -f "{{ playbook_dir }}/rhcl-operator/kuadrant-system/kuadrant.yaml" -n istio-system
+          register: apply_kuadrant_result
+          changed_when: apply_kuadrant_result.rc == 0
+          failed_when: false
+
+        - name: Display Kuadrant CR apply status
+          debug:
+            msg: "Kuadrant CR applied to istio-system: {{ 'OK' if apply_kuadrant_result.rc == 0 else 'Failed - ' + (apply_kuadrant_result.stderr | default(apply_kuadrant_result.msg | default(''))) }}. Limitador will be created by the RHCL operator."
+          when: apply_kuadrant_result is changed or apply_kuadrant_result.rc != 0
+
         - name: Clean up duplicate devspaces subscription if exists
           block:
             - name: Check for duplicate devspaces subscriptions
@@ -1076,7 +1094,7 @@
           changed_when: delete_cl_consolelink.rc == 0 and 'deleted' in (delete_cl_consolelink.stdout | default(''))
           failed_when: false
 
-        - name: Enable console plugins for GitOps and Connectivity Link (dynamic plugin – Administration → spec.plugins)
+        - name: Enable all Console plugins (Console operator.openshift.io spec.plugins)
           block:
             - name: Create or update GitOps ConsolePlugin (dynamic plugin)
               k8s:
@@ -1116,27 +1134,49 @@
               register: connectivity_plugin_result
               failed_when: false
 
-            - name: Patch Console operator to enable plugins in sidebar (barra vertical)
+            - name: Get all ConsolePlugin names (apiVersion console.openshift.io/v1)
+              command: oc get consoleplugin -A -o jsonpath='{.items[*].metadata.name}'
+              register: all_console_plugins_cmd
+              changed_when: false
+              failed_when: false
+
+            - name: Build list of all ConsolePlugin names for Console operator
+              set_fact:
+                console_plugins_list: "{{ (all_console_plugins_cmd.stdout | default('')).split() | list }}"
+              when: all_console_plugins_cmd.stdout | default('') | trim | length > 0
+
+            - name: Set default plugins when no ConsolePlugins found
+              set_fact:
+                console_plugins_list:
+                  - gitops-plugin
+                  - connectivity-link-plugin
+              when: console_plugins_list is not defined or (console_plugins_list | default([]) | length == 0)
+
+            - name: Patch Console (operator.openshift.io) to enable all plugins
               command: >
                 oc patch console.operator.openshift.io cluster --type merge
-                -p '{"spec":{"plugins":["gitops-plugin","connectivity-link-plugin"]}}'
+                -p '{"spec":{"plugins":{{ console_plugins_list | to_json }}}}'
               register: console_patch_result
               failed_when: false
               changed_when: console_patch_result.rc == 0
+              when: console_plugins_list | default([]) | length > 0
 
             - name: Brief pause for console operator to reconcile
               pause:
                 seconds: 10
-              when: console_patch_result.rc == 0
+              when: console_patch_result is defined and console_patch_result.rc == 0
 
-            - name: Re-apply console plugins patch (ensure sidebar entries persist)
+            - name: Re-apply Console plugins patch (ensure sidebar entries persist)
               command: >
                 oc patch console.operator.openshift.io cluster --type merge
-                -p '{"spec":{"plugins":["gitops-plugin","connectivity-link-plugin"]}}'
+                -p '{"spec":{"plugins":{{ console_plugins_list | to_json }}}}'
               register: console_patch_retry
               failed_when: false
               changed_when: console_patch_retry.rc == 0
-              when: console_patch_result.rc == 0
+              when: >
+                console_plugins_list | default([]) | length > 0 and
+                console_patch_result is defined and
+                console_patch_result.rc == 0
 
             - name: Verify plugins are enabled in Console spec
               command: >
@@ -1145,18 +1185,37 @@
               changed_when: false
               failed_when: false
 
-            - name: Display console plugins status (dynamic plugin – activar desde Administration)
+            - name: Display Console plugins status (operator.openshift.io)
               debug:
                 msg:
-                  - "Connectivity Link se activa con el dynamic plugin (no ConsoleLink)."
-                  - "Ver plugins actuales: oc get console.operator.openshift.io cluster -o jsonpath='{.spec.plugins}'"
-                  - "Console spec.plugins actual: {{ console_plugins_actual.stdout | default('(no leído)') }}"
-                  - "Para activar desde consola: Administration → Cluster Settings → Console → spec.plugins (añadir connectivity-link-plugin)."
-                  - "O por CLI: oc patch console.operator.openshift.io cluster --type merge -p '{\"spec\":{\"plugins\":[\"gitops-plugin\",\"connectivity-link-plugin\"]}}'"
-              when: console_plugins_actual is defined
+                  - "Console (operator.openshift.io): todos los ConsolePlugin están activados en spec.plugins."
+                  - "Plugins habilitados: {{ console_plugins_list | default([]) }}"
+                  - "Ver en cluster: oc get console.operator.openshift.io cluster -o jsonpath='{.spec.plugins}'"
+                  - "Recurso: kind Console, apiVersion operator.openshift.io/v1, name cluster."
+              when: console_plugins_list is defined
 
-    - name: Get NeuralBank OIDC client secret from Keycloak when operational (realm neuralbank, client neuralbank)
+    # Task: consultar secret del cliente Keycloak neuralbank-frontend y agregarlo a oidc-policy.yaml
+    # y neuralbank-stack/values.yaml (sección clientSecret) para automatizar el setup.
+    # Ejecutar solo este bloque: ansible-playbook -i localhost, -c local install-gitops.yaml --tags neuralbank-oidc-secret
+    - name: Consultar secret del cliente Keycloak neuralbank-frontend y agregarlo a oidc-policy y values (clientSecret) – automatizar setup
+      tags:
+        - neuralbank-oidc-secret
       block:
+        - name: Obtener cluster domain para Keycloak (si se ejecuta solo con tag neuralbank-oidc-secret)
+          command: oc get ingress.config/cluster -o jsonpath='{.spec.domain}'
+          register: tag_cluster_domain
+          changed_when: false
+          failed_when: false
+          when: keycloak_host is not defined or app_host is not defined
+
+        - name: Definir keycloak_host y app_host desde cluster domain (ejecución con tag)
+          set_fact:
+            cluster_domain: "{{ tag_cluster_domain.stdout | default(lookup('env', 'CLUSTER_DOMAIN'), true) }}"
+            apps_domain: "{{ 'apps.' + cluster_domain if cluster_domain and not cluster_domain.startswith('apps.') else cluster_domain }}"
+            keycloak_host: "{{ keycloak_host | default('rhbk.' + apps_domain, true) }}"
+            app_host: "{{ app_host | default('neuralbank.' + apps_domain, true) }}"
+          when: (keycloak_host is not defined or app_host is not defined) and (tag_cluster_domain.stdout | length > 0 or lookup('env', 'CLUSTER_DOMAIN') | length > 0)
+
         - name: Patch Keycloak CR with correct cluster hostname (so RHBK instance uses cluster_domain)
           command: >
             oc patch keycloaks.k8s.keycloak.org rhbk -n rhbk-operator --type=merge
@@ -1169,7 +1228,7 @@
           debug:
             msg: "Using Keycloak host for token: {{ keycloak_host }} (from cluster domain)"
 
-        - name: Get Keycloak admin credentials for NeuralBank realm
+        - name: Get Keycloak (SSO) admin credentials for NeuralBank realm
           command: >
             oc get secret keycloak-initial-admin -n rhbk-operator
             -o "jsonpath={{ '{.data.username}' }}" | base64 -d
@@ -1185,6 +1244,11 @@
           changed_when: false
           failed_when: false
           no_log: true
+
+        - name: Informar admin de Keycloak (SSO) usado para autenticación
+          debug:
+            msg: "Admin de Keycloak (SSO): {{ kc_nb_admin_user.stdout }} (secret keycloak-initial-admin en rhbk-operator)."
+          when: kc_nb_admin_user.stdout is defined
 
         - name: Get Keycloak admin token for NeuralBank API calls
           uri:
@@ -1210,9 +1274,9 @@
             kc_nb_access_token: "{{ kc_nb_token_result.json.access_token }}"
           when: kc_nb_token_result.status | default(0) == 200 and (kc_nb_token_result.json | default({})).access_token is defined
 
-        - name: Get neuralbank client UUID from Keycloak realm neuralbank
+        - name: Get neuralbank-frontend client UUID from Keycloak realm neuralbank
           uri:
-            url: "https://{{ keycloak_host }}/admin/realms/neuralbank/clients?clientId=neuralbank"
+            url: "https://{{ keycloak_host }}/admin/realms/neuralbank/clients?clientId=neuralbank-frontend"
             method: GET
             headers:
               Authorization: "Bearer {{ kc_nb_access_token }}"
@@ -1223,7 +1287,7 @@
           register: kc_nb_clients_result
           when: kc_nb_access_token is defined
 
-        - name: Set neuralbank client internal ID
+        - name: Set neuralbank-frontend client internal ID
           set_fact:
             kc_nb_client_id: "{{ (kc_nb_clients_result.json | default([{}])[0]).id }}"
           when: >
@@ -1231,7 +1295,7 @@
             kc_nb_clients_result.json is defined and
             (kc_nb_clients_result.json | length) > 0
 
-        - name: Get neuralbank client secret from Keycloak
+        - name: Consultar secret del cliente Keycloak neuralbank-frontend (Admin API)
           uri:
             url: "https://{{ keycloak_host }}/admin/realms/neuralbank/clients/{{ kc_nb_client_id }}/client-secret"
             method: GET
@@ -1244,26 +1308,28 @@
           register: kc_nb_client_secret_result
           when: kc_nb_client_id is defined
 
-        - name: Set NeuralBank OIDC credentials from Keycloak
+        - name: Set NeuralBank OIDC credentials from Keycloak (client neuralbank-frontend)
           set_fact:
             neuralbank_oidc_secret_from_keycloak: true
-            oidc_client_id: "neuralbank"
+            oidc_client_id: "neuralbank-frontend"
             oidc_client_secret: "{{ kc_nb_client_secret_result.json.value }}"
           when: kc_nb_client_secret_result.json.value is defined
 
-        - name: Replace OIDC_CLIENT_SECRET_PLACEHOLDER in neuralbank-stack/values.yaml
+        - name: Agregar clientSecret a neuralbank-stack/values.yaml (keycloak.clientSecret)
           replace:
             path: "{{ playbook_dir }}/neuralbank-stack/values.yaml"
             regexp: "OIDC_CLIENT_SECRET_PLACEHOLDER"
             replace: "{{ oidc_client_secret }}"
           when: oidc_client_secret is defined
+          register: values_replaced
 
-        - name: Replace OIDC_CLIENT_SECRET_PLACEHOLDER in rhcl-operator/oidc-policy.yaml
+        - name: Agregar clientSecret a rhcl-operator/oidc-policy.yaml (spec.provider.clientSecret)
           replace:
             path: "{{ playbook_dir }}/rhcl-operator/oidc-policy.yaml"
             regexp: "OIDC_CLIENT_SECRET_PLACEHOLDER"
             replace: "{{ oidc_client_secret }}"
           when: oidc_client_secret is defined
+          register: oidc_policy_replaced
 
         - name: Ensure neuralbank-stack namespace exists for OIDC Secret
           k8s:
@@ -1273,7 +1339,7 @@
             state: present
           when: oidc_client_secret is defined
 
-        - name: Create Secret with OIDC credentials in neuralbank-stack (from Keycloak)
+        - name: Create Secret with OIDC credentials in neuralbank-stack (neuralbank-frontend from Keycloak)
           k8s:
             state: present
             definition:
@@ -1288,7 +1354,7 @@
                 client_secret: "{{ oidc_client_secret }}"
           when: oidc_client_secret is defined
 
-        - name: Patch OIDCPolicy with full provider (from Keycloak)
+        - name: Patch OIDCPolicy with full provider (neuralbank-frontend secret from Keycloak)
           command: >
             oc patch oidcpolicy neuralbank-oidc -n neuralbank-stack --type merge
             -p '{"spec":{"provider":{
@@ -1304,10 +1370,12 @@
           changed_when: oidc_policy_patch_kc.rc == 0
           when: oidc_client_secret is defined
 
-        - name: Write OIDC credentials and keycloak URLs for frontend (from Keycloak)
+        - name: Write OIDC credentials and Keycloak values for frontend Helm (from Keycloak client neuralbank-frontend)
           copy:
             content: |
-              # OIDC credentials for NeuralBank (client secret from Keycloak realm neuralbank, client neuralbank)
+              # Keycloak values for NeuralBank frontend (client neuralbank-frontend, secret from Keycloak)
+              # Use as Helm override: helm upgrade ... -f oidc-credentials-values.yaml
+              # or merge into neuralbank-stack/values.yaml
               keycloak:
                 issuerUrl: 'https://{{ keycloak_host }}/realms/neuralbank'
                 clientId: 'neuralbank-frontend'
@@ -1320,12 +1388,15 @@
             mode: '0600'
           when: oidc_client_secret is defined
 
-        - name: Display NeuralBank OIDC from Keycloak summary
+        - name: Resumen – secret neuralbank-frontend aplicado a oidc-policy y values
           debug:
             msg:
-              - "NeuralBank OIDC: client secret obtained from Keycloak (realm neuralbank, client neuralbank)."
-              - "  values.yaml and oidc-policy.yaml updated; OIDCPolicy patched; Secrets and oidc-credentials-values.yaml written."
-              - "  Commit and push so ArgoCD syncs the updated values."
+              - "Setup automatizado: secret del cliente Keycloak neuralbank-frontend consultado y aplicado."
+              - "  Admin de Keycloak (SSO) usado: {{ kc_nb_admin_user.stdout | default('(no obtenido)') }}."
+              - "  rhcl-operator/oidc-policy.yaml: spec.provider.clientSecret actualizado."
+              - "  neuralbank-stack/values.yaml: keycloak.clientSecret actualizado (frontend Helm)."
+              - "  OIDCPolicy en cluster parcheado; Secret oidc-client-credentials y oidc-credentials-values.yaml generados."
+              - "  Commit y push para que ArgoCD sincronice los YAML actualizados."
           when: oidc_client_secret is defined
       rescue:
         - name: NeuralBank OIDC from Keycloak not available
@@ -1447,6 +1518,11 @@
           changed_when: false
           failed_when: false
           no_log: true
+
+        - name: Informar admin de Keycloak (SSO) usado para Developer Hub
+          debug:
+            msg: "Admin de Keycloak (SSO): {{ kc_admin_user.stdout }} (secret keycloak-initial-admin en rhbk-operator)."
+          when: kc_admin_user.stdout is defined
 
         - name: Wait for Keycloak admin API and get token
           uri:
@@ -1576,6 +1652,7 @@
           debug:
             msg:
               - "Developer Hub secret 'secrets-rhdh' created/updated in namespace developer-hub."
+              - "  Admin de Keycloak (SSO) usado: {{ kc_admin_user.stdout | default('(no obtenido)') }}."
               - "  Keycloak realm: {{ rhdh_keycloak_realm }}, client: {{ rhdh_keycloak_client_id }}"
               - "  RHDH base URL: {{ rhdh_base_url }}"
               - "  Manifest (do not commit): {{ playbook_dir }}/developer-hub/secret-secrets-rhdh.generated.yaml"

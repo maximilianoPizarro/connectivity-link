@@ -4,7 +4,7 @@ metadata:
   name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
-# rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com / neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com replaced by install.sh or Ansible; clientSecret by playbook (client "neuralbank")
+# Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 spec:
   provider:
     issuerURL: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank"
