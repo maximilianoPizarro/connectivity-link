@@ -4,16 +4,15 @@ metadata:
   name: neuralbank-oidc
   annotations:
     argocd.argoproj.io/sync-wave: "5"
-# Domains updated by install script; clientSecret replaced by playbook after Keycloak realm is ready (client "neuralbank")
+# KEYCLOAK_HOST_PLACEHOLDER / APP_HOST_PLACEHOLDER replaced by install.sh or Ansible; clientSecret by playbook (client "neuralbank")
 spec:
   provider:
-    issuerURL: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
+    issuerURL: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank"
     clientID: neuralbank-frontend
-    # clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER" 
-    clientSecret: "FPmKKyBnFaQjgnMM0xFXukTashI79wjI" 
-    authorizationEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
-    redirectURI: "https://neuralbank.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
-    tokenEndpoint: "https://rhbk.apps.cluster-qmshk.qmshk.sandbox3260.opentlc.com"
+    clientSecret: "OIDC_CLIENT_SECRET_PLACEHOLDER"
+    authorizationEndpoint: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI: "https://APP_HOST_PLACEHOLDER/auth/callback"
+    tokenEndpoint: "https://KEYCLOAK_HOST_PLACEHOLDER/realms/neuralbank/protocol/openid-connect/token"
    
   targetRef:
     group: gateway.networking.k8s.io

@@ -13,6 +13,7 @@ This ArgoCD Application deploys observability resources using the **Red Hat Open
   - **Prometheus** for metrics collection
   - Configurable retention (default 7 days)
   - Optional: Alertmanager, Thanos Querier (can be enabled in the CR if needed)
+- **ServiceMonitor** (`kuadrant`): Discovers and scrapes Kuadrant/Authorino metrics from the `kuadrant-system` namespace so the COO Prometheus can collect them. The Kuadrant CR in `rhcl-operator/kuadrant.yaml` has `components.observability.enable: true` so the controller exposes metrics.
 
 ## Usage
 

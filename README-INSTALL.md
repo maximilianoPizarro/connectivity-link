@@ -85,21 +85,25 @@ chmod +x install.sh
    - Verifies Ansible is installed
    - Detects cluster domain and sets Keycloak/app hosts
 
-2. **Domain updates** (before applying anything)
+2. **Domain updates** (before applying anything) — placeholders `KEYCLOAK_HOST_PLACEHOLDER` and `APP_HOST_PLACEHOLDER` are replaced with the detected cluster domain in:
    - `applicationset-instance.yaml` — keycloak_host, app_host
    - `rhbk/keycloak.yaml` — hostname
-   - `rhbk/keycloak-neuralbank-realm.yaml` — redirect URIs and URLs
+   - `rhbk/keycloak-neuralbank-realm.yaml` — redirect URIs (`/*`, `/auth/callback`) and Keycloak URLs
    - `neuralbank-stack/values.yaml` — Keycloak/app URLs (clientSecret filled by playbook later)
    - `rhcl-operator/oidc-policy.yaml` — provider URLs (clientSecret filled by playbook later)
+   - `rhcl-operator/neuralbank-route.yaml`, `neuralbank-oidc-callback.yaml` — hostnames
    - `servicemeshoperator3/gateway-route.yaml` — host
+   **Ansible** also replaces these placeholders when the playbook runs (so domain is set even if you run only the playbook).
 
 3. **Ansible playbook** (`install-gitops.yaml`)
    - If GitOps is already installed and ArgoCD is Available, skips operator installation
    - Installs OpenShift GitOps Operator (subscription with channel only, no `startingCSV`; `installPlanApproval: Automatic`)
    - Applies ApplicationSet and waits for applications (includes **observability** app: Cluster Observability Operator + MonitoringStack for Prometheus)
    - Removes any Connectivity Link ConsoleLink; enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins`
+   - Replaces `KEYCLOAK_HOST_PLACEHOLDER` and `APP_HOST_PLACEHOLDER` in repo files (values, oidc-policy, realm, HTTPRoutes) with cluster domain
    - When Keycloak and realm `neuralbank` are ready: gets client secret for client `neuralbank`, updates values/oidc-policy files, patches OIDCPolicy, creates Secrets
    - Fixes operator configurations (e.g. rhbk-operator OperatorGroup, duplicate devspaces subscriptions)
+   **After install:** commit and push the updated repo so ArgoCD syncs the new domain and (if obtained) client secret.
 
 ### Run only the Ansible playbook
 

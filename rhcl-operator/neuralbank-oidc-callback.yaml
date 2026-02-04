@@ -9,7 +9,7 @@ spec:
     - name: neuralbank-gateway
       namespace: istio-system
   hostnames:
-    - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    - "APP_HOST_PLACEHOLDER"
   rules:
     - matches:
         - path:

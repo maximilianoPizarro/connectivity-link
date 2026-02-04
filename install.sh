@@ -135,18 +135,18 @@ update_applicationset_domain() {
         fi
     fi
 
-    # Update rhbk/keycloak-neuralbank-realm.yaml redirect URIs and URLs with cluster domain
+    # Update rhbk/keycloak-neuralbank-realm.yaml: replace placeholders with cluster domain
     RHBK_REALM_YAML="${SCRIPT_DIR}/rhbk/keycloak-neuralbank-realm.yaml"
     if [ -f "${RHBK_REALM_YAML}" ]; then
         cp "${RHBK_REALM_YAML}" "${RHBK_REALM_YAML}.backup"
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
-            sed -i '' "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i '' "s|KEYCLOAK_HOST_PLACEHOLDER|${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i '' "s|APP_HOST_PLACEHOLDER|${APP_HOST}|g" "${RHBK_REALM_YAML}"
         else
-            sed -i "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
-            sed -i "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i "s|KEYCLOAK_HOST_PLACEHOLDER|${KEYCLOAK_HOST}|g" "${RHBK_REALM_YAML}"
+            sed -i "s|APP_HOST_PLACEHOLDER|${APP_HOST}|g" "${RHBK_REALM_YAML}"
         fi
-        print_success "Updated rhbk/keycloak-neuralbank-realm.yaml with Keycloak and app URLs"
+        print_success "Updated rhbk/keycloak-neuralbank-realm.yaml with cluster domain"
     fi
 
     # Update servicemeshoperator3/gateway-route.yaml host with cluster domain
@@ -161,16 +161,16 @@ update_applicationset_domain() {
         print_success "Updated servicemeshoperator3/gateway-route.yaml host to ${APP_HOST}"
     fi
 
-    # Update neuralbank-stack/values.yaml and rhcl-operator/oidc-policy.yaml with cluster domain (secret filled by playbook later)
-    for f in "${SCRIPT_DIR}/neuralbank-stack/values.yaml" "${SCRIPT_DIR}/rhcl-operator/oidc-policy.yaml"; do
+    # Replace placeholders with cluster domain (secret filled by playbook later)
+    for f in "${SCRIPT_DIR}/neuralbank-stack/values.yaml" "${SCRIPT_DIR}/rhcl-operator/oidc-policy.yaml" "${SCRIPT_DIR}/rhcl-operator/neuralbank-route.yaml" "${SCRIPT_DIR}/rhcl-operator/neuralbank-oidc-callback.yaml"; do
         if [ -f "${f}" ]; then
             cp "${f}" "${f}.backup"
             if [[ "$OSTYPE" == "darwin"* ]]; then
-                sed -i '' "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${f}"
-                sed -i '' "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${f}"
+                sed -i '' "s|KEYCLOAK_HOST_PLACEHOLDER|${KEYCLOAK_HOST}|g" "${f}"
+                sed -i '' "s|APP_HOST_PLACEHOLDER|${APP_HOST}|g" "${f}"
             else
-                sed -i "s|https://rhbk\.[^\"']*|https://${KEYCLOAK_HOST}|g" "${f}"
-                sed -i "s|https://neuralbank\.[^\"']*|https://${APP_HOST}|g" "${f}"
+                sed -i "s|KEYCLOAK_HOST_PLACEHOLDER|${KEYCLOAK_HOST}|g" "${f}"
+                sed -i "s|APP_HOST_PLACEHOLDER|${APP_HOST}|g" "${f}"
             fi
             print_success "Updated $(basename "${f}") with cluster domain"
         fi

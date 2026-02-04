@@ -8,3 +8,6 @@ spec:
   mtls:
     enable: true
     authorino: true
+  components:
+    observability:
+      enable: true

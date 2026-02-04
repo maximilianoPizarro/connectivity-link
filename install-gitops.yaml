@@ -86,6 +86,50 @@
           - "Keycloak host: {{ keycloak_host }}"
           - "App host: {{ app_host }}"
 
+    - name: Replace KEYCLOAK_HOST_PLACEHOLDER and APP_HOST_PLACEHOLDER in repo files (dynamic cluster domain)
+      block:
+        - name: Replace placeholders in neuralbank-stack/values.yaml
+          replace:
+            path: "{{ playbook_dir }}/neuralbank-stack/values.yaml"
+            replace: "KEYCLOAK_HOST_PLACEHOLDER"
+            with: "{{ keycloak_host }}"
+        - name: Replace APP_HOST_PLACEHOLDER in neuralbank-stack/values.yaml
+          replace:
+            path: "{{ playbook_dir }}/neuralbank-stack/values.yaml"
+            replace: "APP_HOST_PLACEHOLDER"
+            with: "{{ app_host }}"
+        - name: Replace placeholders in rhcl-operator/oidc-policy.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhcl-operator/oidc-policy.yaml"
+            replace: "KEYCLOAK_HOST_PLACEHOLDER"
+            with: "{{ keycloak_host }}"
+        - name: Replace APP_HOST_PLACEHOLDER in rhcl-operator/oidc-policy.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhcl-operator/oidc-policy.yaml"
+            replace: "APP_HOST_PLACEHOLDER"
+            with: "{{ app_host }}"
+        - name: Replace placeholders in rhbk/keycloak-neuralbank-realm.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhbk/keycloak-neuralbank-realm.yaml"
+            replace: "KEYCLOAK_HOST_PLACEHOLDER"
+            with: "{{ keycloak_host }}"
+        - name: Replace APP_HOST_PLACEHOLDER in rhbk/keycloak-neuralbank-realm.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhbk/keycloak-neuralbank-realm.yaml"
+            replace: "APP_HOST_PLACEHOLDER"
+            with: "{{ app_host }}"
+        - name: Replace APP_HOST_PLACEHOLDER in rhcl-operator/neuralbank-route.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhcl-operator/neuralbank-route.yaml"
+            replace: "APP_HOST_PLACEHOLDER"
+            with: "{{ app_host }}"
+        - name: Replace APP_HOST_PLACEHOLDER in rhcl-operator/neuralbank-oidc-callback.yaml
+          replace:
+            path: "{{ playbook_dir }}/rhcl-operator/neuralbank-oidc-callback.yaml"
+            replace: "APP_HOST_PLACEHOLDER"
+            with: "{{ app_host }}"
+      when: keycloak_host is defined and app_host is defined
+
     - name: Install OpenShift GitOps operator and wait for ArgoCD
       block:
         - name: Ensure openshift-operators namespace exists

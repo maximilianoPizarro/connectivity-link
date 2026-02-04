@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - monitoring-stack.yaml
+  - servicemonitor-kuadrant.yaml
   - catalog-info.yaml
