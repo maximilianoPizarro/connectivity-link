@@ -13,7 +13,7 @@ graph TD
     WaitGitOps --> ApplyAppSet
 
     ApplyAppSet --> SyncWaves[Sync Waves 0-7:<br/>Operators, Infra, Apps]
-    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins - no ConsoleLink]
+    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins]
     ConsolePlugins --> OIDCFromKC[OIDC: get client secret from Keycloak<br/>realm neuralbank, client neuralbank]
     OIDCFromKC --> UpdateValues[Update values.yaml & oidc-policy.yaml<br/>Patch OIDCPolicy in-cluster]
     UpdateValues --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]

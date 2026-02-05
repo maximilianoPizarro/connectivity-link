@@ -423,7 +423,7 @@ chmod +x install.sh
    - Waits for InstallPlan and CSV; fallback to other channels if needed
    - Verifies ArgoCD CRD and instance
 3. **Applies ApplicationSet**: Applies `applicationset-instance.yaml` to deploy all components; waits for operators and applications
-4. **Console**: Removes any Connectivity Link ConsoleLink; enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins` (Administration → Cluster Settings → Console)
+4. **Console**: Enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins` (Administration → Cluster Settings → Console)
 5. **OIDC**: When Keycloak and realm `neuralbank` are ready, obtains the client secret for client `neuralbank` from Keycloak and updates `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, and patches the OIDCPolicy in-cluster
 6. **Operator fixes**: Fixes `rhbk-operator` OperatorGroup; cleans up duplicate `devspaces` subscriptions
 
@@ -946,7 +946,7 @@ graph TD
     WaitGitOps --> ApplyAppSet
     
     ApplyAppSet --> SyncWaves[Sync Waves 0-7:<br/>Operators, Infra, Apps]
-    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins - no ConsoleLink]
+    SyncWaves --> ConsolePlugins[Console: dynamic plugins<br/>spec.plugins]
     ConsolePlugins --> OIDCFromKC[OIDC: get client secret from Keycloak<br/>realm neuralbank, client neuralbank]
     OIDCFromKC --> UpdateValues[Update values.yaml & oidc-policy.yaml<br/>Patch OIDCPolicy in-cluster]
     UpdateValues --> FixConfig[Fix Operator Configurations<br/>rhbk-operator, devspaces]

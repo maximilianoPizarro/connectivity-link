@@ -214,34 +214,6 @@ delete_applicationsets() {
     done
 }
 
-# Eliminar ConsoleLinks
-delete_consolelinks() {
-    print_header "Eliminando ConsoleLinks"
-    
-    declare -a consolelinks=(
-        "openshift-gitops"
-        "connectivity-link"
-        "devspaces"
-    )
-    
-    for cl in "${consolelinks[@]}"; do
-        if [ "$DRY_RUN" = true ]; then
-            if oc get consolelink "${cl}" &> /dev/null; then
-                print_warning "[DRY-RUN] Se eliminaría: oc delete consolelink ${cl}"
-            fi
-            continue
-        fi
-        
-        if oc get consolelink "${cl}" &> /dev/null; then
-            print_info "Eliminando ConsoleLink: ${cl}"
-            oc delete consolelink "${cl}" --wait=true --timeout=30s || true
-            print_success "ConsoleLink ${cl} eliminado"
-        else
-            print_warning "ConsoleLink ${cl} no existe, omitiendo"
-        fi
-    done
-}
-
 # Limpiar subscriptions de operadores
 clean_subscriptions() {
     if [ "$CLEAN_ALL" != true ]; then
@@ -368,7 +340,6 @@ confirm_action() {
     
     if [ "$CLEAN_ALL" = true ]; then
         print_warning "Modo --clean-all activado: también se eliminarán:"
-        echo "  - ConsoleLinks"
         echo "  - Subscriptions de operadores"
         echo "  - Namespaces"
     fi
@@ -445,9 +416,6 @@ main() {
     
     # Eliminar ApplicationSets
     delete_applicationsets
-    
-    # Eliminar ConsoleLinks
-    delete_consolelinks
     
     # Limpieza adicional si se solicita
     if [ "$CLEAN_ALL" = true ]; then

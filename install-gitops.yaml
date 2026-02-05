@@ -1088,12 +1088,6 @@
                   - "  - Action taken: {{ 'Recreated with targetNamespaces' if has_allnamespaces | default(false) else 'No action needed' }}"
                   - "Note: If the operator CSV still shows AllNamespaces error, you may need to delete the Subscription and let it recreate"
 
-        - name: Remove Connectivity Link ConsoleLink (use dynamic plugin via spec.plugins instead; ConsoleLink can block sync)
-          command: oc delete consolelink connectivity-link --ignore-not-found=true
-          register: delete_cl_consolelink
-          changed_when: delete_cl_consolelink.rc == 0 and 'deleted' in (delete_cl_consolelink.stdout | default(''))
-          failed_when: false
-
         - name: Enable all Console plugins (Console operator.openshift.io spec.plugins)
           block:
             - name: Create or update GitOps ConsolePlugin (dynamic plugin)

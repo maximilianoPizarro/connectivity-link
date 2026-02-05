@@ -99,7 +99,7 @@ chmod +x install.sh
    - If GitOps is already installed and ArgoCD is Available, skips operator installation
    - Installs OpenShift GitOps Operator (subscription with channel only, no `startingCSV`; `installPlanApproval: Automatic`)
    - Applies ApplicationSet and waits for applications (includes **observability** app: Cluster Observability Operator + MonitoringStack for Prometheus)
-   - Removes any Connectivity Link ConsoleLink; enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins`
+   - Enables **dynamic console plugins** (GitOps and Connectivity Link) via `spec.plugins`
    - Replaces `KEYCLOAK_HOST_PLACEHOLDER` and `APP_HOST_PLACEHOLDER` in repo files (values, oidc-policy, realm, HTTPRoutes) with cluster domain
    - When Keycloak and realm `neuralbank` are ready: gets client secret for client `neuralbank`, updates values/oidc-policy files, patches OIDCPolicy, creates Secrets
    - Fixes operator configurations (e.g. rhbk-operator OperatorGroup, duplicate devspaces subscriptions)
@@ -137,7 +137,7 @@ ansible-playbook -i localhost, -c local install-gitops.yaml -e cluster_domain=ap
 
 ### Console (Connectivity Link view)
 
-Connectivity Link is exposed via the **dynamic console plugin**, not ConsoleLink. Enable it:
+Connectivity Link is exposed via the **dynamic console plugin**. Enable it:
 
 - **UI:** Administration → Cluster Settings → Console → add `connectivity-link-plugin` to spec.plugins (and `gitops-plugin` for GitOps).
 - **CLI:**

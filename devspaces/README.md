@@ -16,7 +16,6 @@ The Dev Spaces deployment consists of:
 - **CheCluster CR**: Main custom resource that defines the Dev Spaces instance
 - **DevWorkspace Operator**: Manages workspace lifecycle and resources
 - **Image Puller**: Pre-pulls container images for faster workspace startup
-- **Console Link**: Integration with OpenShift console for quick access
 
 ## Configuration
 
@@ -29,7 +28,6 @@ The Dev Spaces deployment consists of:
   - Git services integration
 - **`devworkspace-operator-config.yaml`**: DevWorkspace Operator configuration
 - **`image-puller-instance.yaml`**: Image puller configuration for pre-caching images
-- **`consolelink.yaml`**: OpenShift console integration
 
 ### CheCluster Configuration
 
@@ -57,7 +55,6 @@ This application is managed by ArgoCD:
 
 - **Dev Spaces URL**: `https://devspaces.apps.<cluster-domain>`
 - **ArgoCD Application**: Available in OpenShift GitOps console
-- **Console Link**: Available in OpenShift console Application Menu
 
 ## Workspace Management
 

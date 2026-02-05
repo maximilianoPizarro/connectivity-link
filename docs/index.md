@@ -389,7 +389,7 @@ chmod +x install.sh
 
 **What `install.sh` does:** Pre-flight checks → detects cluster domain → updates domain in `applicationset-instance.yaml`, `rhbk/keycloak.yaml`, `rhbk/keycloak-neuralbank-realm.yaml`, `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, `servicemeshoperator3/gateway-route.yaml` → runs `install-gitops.yaml`.
 
-**What the playbook does:** Skips GitOps install if already available → Installs OpenShift GitOps (channel only, no version pin; Automatic) → Applies ApplicationSet → Enables **dynamic console plugins** (no ConsoleLink) via `spec.plugins` → Obtains OIDC client secret from Keycloak (realm `neuralbank`, client `neuralbank`) and updates values/oidc-policy and patches OIDCPolicy → Fixes operator configs (rhbk-operator, devspaces).
+**What the playbook does:** Skips GitOps install if already available → Installs OpenShift GitOps (channel only, no version pin; Automatic) → Applies ApplicationSet → Enables **dynamic console plugins** via `spec.plugins` → Obtains OIDC client secret from Keycloak (realm `neuralbank`, client `neuralbank`) and updates values/oidc-policy and patches OIDCPolicy → Fixes operator configs (rhbk-operator, devspaces).
 
 ### Manual Installation (Alternative)
 
