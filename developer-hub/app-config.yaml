@@ -18,9 +18,6 @@ data:
     integrations:
       github:
         - host: github.com
-          token: ${GITHUB_INTEGRATION}
-      github:
-        - host: github.com
           # Token is required to avoid rate limits when using multiple providers
           # Set GITHUB_INTEGRATION secret with your GitHub personal access token
           token: ${GITHUB_INTEGRATION}
