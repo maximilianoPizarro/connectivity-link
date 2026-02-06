@@ -21,6 +21,22 @@
 #   memberOf:
 #     - developers
 
+# Admin user - matches Keycloak preferred_username "admin" for first-time / admin logins
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: admin
+  namespace: default
+  description: Administrator
+spec:
+  profile:
+    displayName: Administrator
+    email: admin@developer-hub.local
+  memberOf:
+    - platform-team
+    - platformengineers
+
+---
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:

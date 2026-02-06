@@ -36,6 +36,7 @@ data:
             signIn:
               resolvers:
                 - resolver: preferredUsernameMatchingUserEntityName
+                - resolver: emailMatchingUserEntityProfileEmail
     backend:
       auth:
         externalAccess:

@@ -157,7 +157,12 @@ RBAC policies are defined in `rhdh-rbac-policy.yaml` using the Casbin policy for
 
 ### Common Issues
 
-1. **Authentication not working**
+1. **"Failed to sign-in, unable to resolve user identity"**
+   - Backstage must find a **User** entity in the catalog that matches your Keycloak identity. Sign-in resolvers are (in order): `preferredUsernameMatchingUserEntityName`, then `emailMatchingUserEntityProfileEmail`.
+   - **Fix:** Ensure `groups/users.yaml` (in the connectivity-link repo) contains a User whose `metadata.name` equals your Keycloak **preferred_username**, or whose `spec.profile.email` equals your Keycloak email. Then add that file to the catalog locations and sync, or wait for the next Keycloak/group provider sync.
+   - If you log in as **admin**, add a User with `name: admin` in `users.yaml`. If you use another username (e.g. maximilianopizarro), that user already exists in the sample `users.yaml`.
+
+2. **Authentication not working**
    - Verify Keycloak is running and accessible
    - Check OIDC configuration in `app-config.yaml`
    - Verify Keycloak realm configuration
