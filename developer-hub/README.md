@@ -174,7 +174,7 @@ RBAC policies are defined in `rhdh-rbac-policy.yaml` using the Casbin policy for
 
 4. **Lightspeed / Llama Stack version mismatch**
    - **"Client version 0.4.3 is not compatible with server version 0.2.18"**: `lightspeed-stack:latest` uses client 0.4.3; Red Hat llama-stack has no 0.4.x image tag. **Fix:** Use `lightspeed-stack:0.2.0` (see below).
-   - **"Llama Stack version <= 0.2.17 is required, but 0.2.18 is used"**: `lightspeed-stack:0.2.0` only accepts server <= 0.2.17, while `llama-stack:0.1.1` reports 0.2.18. **Fix:** Use `llama-stack:0.1.0` (reports 0.2.17). If `0.1.0` is not available or still reports 0.2.18, you may need a different lightspeed-stack image tag that allows 0.2.18; check [Quay](https://quay.io/repository/lightspeed-core/lightspeed-stack) for tags.
+   - **"Llama Stack version <= 0.2.17 is required, but 0.2.18 is used"**: `lightspeed-stack:0.2.0` only accepts server <= 0.2.17; `llama-stack:0.1.1` reports 0.2.18. **Fix:** Use `lightspeed-stack:0.2.1` (or a newer 0.2.x tag) which should allow server 0.2.18. If tag `0.2.1` does not exist, try `0.2.2` or list tags on [Quay lightspeed-stack](https://quay.io/repository/lightspeed-core/lightspeed-stack). Alternative: use `llama-stack:0.1.0` with `lightspeed-stack:0.2.0` if 0.1.0 reports server 0.2.17.
 
 ## Related Components
 

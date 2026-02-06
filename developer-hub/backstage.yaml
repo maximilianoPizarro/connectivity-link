@@ -46,8 +46,7 @@ spec:
                 env:
                   - name: MCP_HEADERS
                     value: '{"backstage-actions": {"Authorization": "Bearer backstage"}, "http://localhost:7007/api/mcp-actions/v1": {"Authorization": "Bearer backstage"}, "http://localhost:7007/api/mcp-actions/v1/sse": {"Authorization": "Bearer backstage"}}'
-                # 0.1.0 reports server 0.2.17; 0.1.1 reports 0.2.18 which lightspeed-stack:0.2.0 rejects (requires <= 0.2.17)
-                image: 'quay.io/redhat-ai-dev/llama-stack:0.1.0'
+                image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
                 name: llama-stack
                 ports:
                   - containerPort: 8321
@@ -81,8 +80,8 @@ spec:
                   - mountPath: /app-root/run.yaml
                     name: llama-stack-config
                     subPath: run.yaml
-              # Pin to 0.2.x image: latest uses llama_stack_client 0.4.3, incompatible with llama-stack:0.1.1 (server 0.2.18)
-              - image: 'quay.io/lightspeed-core/lightspeed-stack:0.2.0'
+              # 0.2.0 requires server <= 0.2.17; 0.2.1+ should allow 0.2.18. Fallback: 0.2.0 + llama-stack:0.1.0 if 0.2.1 missing
+              - image: 'quay.io/lightspeed-core/lightspeed-stack:0.2.1'
                 name: lightspeed-core
                 envFrom:
                   - secretRef:
