@@ -240,6 +240,17 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 70 }
+          nfl-wallet:
+            host: github.com
+            owner: maximilianoPizarro
+            repo: NFL-Wallet
+            branch: main
+            catalogPath: /catalog-info.yaml
+            token: ${GITHUB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 75 }
       locations:
         # GitHub catalog-info.yaml files - Using /blob/ format for Backstage URL reader compatibility
         - type: url
@@ -272,6 +283,11 @@ data:
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/groups/users.yaml
         - type: url
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/dotnet-demo/catalog-info.yaml
+        # NFL-Wallet (Connectivity Link sample): https://github.com/maximilianoPizarro/NFL-Wallet
+        - type: url
+          target: https://github.com/maximilianoPizarro/NFL-Wallet/blob/main/catalog-info.yaml
+        - type: url
+          target: https://github.com/maximilianoPizarro/NFL-Wallet/blob/main/catalog/catalog-info.yaml
         # Red Hat Developer Hub Software Templates Collection
         - type: url
           target: https://raw.githubusercontent.com/redhat-developer/red-hat-developer-hub-software-templates/main/templates.yaml
@@ -324,17 +340,12 @@ data:
         # Optional: Configure authentication if needed
         # auth:
         #   token: ${TEKTON_TOKEN}
-    # Lightspeed server configuration
-    # Required by OLS (Road Core Service) backend for Lightspeed plugin
-    # Note: This configuration connects to lightspeed-core (sidecar) at localhost:8082
-    # lightspeed-core handles communication with llama-stack, which connects to external LLM service
-    # NOTE: conversation_cache is managed by lightspeed-core (configured in lightspeed-stack.yaml)
-    # This configuration is for the plugin backend only
-    lightspeed:
-      servers:
-        - id: "${LLM_SERVER_ID}"
-          url: "${LLM_SERVER_URL}"  # Should be http://localhost:8082 (lightspeed-core)
-          token: "${LLM_SERVER_TOKEN}"  # Empty string for local connection
+    # Lightspeed plugin disabled (image version conflicts)
+    # lightspeed:
+    #   servers:
+    #     - id: "${LLM_SERVER_ID}"
+    #       url: "${LLM_SERVER_URL}"
+    #       token: "${LLM_SERVER_TOKEN}"
     # MCP (Model Context Protocol) Configuration
     # Note: MCP configuration is separate from Lightspeed servers
     mcp:

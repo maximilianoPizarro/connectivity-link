@@ -17,8 +17,9 @@ data:
         disabled: false
       - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
         disabled: true
+      # Lightspeed plugin disabled (image version conflicts with llama-stack)
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed
-        disabled: false
+        disabled: true
         pluginConfig:
           lightspeed:
             # OPTIONAL: Custom users prompts displayed to users
@@ -44,8 +45,9 @@ data:
                     menuItem:
                       icon: LightspeedIcon
                       text: Lightspeed
+      # Lightspeed backend disabled (image version conflicts)
       - package: oci://ghcr.io/redhat-developer/rhdh-plugin-export-overlays/red-hat-developer-hub-backstage-plugin-lightspeed-backend:bs_1.42.5__1.0.3!red-hat-developer-hub-backstage-plugin-lightspeed-backend
-        disabled: false
+        disabled: true
         pluginConfig:
           lightspeed:
             # Connect to lightspeed-core service running as sidecar

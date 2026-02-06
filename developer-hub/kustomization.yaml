@@ -4,17 +4,18 @@ resources:
   - rolebinding.yaml
   # secrets-rhdh: created by install-gitops.yaml from Keycloak when Keycloak is operational (template: secret-secrets-rhdh.yaml.j2)
   #- ols-embeddings.yaml
-  - lightspeed-postgres-secret.yaml
-  - lightspeed-postgres.yaml
-  #- lightspeed-postgres-init-job.yaml  # Deshabilitado - usando una sola base de datos
+  # Lightspeed/llama-stack disabled (image version conflicts)
+  #- lightspeed-postgres-secret.yaml
+  #- lightspeed-postgres.yaml
+  #- lightspeed-postgres-init-job.yaml
   - backstage.yaml
   - app-config.yaml
   - dynamic-plugins.yaml
   - rhdh-rbac-policy.yaml
-  - llama-stack-secrets.yaml
-  - llama-stack-config.yaml
-  - lightspeed-secrets.yaml
-  - lightspeed-stack.yaml
+  #- llama-stack-secrets.yaml
+  #- llama-stack-config.yaml
+  #- lightspeed-secrets.yaml
+  #- lightspeed-stack.yaml
   - proxy.yaml
 
 namespace: developer-hub

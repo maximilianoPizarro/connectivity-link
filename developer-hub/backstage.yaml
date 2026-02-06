@@ -14,7 +14,7 @@ spec:
     extraEnvs:
       secrets:
         - name: secrets-rhdh
-        - name: lightspeed-secrets
+        # - name: lightspeed-secrets  # Lightspeed plugin disabled (image version conflicts)
     extraFiles:
       configMaps:
         - name: rhdh-rbac-policy
@@ -24,109 +24,12 @@ spec:
       enabled: true
   database:
     enableLocalDb: true
-  deployment:
-    patch:
-      spec:
-        template:
-          spec:
-            initContainers:
-              - name: init-rag-data
-                image: 'quay.io/redhat-ai-dev/rag-content:release-1.8-lcs'
-                command:
-                  - "sh"
-                  - "-c"
-                  - "echo 'Copying RAG data...'; cp -r /rag/vector_db/rhdh_product_docs /data/ && cp -r /rag/embeddings_model /data/ && echo 'Copy complete.'"
-                volumeMounts:
-                  - mountPath: /data
-                    name: rag-data-volume
-            containers:
-              - envFrom:
-                  - secretRef:
-                      name: llama-stack-secrets
-                env:
-                  - name: MCP_HEADERS
-                    value: '{"backstage-actions": {"Authorization": "Bearer backstage"}, "http://localhost:7007/api/mcp-actions/v1": {"Authorization": "Bearer backstage"}, "http://localhost:7007/api/mcp-actions/v1/sse": {"Authorization": "Bearer backstage"}}'
-                image: 'quay.io/redhat-ai-dev/llama-stack:0.1.1'
-                name: llama-stack
-                ports:
-                  - containerPort: 8321
-                    name: llama-stack-api
-                    protocol: TCP
-                readinessProbe:
-                  tcpSocket:
-                    port: 8321
-                  initialDelaySeconds: 15
-                  periodSeconds: 5
-                  timeoutSeconds: 3
-                  successThreshold: 1
-                  failureThreshold: 3
-                startupProbe:
-                  tcpSocket:
-                    port: 8321
-                  initialDelaySeconds: 10
-                  periodSeconds: 5
-                  timeoutSeconds: 3
-                  successThreshold: 1
-                  failureThreshold: 20
-                volumeMounts:
-                  - mountPath: /app-root/.llama
-                    name: shared-storage
-                  - mountPath: /app-root/embeddings_model
-                    name: rag-data-volume
-                    subPath: embeddings_model
-                  - mountPath: /app-root/vector_db/rhdh_product_docs
-                    name: rag-data-volume
-                    subPath: rhdh_product_docs
-                  - mountPath: /app-root/run.yaml
-                    name: llama-stack-config
-                    subPath: run.yaml
-              # 0.2.0 requires server <= 0.2.17; 0.2.1+ should allow 0.2.18. Fallback: 0.2.0 + llama-stack:0.1.0 if 0.2.1 missing
-              - image: 'quay.io/lightspeed-core/lightspeed-stack:0.2.1'
-                name: lightspeed-core
-                envFrom:
-                  - secretRef:
-                      name: lightspeed-secrets
-                env:
-                  - name: MCP_HEADERS
-                    value: '{"backstage-actions": {"Authorization": "Bearer backstage"}}'
-                ports:
-                  - containerPort: 8082
-                    name: lightspeed-api
-                    protocol: TCP
-                readinessProbe:
-                  tcpSocket:
-                    port: 8082
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  successThreshold: 1
-                  failureThreshold: 3
-                startupProbe:
-                  tcpSocket:
-                    port: 8082
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  successThreshold: 1
-                  failureThreshold: 20
-                volumeMounts:
-                  - mountPath: /app-root/lightspeed-stack.yaml
-                    name: lightspeed-stack
-                    subPath: lightspeed-stack.yaml
-                  - mountPath: /tmp/data/feedback
-                    name: shared-storage
-                  - mountPath: /tmp/data/transcripts
-                    name: shared-storage
-                  - mountPath: /tmp/data/conversations
-                    name: shared-storage
-            volumes:
-              - configMap:
-                  name: lightspeed-stack
-                name: lightspeed-stack
-              - configMap:
-                  name: llama-stack-config
-                name: llama-stack-config
-              - emptyDir: {}
-                name: shared-storage
-              - emptyDir: {}
-                name: rag-data-volume
+  # Lightspeed/llama-stack sidecars disabled (image version conflicts: 0.2.17 vs 0.2.18, 0.4.4 tag missing)
+  # deployment:
+  #   patch:
+  #     spec:
+  #       template:
+  #         spec:
+  #           initContainers: ...
+  #           containers: (llama-stack, lightspeed-core) ...
+  #           volumes: ...
