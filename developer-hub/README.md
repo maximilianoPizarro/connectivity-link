@@ -172,6 +172,11 @@ RBAC policies are defined in `rhdh-rbac-policy.yaml` using the Casbin policy for
    - Check plugin repository accessibility
    - Review backend logs for plugin errors
 
+4. **Lightspeed startup fails: "Client version 0.4.3 is not compatible with server version 0.2.18"**
+   - Lightspeed-core uses `llama_stack_client` 0.4.3; the Llama stack server image must be 0.4.x.
+   - In `backstage.yaml`, the llama-stack container image is set to `quay.io/redhat-ai-dev/llama-stack:0.4.4`. If that tag does not exist or is unavailable, try `latest` or check [Quay](https://quay.io/repository/redhat-ai-dev/llama-stack) for available tags.
+   - Alternative: pin lightspeed-core to an older image that bundles a client compatible with server 0.2.x (e.g. a lightspeed-stack image that uses `llama_stack_client` 0.2.x).
+
 ## Related Components
 
 - [Keycloak](../rhbk/README.md) - Authentication provider
