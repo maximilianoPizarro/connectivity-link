@@ -89,3 +89,15 @@ spec:
           hs.message = "Waiting for volume"
         end
         return hs
+    # OpenShift Route: Healthy cuando existe (evita bloquear app servicemeshoperator3 por Route sin status.ingress)
+    "route.openshift.io/Route":
+      health.lua: |
+        hs = {}
+        if obj.status ~= nil and obj.status.ingress ~= nil and #obj.status.ingress > 0 then
+          hs.status = "Healthy"
+          hs.message = "Route admitted"
+        else
+          hs.status = "Healthy"
+          hs.message = "Route created"
+        end
+        return hs
