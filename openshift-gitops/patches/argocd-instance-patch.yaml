@@ -42,8 +42,17 @@ spec:
       g, system:authenticated, role:admin
       g, system:authenticated:oauth, role:admin
     scopes: '[groups]'
-  # Opciones del Repositorio (Aquí se monta el CMP)
+  # Repo server: más recursos y réplicas para evitar timeouts y "connection refused" al generar manifiestos
   repo:
+    resources:
+      limits:
+        cpu: "2"
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    replicas: 2
+    # Opciones del Repositorio (Aquí se monta el CMP)
     sidecarContainers:
       - name: my-custom-plugin-sidecar
         command: [/var/run/argocd/argocd-cmp-server]
