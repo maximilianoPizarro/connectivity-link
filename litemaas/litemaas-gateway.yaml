@@ -1,10 +1,12 @@
+# Gateway in istio-system so Istio controller picks it up. HTTPRoute stays in litemaas.
+# Single host (litemaas-litemaas.<domain>): / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: '4'
   name: litemaas-gateway
   namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   gatewayClassName: istio
   listeners:
@@ -21,37 +23,48 @@ spec:
       port: 443
       protocol: HTTPS
 ---
+# HTTPRoute in litemaas namespace; parentRef points to Gateway in istio-system.
+# Path-based routing so frontend calls LiteLLM via same host (e.g. /v1).
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: litemaas-route
+  namespace: litemaas
   annotations:
-    argocd.argoproj.io/sync-wave: "5"  
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   hostnames:
-    - litemaas.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
+    - litemaas-litemaas.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: litemaas-gateway
       namespace: istio-system
   rules:
-    - backendRefs:
-        - group: ''
-          kind: Service
-          name: frontend
-          port: 8080
-          weight: 1
-      matches:
+    # /api -> LiteMaaS backend
+    - matches:
         - path:
             type: PathPrefix
             value: /api
+      backendRefs:
+        - name: backend
+          port: 8080
+    # /v1 and /q -> LiteLLM API (frontend and backend call this via gateway)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
         - path:
             type: PathPrefix
             value: /q
+      backendRefs:
+        - name: litellm
+          port: 4000
+    # / -> frontend
+    - matches:
         - path:
             type: PathPrefix
-            value: /v1            
-        - path:
-            type: PathPrefix
-            value: /                       
+            value: /
+      backendRefs:
+        - name: frontend
+          port: 8080
