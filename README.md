@@ -69,7 +69,7 @@ The architecture follows a **consolidated ApplicationSet approach** where all in
 2. **Wave 1**: Namespaces creation
 3. **Wave 2**: Operators (rhbk-operator, RBAC configurations)
 4. **Wave 3**: Infrastructure components (Service Mesh, RHCL Operator, Developer Hub)
-5. **Wave 4-7**: Applications (NeuralBank Stack, Nexus, DotNet Demo, LibreChat)
+5. **Wave 4-7**: Applications (NeuralBank Stack, LibreChat, LiteMaaS, etc.)
 
 ## ⚙️ Important Requirements
 

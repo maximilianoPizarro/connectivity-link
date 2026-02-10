@@ -65,19 +65,7 @@ spec:
             app_type: kustomize
             keycloak_host: rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
             app_host: neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
-          # LibreChat RBAC
-          - name: librechat-rbac
-            namespace: librechat
-            path: librechat-rbac
-            sync_wave: "6"
-            app_type: plain
           # DevSpaces (will be handled by separate ApplicationSet)
-          # Nexus2
-          - name: nexus2
-            namespace: nexus2
-            path: nexus2
-            sync_wave: "4"
-            app_type: plain
           # LiteMaaS (cluster domain in litemaas/cluster-config.env; run update-cluster-domain.sh to set)
           - name: litemaas
             namespace: litemaas
@@ -95,6 +83,10 @@ spec:
         repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
+        {{- if eq .path "namespaces" }}
+        directory:
+          exclude: catalog-info.yaml
+        {{- end }}
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
@@ -276,8 +268,7 @@ spec:
           name: librechat-postgresql
           jsonPointers:
             - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1postgresql
-            - /spec/template/spec/containers/0/securityContext/seLinuxOptions
-            - /spec/template/spec/securityContext/seLinuxOptions
+            - /spec/template/metadata/annotations/container.seccomp.security.alpha.kubernetes.io~1init-chmod-data
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet

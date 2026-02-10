@@ -28,6 +28,8 @@ This directory contains Kubernetes manifests and Kustomize configuration for dep
 
 ## Quick Start
 
+**Using the repo install script:** From the repo root, `./install.sh` updates the cluster domain for the whole repo (including LiteMaaS). Argo CD will deploy the `litemaas` application from the ApplicationSet. You still need to configure secrets in `litemaas/` (see below) and apply the OAuth client; see [INTEGRATION.md](INTEGRATION.md).
+
 ### Prepare the configuration file
 
 The deployment uses a **template-based configuration system**:

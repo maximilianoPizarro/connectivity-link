@@ -188,6 +188,29 @@ update_applicationset_domain() {
     fi
 }
 
+# Update LiteMaaS domain (cluster-config.env, OAuthClient, gateway) to match cluster domain
+# Uses same demo domain as update-cluster-domain.sh so install and manual script stay in sync
+update_litemaas_domain() {
+    local LITEMAAS_DIR="${SCRIPT_DIR}/litemaas"
+    local OLD_DOMAIN="apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    if [ ! -d "${LITEMAAS_DIR}" ]; then
+        return 0
+    fi
+    print_info "Updating LiteMaaS domain to ${APPS_DOMAIN}..."
+    for rel in cluster-config.env OAuthClient.yaml litemaas-gateway.yaml; do
+        local f="${LITEMAAS_DIR}/${rel}"
+        if [ -f "${f}" ] && grep -q "${OLD_DOMAIN}" "${f}" 2>/dev/null; then
+            cp "${f}" "${f}.backup"
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                sed -i '' "s|${OLD_DOMAIN}|${APPS_DOMAIN}|g" "${f}"
+            else
+                sed -i "s|${OLD_DOMAIN}|${APPS_DOMAIN}|g" "${f}"
+            fi
+            print_success "Updated litemaas/$(basename "${f}") with cluster domain"
+        fi
+    done
+}
+
 # Check CatalogSource health
 check_catalog_source() {
     print_info "Checking CatalogSource health..."
@@ -903,6 +926,9 @@ main() {
     
     # Update applicationset with domain
     update_applicationset_domain
+    
+    # Update LiteMaaS domain (cluster-config.env, OAuthClient, gateway)
+    update_litemaas_domain
     
     echo ""
     print_info "Starting installation process..."

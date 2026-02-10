@@ -72,19 +72,6 @@ data:
       reading:
         allow:
           - host: github.com
-      # Proxy configuration for Nexus Repository Manager
-      # The plugin uses /nexus-repository-manager path to proxy requests to Nexus
-      # Requests to /nexus-repository-manager/* are proxied to Nexus root
-      proxy:
-        '/nexus-repository-manager':
-          target: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
-          # Path rewriting: /nexus-repository-manager/service/rest -> /service/rest
-          pathRewrite:
-            '^/nexus-repository-manager': ''
-          headers:
-            X-Requested-With: 'XMLHttpRequest'
-          changeOrigin: true
-          secure: false
     signInPage: oidc
     catalog:
       providers:
@@ -363,15 +350,4 @@ data:
       jenkins: true
       permission: false
 
-    # Nexus Repository Manager Plugin Configuration
-    nexusRepositoryManager:
-      # Nexus instance configuration
-      instances:
-        - name: nexus-instance
-          url: 'http://nexus-nexus2.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
-          # Optional: Authentication token if required
-          # token: ${NEXUS_TOKEN}
-          # Optional: Username and password for basic auth
-          username: ${NEXUS_USERNAME}
-          password: ${NEXUS_PASSWORD}
 

@@ -24,9 +24,6 @@ librechat:
           - path: /
             pathType: ImplementationSpecific
     tls: []
-  # ServiceAccount configuration for LibreChat subchart deployment
-  # The chart creates librechat-sa with Role and RoleBinding automatically
-  # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
   serviceAccount:
     create: true
     name: librechat-sa
@@ -96,14 +93,10 @@ librechat:
     configYamlContent: ''
     existingConfigYaml: ''
     existingSecretName: librechat-secretenv
-    # ServiceAccount configuration for LibreChat deployment
-    # The chart creates librechat-sa with Role and RoleBinding automatically
-    # The RoleBinding in librechat-rbac/scc-rolebinding.yaml only adds SCC anyuid permission
     serviceAccount:
       create: true
       name: librechat-sa
       automountServiceAccountToken: true
-    # Also set serviceAccountName directly for the deployment
     serviceAccountName: librechat-sa
     imageVolume:
       accessModes: ReadWriteOnce
@@ -117,47 +110,26 @@ librechat:
     auth:
       existingMasterKeySecret: librechat-secretenv
     enabled: true
-    # Chainguard image (evita límites de Docker Hub; no hay imagen Red Hat oficial de Meilisearch)
     image:
       registry: cgr.dev
       repository: chainguard/meilisearch
-      tag: "1.7"  # o "latest" si no existe la tag
+      tag: "1.7"
     persistence:
       enabled: true
       storageClass: ''
-    serviceAccountName: librechat-meilisearch-sa
   postgresql:
     auth:
       database: librechat-vectordb
       username: postgres
-      password: postgres 
+      password: postgres
     enabled: true
     image:
       registry: ghcr.io
       repository: bat-bs/bitnami-pgvector
       tag: pg16
-    # Init container that chowns the data dir so postgres (1001) can write
     volumePermissions:
       enabled: true
-    # ServiceAccount configuration for OpenShift SCC anyuid
-    # The ServiceAccount name must match: {{ .Release.Name }}-postgresql (i.e., librechat-postgresql)
-    serviceAccount:
-      create: true
-      name: librechat-postgresql
-      automountServiceAccountToken: true
     primary:
-      # Bitnami PostgreSQL runs as UID/GID 1001; data dir must be writable by that user
-      podSecurityContext:
-        runAsUser: 1001
-        runAsGroup: 1001
-        fsGroup: 1001
-        fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: null
-        sysctls: null
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 1001
-        runAsNonRoot: true
       initdb:
         scripts:
           create-librechat-db.sql: |
@@ -167,11 +139,7 @@ librechat:
             -- Connect to the new database and create the pgvector extension
             \c librechat-vectordb
             CREATE EXTENSION IF NOT EXISTS vector;
-
-            -- CREATE USER postgres WITH PASSWORD 'postgres';
-            -- GRANT ALL PRIVILEGES ON DATABASE "librechat-vectordb" TO postgres;
   mongodb:
-    # Imagen Red Hat (evita límites de Docker Hub). Requiere pull secret para registry.redhat.io.
     image:
       pullPolicy: IfNotPresent
       registry: docker.io
@@ -182,22 +150,6 @@ librechat:
     databases:
       - LibreChat
     enabled: true
-    # ServiceAccount configuration for OpenShift SCC anyuid
-    # The ServiceAccount name must match: {{ .Release.Name }}-mongodb (i.e., librechat-mongodb)
-    serviceAccount:
-      create: true
-      name: librechat-mongodb
-      automountServiceAccountToken: true
-    # Disable securityContext to let OpenShift SCC handle it
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
-    initContainersSecurityContext:
-      enabled: false
-    extraVolumeMounts:
-      - name: datadir
-        mountPath: /data/db
   ollama:
     enabled: true
 
@@ -205,7 +157,6 @@ librechat:
   nodeSelector: {}
   podAnnotations: {}
   podLabels: {}
-  # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
   podSecurityContext: {}
   replicaCount: 1
   resources:

@@ -76,9 +76,28 @@ El script instalará los siguientes componentes en orden:
 5. **Service Mesh & RHCL** (sync_wave: 3)
 6. **NeuralBank Stack** (sync_wave: 5)
 7. **Workshop Pipelines** (sync_wave: 5)
-8. **DotNet Demo** (sync_wave: 6)
+8. **LiteMaaS** (sync_wave: 6)
 9. **LibreChat** (sync_wave: 7)
 10. **Dev Spaces** (sync_wave: 7)
+
+### LiteMaaS con install
+
+Al ejecutar `./install.sh`, el script:
+
+- Actualiza el dominio del cluster en `litemaas/cluster-config.env`, `litemaas/OAuthClient.yaml` y `litemaas/litemaas-gateway.yaml` (mismo dominio que el resto del install).
+- Argo CD despliega la aplicación **litemaas** desde el ApplicationSet (path `litemaas/`).
+
+Para que LiteMaaS funcione con login y base de datos, después del install (o antes del primer sync) configura los secrets en `litemaas/`:
+
+```bash
+cd litemaas
+cp user-values.env.example user-values.env
+# Editar user-values.env con contraseñas y OAuth reales
+./preparation.sh
+# Hacer commit y push para que Argo sincronice, o: oc apply -k .
+```
+
+Ver [litemaas/README.md](litemaas/README.md) para requisitos (OAuth client, grupos OpenShift, etc.).
 
 ## Monitoreo del Progreso
 

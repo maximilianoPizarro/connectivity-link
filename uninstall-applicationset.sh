@@ -63,7 +63,6 @@ declare -a NAMESPACES_TO_CLEAN=(
     "istio-system"
     "librechat"
     "devspaces"
-    "nexus2"
 )
 
 # Subscriptions a eliminar (si --clean-all)
