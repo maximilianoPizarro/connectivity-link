@@ -56,10 +56,3 @@ metadata:
   name: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "1"
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: workshop-pipelines
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"

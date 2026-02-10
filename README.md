@@ -350,12 +350,6 @@ spec:
   generators:
     - list:
         elements:
-          - name: workshop-pipelines
-            namespace: workshop-pipelines
-            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
-            chart: workshop-pipelines
-            chartVersion: "0.1.6"
-            sync_wave: "5"
   template:
     metadata:
       name: '{{.name}}'
@@ -775,18 +769,6 @@ Metrics and monitoring via the **Red Hat OpenShift Cluster Observability Operato
 
 - [`namespaces/namespaces.yaml`](namespaces/namespaces.yaml) — Kubernetes namespace definitions for the demo
 
-### Workshop Pipelines (`workshop-pipelines/`)
-
-Helm-based deployment configuration for the workshop-pipelines chart from an external Helm repository:
-
-- [`workshop-pipelines/values.yaml`](workshop-pipelines/values.yaml) — Custom values file for the workshop-pipelines Helm chart
-- [`workshop-pipelines/README.md`](workshop-pipelines/README.md) — Documentation for the workshop-pipelines deployment
-
-**Key Features:**
-- Deployed from external Helm repository: `https://maximilianopizarro.github.io/workshop-pipelines/`
-- Customizable via `values.yaml` in this repository
-- Managed by ArgoCD through ApplicationSet with sync_wave: 4
-
 ## 📝 Notes
 
 - The demo configuration uses a Keycloak operator CR ([`rhbk/keycloak.yaml`](rhbk/keycloak.yaml)) to bootstrap an instance and wire it to a PostgreSQL database
@@ -1010,7 +992,6 @@ The uninstallation script performs the following operations in reverse order of 
 
 1. **Removes ArgoCD Applications** in reverse sync order:
    - `neuralbank-stack` (sync_wave: 5)
-   - `workshop-pipelines` (sync_wave: 4)
    - `servicemeshoperator3` and `rhcl-operator` (sync_wave: 3)
    - `developer-hub`, `rhbk`, and `operators` (sync_wave: 2)
    - `namespaces` (sync_wave: 1)
@@ -1019,7 +1000,7 @@ The uninstallation script performs the following operations in reverse order of 
 
 3. **Optional cleanup** (with `--clean-all` flag):
    - Removes operator subscriptions (rhcl-operator, servicemeshoperator3, cluster-observability-operator, devspaces, openshift-pipelines-operator-rh)
-   - Deletes namespaces (neuralbank-stack, workshop-pipelines, developer-hub, rhbk-operator, kuadrant-operator, kuadrant-system, observability, rhdh-operator, istio-system). With RHCL, only `kuadrant-system` is used (Kuadrant is part of RHCL); `kuadrant-operator` is for standalone upstream Kuadrant.
+   - Deletes namespaces (neuralbank-stack, developer-hub, rhbk-operator, kuadrant-operator, kuadrant-system, observability, rhdh-operator, istio-system). With RHCL, only `kuadrant-system` is used (Kuadrant is part of RHCL); `kuadrant-operator` is for standalone upstream Kuadrant.
 
 ### Important Notes
 

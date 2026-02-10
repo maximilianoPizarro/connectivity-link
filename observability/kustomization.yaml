@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - monitoring-stack.yaml
   - servicemonitor-kuadrant.yaml
+  - servicemonitor-litemaas-gateway.yaml

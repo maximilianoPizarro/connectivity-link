@@ -34,14 +34,12 @@ declare -a APPLICATIONS=(
     "devspaces"
     # Applications sync_wave 5
     "neuralbank-stack"
-    "workshop-pipelines"
     # Applications sync_wave 3
     "developer-hub"
     # Applications sync_wave 2
     "servicemeshoperator3"
     "rhcl-operator"
     "rhbk"
-    "workshop-pipelines-rbac"
     # Applications sync_wave 1
     "operators"
     # Applications sync_wave 0
@@ -52,7 +50,6 @@ declare -a APPLICATIONS=(
 # Namespaces a limpiar (si --clean-all)
 declare -a NAMESPACES_TO_CLEAN=(
     "neuralbank-stack"
-    "workshop-pipelines"
     "developer-hub"
     "rhbk-operator"
     "rhdh-operator"
@@ -386,9 +383,6 @@ main() {
                 ;;
             "neuralbank-stack")
                 namespace="neuralbank-stack"
-                ;;
-            "workshop-pipelines"|"workshop-pipelines-rbac")
-                namespace="workshop-pipelines"
                 ;;
             "librechat"|"librechat-rbac")
                 namespace="librechat"

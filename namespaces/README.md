@@ -23,7 +23,6 @@ Namespaces provide:
   - `developer-hub` - Developer Hub (Backstage) resources
   - `neuralbank-stack` - NeuralBank application resources
   - `rhbk-operator` - Keycloak resources
-  - `workshop-pipelines` - Tekton pipeline resources
   - `openshift-devspaces` - Dev Spaces resources
   - Additional namespaces as needed
 
@@ -53,7 +52,6 @@ This application is managed by ArgoCD:
 
 - **`developer-hub`**: Developer Hub (Backstage) deployment
 - **`neuralbank-stack`**: NeuralBank application stack
-- **`workshop-pipelines`**: Tekton pipelines and CI/CD resources
 - **`openshift-devspaces`**: Dev Spaces workspaces
 
 ### Operator Namespaces

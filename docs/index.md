@@ -340,11 +340,11 @@ spec:
   generators:
     - list:
         elements:
-          - name: workshop-pipelines
-            namespace: workshop-pipelines
-            helmRepoURL: 'https://maximilianopizarro.github.io/workshop-pipelines/'
-            chart: workshop-pipelines
-            chartVersion: "0.1.6"
+          - name: my-app
+            namespace: my-namespace
+            helmRepoURL: 'https://example.com/helm'
+            chart: my-chart
+            chartVersion: "1.0.0"
             sync_wave: "5"
   template:
     metadata:
