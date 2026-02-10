@@ -7,12 +7,12 @@ metadata:
 # Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 spec:
   provider:
-    issuerURL: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank"
+    issuerURL: "https://rhbk.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF"
-    authorizationEndpoint: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
-    redirectURI: "https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/auth/callback"
-    tokenEndpoint: "https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
+    authorizationEndpoint: "https://rhbk.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
+    redirectURI: "https://neuralbank.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/auth/callback"
+    tokenEndpoint: "https://rhbk.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
    
   targetRef:
     group: gateway.networking.k8s.io
