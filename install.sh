@@ -246,11 +246,6 @@ check_catalog_source() {
             sleep 5
         fi
         
-        # Also try to force update the CatalogSource by patching it
-        print_info "Forcing CatalogSource update..."
-        oc patch catalogsource "${catalog_source}" -n "${catalog_namespace}" --type=merge -p '{"metadata":{"annotations":{"olm.catalogSource.forceUpdate":"'$(date +%s)'"}}}' 2>/dev/null || true
-        sleep 3
-        
         # Wait a bit for pod to restart
         print_info "Waiting for CatalogSource to become ready..."
         local max_wait=30
@@ -331,17 +326,13 @@ metadata:
   name: ${subscription_name}
   namespace: ${namespace}
 spec:
-  channel: stable
+  channel: latest
   name: ${GITOPS_OPERATOR_NAME}
   source: redhat-operators
   sourceNamespace: openshift-marketplace
   installPlanApproval: Automatic
 EOF
         print_success "Subscription recreated"
-        
-        # Force CatalogSource refresh again after recreating subscription
-        print_info "Forcing CatalogSource refresh after subscription recreation..."
-        oc patch catalogsource redhat-operators -n openshift-marketplace --type=merge -p '{"metadata":{"annotations":{"olm.catalogSource.forceUpdate":"'$(date +%s)'"}}}' 2>/dev/null || true
         
         # Wait a bit longer for OLM to process
         print_info "Waiting for OLM to process subscription..."
@@ -406,7 +397,7 @@ metadata:
   name: ${GITOPS_SUBSCRIPTION_NAME}
   namespace: openshift-operators
 spec:
-  channel: stable
+  channel: latest
   name: ${GITOPS_OPERATOR_NAME}
   source: redhat-operators
   sourceNamespace: openshift-marketplace
@@ -575,11 +566,18 @@ wait_for_argocd_server() {
     
     local max_attempts=60
     local attempt=0
+    local server_deployment=""
     
     while [ $attempt -lt $max_attempts ]; do
-        if oc get deployment argocd-server -n "${GITOPS_NAMESPACE}" &> /dev/null; then
-            READY_REPLICAS=$(oc get deployment argocd-server -n "${GITOPS_NAMESPACE}" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo "0")
-            if [ "$READY_REPLICAS" == "1" ]; then
+        # OpenShift GitOps uses openshift-gitops-server; fallback to argocd-server
+        if oc get deployment openshift-gitops-server -n "${GITOPS_NAMESPACE}" &> /dev/null; then
+            server_deployment="openshift-gitops-server"
+        elif oc get deployment argocd-server -n "${GITOPS_NAMESPACE}" &> /dev/null; then
+            server_deployment="argocd-server"
+        fi
+        if [ -n "$server_deployment" ]; then
+            READY_REPLICAS=$(oc get deployment "${server_deployment}" -n "${GITOPS_NAMESPACE}" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo "0")
+            if [ "${READY_REPLICAS:-0}" -ge 1 ]; then
                 print_success "ArgoCD server is ready"
                 return 0
             fi
