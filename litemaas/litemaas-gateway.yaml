@@ -1,0 +1,57 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: '4'
+  name: litemaas-gateway
+  namespace: istio-system
+spec:
+  gatewayClassName: istio
+  listeners:
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: http
+      port: 8080
+      protocol: HTTP
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: https
+      port: 443
+      protocol: HTTPS
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: litemaas-route
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"  
+spec:
+  hostnames:
+    - litemaas.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: litemaas-gateway
+      namespace: istio-system
+  rules:
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: frontend
+          port: 8080
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api
+        - path:
+            type: PathPrefix
+            value: /q
+        - path:
+            type: PathPrefix
+            value: /v1            
+        - path:
+            type: PathPrefix
+            value: /                       

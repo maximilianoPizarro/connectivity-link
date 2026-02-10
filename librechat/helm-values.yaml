@@ -71,7 +71,6 @@ librechat:
       ALLOW_REGISTRATION: 'true'
       ALLOW_SOCIAL_LOGIN: 'true'
       DOMAIN_SERVER: 'https://librechat.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
-      DOMAIN_SERVER: 'https://librechat.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
       OPENID_CALLBACK_URL: /oauth/openid/callback
       OPENID_LOGIN_ENABLED: 'true'
       OPENID_SESSION_SECRET: sessionsecret
@@ -175,9 +174,9 @@ librechat:
     # Imagen Red Hat (evita límites de Docker Hub). Requiere pull secret para registry.redhat.io.
     image:
       pullPolicy: IfNotPresent
-      registry: registry.redhat.io
-      repository: rhscl/mongodb-44-rhel7
-      tag: '4.4'
+      registry: docker.io
+      repository: mongo
+      tag: '8.0.13'
     auth:
       enabled: false
     databases:
@@ -208,8 +207,6 @@ librechat:
   podLabels: {}
   # Leave podSecurityContext empty to let OpenShift SCC anyuid handle it automatically
   podSecurityContext: {}
-  # ServiceAccount for LibreChat deployment - must match RoleBinding in librechat-rbac
-  serviceAccountName: librechat-sa
   replicaCount: 1
   resources:
     requests:

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: litemaas
+  labels:
+    name: litemaas
+    app.kubernetes.io/name: litemaas
+    app.kubernetes.io/instance: litemaas
+    app.kubernetes.io/component: litemaas
+    app.kubernetes.io/part-of: litemaas

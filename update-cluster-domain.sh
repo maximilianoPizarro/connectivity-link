@@ -56,7 +56,7 @@ fi
 # Count files that will be modified
 echo ""
 echo -e "${YELLOW}Searching for files to update...${NC}"
-FILES_TO_UPDATE=$(grep -r "$OLD_DOMAIN" --include="*.yaml" --include="*.yml" --include="*.sh" . 2>/dev/null | cut -d: -f1 | sort -u | grep -v node_modules | grep -v ".git" || true)
+FILES_TO_UPDATE=$(grep -r "$OLD_DOMAIN" --include="*.yaml" --include="*.yml" --include="*.sh" --include="*.env" . 2>/dev/null | cut -d: -f1 | sort -u | grep -v node_modules | grep -v ".git" || true)
 
 if [ -z "$FILES_TO_UPDATE" ]; then
     echo -e "${GREEN}No files found with the old domain. Nothing to update.${NC}"

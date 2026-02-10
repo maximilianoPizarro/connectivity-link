@@ -1,0 +1,8 @@
+kind: OAuthClient
+apiVersion: oauth.openshift.io/v1
+metadata:
+  name: litemaas-oauth-client
+secret: change-me-oauth-secret
+redirectURIs:
+  - 'https://litemaas.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/api/auth/callback'
+grantMethod: auto

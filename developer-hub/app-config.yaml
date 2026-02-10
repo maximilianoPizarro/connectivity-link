@@ -230,17 +230,6 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 65 }
-          connectivity-link-dotnet-demo:
-            host: github.com
-            owner: maximilianoPizarro
-            repo: connectivity-link
-            branch: main
-            catalogPath: /dotnet-demo/catalog-info.yaml
-            token: ${GITHUB_INTEGRATION}
-            schedule:
-              frequency: { minutes: 30 }
-              timeout: { minutes: 5 }
-              initialDelay: { seconds: 70 }
           nfl-wallet:
             host: github.com
             owner: maximilianoPizarro
@@ -282,8 +271,6 @@ data:
         # Keeping this location for backward compatibility
         - type: url
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/groups/users.yaml
-        - type: url
-          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/dotnet-demo/catalog-info.yaml
         # NFL-Wallet (Connectivity Link sample): https://github.com/maximilianoPizarro/NFL-Wallet
         - type: url
           target: https://github.com/maximilianoPizarro/NFL-Wallet/blob/main/catalog-info.yaml
@@ -329,11 +316,8 @@ data:
     # Tekton/CI Pipeline Configuration
     # Configure Tekton integration for pipeline visualization
     tekton:
-      # Base URL for Tekton Dashboard (if available)
       dashboardUrl: 'https://tekton-dashboard.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com'
-      # Namespace where pipelines are located
-      # Note: dotnet-demo pipelines are in dotnet-demo namespace
-      namespace: dotnet-demo
+      namespace: workshop-pipelines
     # CI/CD Integration
     ci:
       - name: tekton

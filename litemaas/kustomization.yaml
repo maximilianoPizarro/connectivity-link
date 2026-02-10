@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: litemaas
+
+# Cluster-domain-dependent URLs (single source: cluster-config.env).
+# Set domain from repo root: ./update-cluster-domain.sh <apps.your-cluster.domain>
+configMapGenerator:
+  - name: litemaas-cluster-config
+    envs:
+      - cluster-config.env
+    options:
+      disableNameSuffixHash: true
+
+resources:
+  - namespace.yaml
+  - rolebinding.yaml
+  - backend-secret.yaml
+  - postgres-secret.yaml
+  - litellm-secret.yaml
+  - postgres-init-configmap.yaml
+  - postgres-statefulset.yaml
+  - postgres-service.yaml
+  - litellm-deployment.yaml
+  - litellm-service.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - frontend-route.yaml
+  - litellm-route.yaml
+
+images:
+  - name: quay.io/rh-aiservices-bu/litemaas-backend
+    newTag: latest
+  - name: quay.io/rh-aiservices-bu/litemaas-frontend
+    newTag: latest
+# Resource patches - can be uncommented and customized as needed
+# patches:
+#   # Example: Increase backend replicas for production
+#   - patch: |-
+#       - op: replace
+#         path: /spec/replicas
+#         value: 3
+#     target:
+#       kind: Deployment
+#       name: backend
+#
+#   # Example: Set custom storage class for PostgreSQL
+#   - patch: |-
+#       - op: add
+#         path: /spec/volumeClaimTemplates/0/spec/storageClassName
+#         value: "fast-ssd"
+#     target:
+#       kind: StatefulSet
+#       name: postgres

@@ -32,8 +32,6 @@ declare -a APPLICATIONS=(
     # Applications sync_wave 7
     "librechat"
     "devspaces"
-    # Applications sync_wave 6
-    "dotnet-demo"
     # Applications sync_wave 5
     "neuralbank-stack"
     "workshop-pipelines"
@@ -63,7 +61,6 @@ declare -a NAMESPACES_TO_CLEAN=(
     "observability"
     "openshift-cluster-observability-operator"
     "istio-system"
-    "dotnet-demo"
     "librechat"
     "devspaces"
     "nexus2"
@@ -393,9 +390,6 @@ main() {
                 ;;
             "workshop-pipelines"|"workshop-pipelines-rbac")
                 namespace="workshop-pipelines"
-                ;;
-            "dotnet-demo")
-                namespace="dotnet-demo"
                 ;;
             "librechat"|"librechat-rbac")
                 namespace="librechat"

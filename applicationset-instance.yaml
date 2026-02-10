@@ -65,12 +65,6 @@ spec:
             app_type: kustomize
             keycloak_host: rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
             app_host: neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
-          # DotNet Demo Application
-          - name: dotnet-demo
-            namespace: dotnet-demo
-            path: dotnet-demo
-            sync_wave: "6"
-            app_type: plain
           # LibreChat RBAC
           - name: librechat-rbac
             namespace: librechat
@@ -83,6 +77,12 @@ spec:
             namespace: nexus2
             path: nexus2
             sync_wave: "4"
+            app_type: plain
+          # LiteMaaS (cluster domain in litemaas/cluster-config.env; run update-cluster-domain.sh to set)
+          - name: litemaas
+            namespace: litemaas
+            path: litemaas
+            sync_wave: "6"
             app_type: plain
   template:
     metadata:
