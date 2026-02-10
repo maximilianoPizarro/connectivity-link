@@ -1,0 +1,58 @@
+# RBAC so Argo CD (rhcl-operator app) can create LiteMaaS Gateway in istio-system and HTTPRoute in litemaas.
+# Namespaces patched in kustomization (default is neuralbank-stack).
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litemaas-gitops-gateway-role
+  namespace: neuralbank-stack
+spec:
+  rules:
+    - apiGroups: ["gateway.networking.k8s.io"]
+      resources: [gateways]
+      verbs: [create, delete, get, list, patch, update, watch]
+    - apiGroups: ["rbac.authorization.k8s.io"]
+      resources: [roles, rolebindings]
+      verbs: [create, delete, get, list, patch, update, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litemaas-gitops-gateway-rolebinding
+  namespace: neuralbank-stack
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  kind: Role
+  name: litemaas-gitops-gateway-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litemaas-gitops-httproute-role
+  namespace: neuralbank-stack
+spec:
+  rules:
+    - apiGroups: ["gateway.networking.k8s.io"]
+      resources: [httproutes]
+      verbs: [create, delete, get, list, patch, update, watch]
+    - apiGroups: ["rbac.authorization.k8s.io"]
+      resources: [roles, rolebindings]
+      verbs: [create, delete, get, list, patch, update, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litemaas-gitops-httproute-rolebinding
+  namespace: neuralbank-stack
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  kind: Role
+  name: litemaas-gitops-httproute-role
+  apiGroup: rbac.authorization.k8s.io

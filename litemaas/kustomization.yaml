@@ -14,8 +14,6 @@ configMapGenerator:
 
 resources:
   - namespace.yaml
-  - rolebinding.yaml
-  - rolebinding-istio-system.yaml
   - backend-secret.yaml
   - postgres-secret.yaml
   - litellm-secret.yaml
@@ -30,32 +28,6 @@ resources:
   - frontend-service.yaml
   - frontend-route.yaml
   - litellm-route.yaml
-  - litemaas-gateway.yaml
-
-patches:
-  # Gateway must live in istio-system for Istio; HTTPRoute stays in litemaas
-  - target:
-      kind: Gateway
-      name: litemaas-gateway
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
-  # RBAC for istio-system: keep Role and RoleBinding in that namespace (kustomization default is litemaas)
-  - target:
-      kind: Role
-      name: litemaas-gitops-gateway-role
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
-  - target:
-      kind: RoleBinding
-      name: litemaas-gitops-gateway-rolebinding
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
 
 images:
   - name: quay.io/rh-aiservices-bu/litemaas-backend
