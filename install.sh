@@ -872,26 +872,28 @@ monitor_progress() {
     fi
 }
 
-# Check if Ansible is installed
-check_ansible_installed() {
-    if ! command -v ansible-playbook &> /dev/null; then
-        print_error "ansible-playbook is not installed. Please install Ansible first:"
-        print_info "  pip install ansible kubernetes"
-        print_info "  or: dnf install ansible python3-kubernetes"
-        exit 1
+# Check if Ansible is available (optional; script can fall back to native install)
+check_ansible_available() {
+    if command -v ansible-playbook &> /dev/null; then
+        print_success "Ansible is available (will try Ansible first; requires Python 3.10+)"
+        return 0
+    else
+        print_warning "Ansible not found. Installation will use native oc/helm path."
+        print_info "  To use Ansible: pip install ansible kubernetes (requires Python 3.10+)"
+        return 1
     fi
-    print_success "Ansible is installed"
 }
 
-# Install GitOps Operator using Ansible
+# Install GitOps Operator using Ansible (requires Python 3.10+ for Ansible)
+# Returns 0 on success, 1 on failure (caller can fall back to native install)
 install_gitops_with_ansible() {
     print_info "Installing OpenShift GitOps Operator using Ansible..."
     
     local ansible_playbook="${SCRIPT_DIR}/install-gitops.yaml"
     
     if [ ! -f "${ansible_playbook}" ]; then
-        print_error "Ansible playbook not found: ${ansible_playbook}"
-        exit 1
+        print_warning "Ansible playbook not found: ${ansible_playbook}"
+        return 1
     fi
     
     # Export cluster domain if detected
@@ -903,9 +905,19 @@ install_gitops_with_ansible() {
         print_success "OpenShift GitOps Operator installed successfully via Ansible"
         return 0
     else
-        print_error "Failed to install OpenShift GitOps Operator with Ansible"
-        exit 1
+        print_warning "Ansible failed (e.g. Python 3.10+ required for os.get_blocking). Use native install fallback or upgrade Python."
+        return 1
     fi
+}
+
+# Native install path (no Ansible): oc/helm only. Use when Ansible is missing or fails (e.g. Python < 3.10).
+run_native_gitops_install() {
+    print_info "Installing OpenShift GitOps Operator and ApplicationSet (native oc/helm path)..."
+    install_gitops_operator
+    wait_for_gitops_operator
+    wait_for_gitops_namespace
+    wait_for_argocd_server
+    apply_applicationset
 }
 
 # Main installation flow
@@ -919,7 +931,7 @@ main() {
     check_oc_installed
     check_authentication
     check_permissions
-    check_ansible_installed
+    check_ansible_available || true
     
     # Get cluster domain
     get_cluster_domain
@@ -934,19 +946,18 @@ main() {
     print_info "Starting installation process..."
     echo ""
     
-    # Step 1: Install GitOps Operator and deploy operators/applications using Ansible
-    print_info "Step 1/4: Installing OpenShift GitOps Operator and deploying operators/applications (using Ansible)"
-    install_gitops_with_ansible
-    
-    # Step 2: Operators and Applications are now handled by Ansible playbook
-    print_info ""
-    print_info "Step 2/4: Operators and Applications will be installed by Ansible playbook"
-    print_info "The Ansible playbook will:"
-    print_info "  1. Apply operators ApplicationSet"
-    print_info "  2. Wait for all operators to be ready"
-    print_info "  3. Apply applications ApplicationSet"
-    print_info ""
-    print_info "Note: This step is handled automatically by the Ansible playbook."
+    # Step 1: Install GitOps Operator (try Ansible first; fall back to native oc/helm if Ansible fails)
+    print_info "Step 1/4: Installing OpenShift GitOps Operator and applying ApplicationSet"
+    if command -v ansible-playbook &> /dev/null; then
+        if install_gitops_with_ansible; then
+            : # success
+        else
+            print_warning "Falling back to native oc/helm installation (no Ansible or Ansible failed, e.g. Python < 3.10)."
+            run_native_gitops_install
+        fi
+    else
+        run_native_gitops_install
+    fi
     
     # Monitor progress
     echo ""

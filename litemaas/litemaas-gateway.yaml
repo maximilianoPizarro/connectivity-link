@@ -29,7 +29,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"  
 spec:
   hostnames:
-    - litemaas.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    - litemaas.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway

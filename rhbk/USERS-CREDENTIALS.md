@@ -1,6 +1,19 @@
 # Developer Hub User Credentials
 
-## Users Added
+## Keycloak Admin Console (RHBK default admin)
+
+The **Keycloak Admin Console** (`https://rhbk.apps.<cluster-domain>/admin`) uses a separate initial admin user:
+
+| Field    | Value |
+|----------|--------|
+| Username | `admin` |
+| Password | `d9faa9d643ed4704b413f8d0b0a7e7d3` |
+
+This account is used to manage Keycloak (realms, clients, users). Change this password in production.
+
+---
+
+## Users Added (Backstage realm)
 
 10 users have been added to the Keycloak `backstage` realm with common access (username/password).
 

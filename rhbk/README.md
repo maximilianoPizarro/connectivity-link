@@ -43,11 +43,16 @@ PostgreSQL is configured via:
   - **neuralbank-backend** (bearer only): API
   - **neuralbank** (confidential): OIDCPolicy and backend; client secret is obtained by the install playbook from Keycloak once the realm is ready, then used to update `neuralbank-stack/values.yaml`, `rhcl-operator/oidc-policy.yaml`, and to patch the OIDCPolicy in-cluster.
 
-### Initial Admin
+### Initial Admin (Keycloak Admin Console)
 
-- **`keycloak-initial-admin.yaml`**: Initial admin user credentials
-- **Username**: `admin`
-- **Password**: Managed via secret (see deployment)
+- **`keycloak-initial-admin.yaml`**: Initial admin user for the Keycloak Admin Console (`/admin`).
+
+| Field    | Value |
+|----------|--------|
+| Username | `admin` |
+| Password | `d9faa9d643ed4704b413f8d0b0a7e7d3` |
+
+⚠️ Change this password in production. These credentials are for the **Keycloak Admin Console** (realm management, clients, users). Realm users (e.g. Developer Hub) are defined separately; see [USERS-CREDENTIALS.md](USERS-CREDENTIALS.md).
 
 ## Dependencies
 

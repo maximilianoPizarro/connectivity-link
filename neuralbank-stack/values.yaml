@@ -33,7 +33,7 @@ frontend:
 keycloak:
   issuerUrl: 'https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'
-  clientSecret: 'OIDC_CLIENT_SECRET_PLACEHOLDER'
+  clientSecret: 'FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF'
   authorizationEndpoint: 'https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
   redirectUri: 'https://neuralbank.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/auth/callback'
   tokenEndpoint: 'https://rhbk.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
