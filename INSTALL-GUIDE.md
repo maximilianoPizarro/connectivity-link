@@ -77,8 +77,7 @@ El script instalará los siguientes componentes en orden:
 6. **NeuralBank Stack** (sync_wave: 5)
 7. **Workshop Pipelines** (sync_wave: 5)
 8. **LiteMaaS** (sync_wave: 6)
-9. **LibreChat** (sync_wave: 7)
-10. **Dev Spaces** (sync_wave: 7)
+9. **Dev Spaces** (sync_wave: 7)
 
 ### LiteMaaS con install
 

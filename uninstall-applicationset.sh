@@ -21,7 +21,6 @@ CLEAN_ALL=false
 
 # ApplicationSets a eliminar (en orden inverso de creación)
 declare -a APPLICATIONSETS=(
-    "librechat-helm"
     "connectivity-apps-helm-external"
     "connectivity-infra-all-in-one"
 )
@@ -30,7 +29,6 @@ declare -a APPLICATIONSETS=(
 # Orden: sync_wave 7 -> 6 -> 5 -> 4 -> 3 -> 2 -> 1 -> 0
 declare -a APPLICATIONS=(
     # Applications sync_wave 7
-    "librechat"
     "devspaces"
     # Applications sync_wave 5
     "neuralbank-stack"
@@ -58,7 +56,6 @@ declare -a NAMESPACES_TO_CLEAN=(
     "observability"
     "openshift-cluster-observability-operator"
     "istio-system"
-    "librechat"
     "devspaces"
 )
 
@@ -383,9 +380,6 @@ main() {
                 ;;
             "neuralbank-stack")
                 namespace="neuralbank-stack"
-                ;;
-            "librechat"|"librechat-rbac")
-                namespace="librechat"
                 ;;
             "devspaces")
                 namespace="devspaces"

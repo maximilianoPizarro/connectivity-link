@@ -16,6 +16,5 @@ resources:
   #- llama-stack-config.yaml
   #- lightspeed-secrets.yaml
   #- lightspeed-stack.yaml
-  - proxy.yaml
 
 namespace: developer-hub

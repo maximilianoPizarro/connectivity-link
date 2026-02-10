@@ -1,2 +1,0 @@
-# All volumes are configured as ephemeral (emptyDir)
-# No PersistentVolumeClaims are created
