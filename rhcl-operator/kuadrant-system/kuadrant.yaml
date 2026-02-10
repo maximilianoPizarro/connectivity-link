@@ -10,4 +10,4 @@ spec:
     authorino: true
   components:
     observability:
-      enable: true
+      enable: false
