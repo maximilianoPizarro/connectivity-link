@@ -1,5 +1,5 @@
 # Gateway in istio-system so Istio controller picks it up. HTTPRoute stays in litemaas.
-# Single host (litemaas-litemaas.<domain>): / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
+# All traffic through single host litemaas.apps.<domain>: / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -24,7 +24,7 @@ spec:
       protocol: HTTPS
 ---
 # HTTPRoute in litemaas namespace; parentRef points to Gateway in istio-system.
-# Path-based routing so frontend calls LiteLLM via same host (e.g. /v1).
+# Path-based routing: all traffic via gateway host litemaas.apps.<domain>.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -34,7 +34,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   hostnames:
-    - litemaas-litemaas.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com
+    - litemaas.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
