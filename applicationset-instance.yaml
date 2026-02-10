@@ -14,11 +14,6 @@ spec:
             path: openshift-gitops
             sync_wave: "0"
             app_type: plain
-          - name: namespaces
-            namespace: openshift-gitops
-            path: namespaces
-            sync_wave: "1"
-            app_type: plain
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -83,10 +78,46 @@ spec:
         repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
         targetRevision: main
         path: '{{.path}}'
-        {{- if eq .path "namespaces" }}
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+---
+# Namespaces app with directory.exclude so Backstage catalog-info.yaml (CRDs not yet installed at sync_wave 1) is not applied
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-namespaces
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: namespaces
+            namespace: openshift-gitops
+            path: namespaces
+            sync_wave: "1"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
         directory:
           exclude: catalog-info.yaml
-        {{- end }}
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'

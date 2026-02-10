@@ -44,6 +44,7 @@ env/
 # Credentials and secrets
 *.env
 !*.env.example
+!litemaas/cluster-config.env
 nexus-credentials.env
 *credentials*.yaml
 oidc-credentials-values.yaml
