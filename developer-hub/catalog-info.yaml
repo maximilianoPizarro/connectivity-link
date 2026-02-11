@@ -4,12 +4,12 @@ metadata:
   name: developer-hub
   description: Red Hat Developer Hub (Backstage) instance with Keycloak authentication and catalog integration
   annotations:
-    backstage.io/view-url: https://developer-hub.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+    backstage.io/view-url: https://developer-hub.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com
     argocd/app-name: developer-hub
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/developer-hub
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com/applications/developer-hub
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/applications/developer-hub
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - backstage
