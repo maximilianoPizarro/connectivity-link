@@ -13,48 +13,5 @@ resources:
 
 namespace: neuralbank-stack
 
-patches:
-  # LiteMaaS Gateway in istio-system; HTTPRoute in litemaas
-  - target:
-      kind: Gateway
-      name: litemaas-gateway
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
-  - target:
-      kind: HTTPRoute
-      name: litemaas-route
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: litemaas
-  # RBAC: Gateway Role+RoleBinding -> istio-system; HTTPRoute Role+RoleBinding -> litemaas
-  - target:
-      kind: Role
-      name: litemaas-gitops-gateway-role
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
-  - target:
-      kind: RoleBinding
-      name: litemaas-gitops-gateway-rolebinding
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: istio-system
-  - target:
-      kind: Role
-      name: litemaas-gitops-httproute-role
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: litemaas
-  - target:
-      kind: RoleBinding
-      name: litemaas-gitops-httproute-rolebinding
-    patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: litemaas
+# LiteMaaS resources set their own namespace in YAML: Gateway + RBAC gateway -> istio-system; HTTPRoute + RBAC httproute -> litemaas (no patches needed)
+patches: []

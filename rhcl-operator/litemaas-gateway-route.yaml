@@ -1,11 +1,11 @@
 # Gateway in istio-system so Istio controller picks it up. HTTPRoute in litemaas (backendRefs to litemaas services).
 # All traffic through single host litemaas.apps.<domain>: / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
-# Namespaces set via kustomization patches (Gateway -> istio-system, HTTPRoute -> litemaas).
+# LiteMaaS: Gateway + RBAC gateway -> istio-system; HTTPRoute + RBAC httproute -> litemaas.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: litemaas-gateway
-  namespace: neuralbank-stack
+  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
