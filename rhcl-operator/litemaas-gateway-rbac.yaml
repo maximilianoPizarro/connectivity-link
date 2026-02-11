@@ -1,33 +1,4 @@
-# RBAC so Argo CD (rhcl-operator app) can create LiteMaaS Gateway in istio-system and HTTPRoute in litemaas.
-# Gateway Role+RoleBinding -> istio-system; HTTPRoute Role+RoleBinding -> litemaas.
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: litemaas-gitops-gateway-role
-  namespace: istio-system
-spec:
-  rules:
-    - apiGroups: ["gateway.networking.k8s.io"]
-      resources: [gateways]
-      verbs: [create, delete, get, list, patch, update, watch]
-    - apiGroups: ["rbac.authorization.k8s.io"]
-      resources: [roles, rolebindings]
-      verbs: [create, delete, get, list, patch, update, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: litemaas-gitops-gateway-rolebinding
-  namespace: istio-system
-subjects:
-  - kind: ServiceAccount
-    name: openshift-gitops-argocd-application-controller
-    namespace: openshift-gitops
-roleRef:
-  kind: Role
-  name: litemaas-gitops-gateway-role
-  apiGroup: rbac.authorization.k8s.io
+# RBAC so Argo CD (rhcl-operator app) can create LiteMaaS HTTPRoute in litemaas. Gateway is in servicemeshoperator3 (istio-system).
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

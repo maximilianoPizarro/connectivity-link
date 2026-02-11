@@ -1,29 +1,5 @@
-# Gateway in istio-system so Istio controller picks it up. HTTPRoute in litemaas (backendRefs to litemaas services).
+# HTTPRoute in litemaas (backendRefs to litemaas services). Gateway litemaas-gateway is in servicemeshoperator3 (istio-system).
 # All traffic through single host litemaas.apps.<domain>: / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
-# LiteMaaS: Gateway + RBAC gateway -> istio-system; HTTPRoute + RBAC httproute -> litemaas.
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: litemaas-gateway
-  namespace: istio-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
-spec:
-  gatewayClassName: istio
-  listeners:
-    - allowedRoutes:
-        namespaces:
-          from: All
-      name: http
-      port: 8080
-      protocol: HTTP
-    - allowedRoutes:
-        namespaces:
-          from: All
-      name: https
-      port: 443
-      protocol: HTTPS
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
