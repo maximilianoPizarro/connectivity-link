@@ -4,7 +4,7 @@ kind: OAuthClient
 apiVersion: oauth.openshift.io/v1
 metadata:
   name: litemaas-oauth-client
-secret: change-me-oauth-secret
+secret: litemaassecret
 redirectURIs:
   - 'https://litemaas.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/api/auth/callback'
 grantMethod: auto
