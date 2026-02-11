@@ -192,7 +192,7 @@ spec:
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
-          - 'https://backstage-developer-hub-developer-hub.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/api/auth/oidc/handler/frame'
+          - 'https://backstage-developer-hub-developer-hub.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/api/auth/oidc/handler/frame'
         frontchannelLogout: true
         serviceAccountsEnabled: true
         clientId: backstage
@@ -226,7 +226,7 @@ spec:
           realm_client: 'false'
         protocol: openid-connect
         webOrigins:
-          - 'https://backstage-developer-hub-developer-hub.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com/'
+          - 'https://backstage-developer-hub-developer-hub.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/'
         consentRequired: false
         protocolMappers:
           - config:
