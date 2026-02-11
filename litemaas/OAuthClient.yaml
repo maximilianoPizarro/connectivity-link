@@ -1,3 +1,5 @@
+# OAuthClient for LiteMaaS. secret MUST match backend-secret oauth-client-secret (litemaas namespace).
+# If you get "Authentication failed" on /api/auth/callback: sync secret and restart backend (see README).
 kind: OAuthClient
 apiVersion: oauth.openshift.io/v1
 metadata:

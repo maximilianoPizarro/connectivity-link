@@ -39,13 +39,13 @@ spec:
     - "neuralbank.apps.cluster-gvtlc.gvtlc.sandbox3502.opentlc.com"
 
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /swagger-ui  
-      backendRefs:
-        - name: neuralbank-backend-svc
-          port: 8080  
+#    - matches:
+#        - path:
+#            type: PathPrefix
+#            value: /swagger-ui  
+#      backendRefs:
+#        - name: neuralbank-backend-svc
+#          port: 8080  
 
     - matches:
         - path:

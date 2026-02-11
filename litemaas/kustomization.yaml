@@ -28,6 +28,8 @@ resources:
   - frontend-service.yaml
   - frontend-route.yaml
   - litellm-route.yaml
+  - litemaas-gateway-route.yaml
+  - rolebinding.yaml
 
 images:
   - name: quay.io/rh-aiservices-bu/litemaas-backend

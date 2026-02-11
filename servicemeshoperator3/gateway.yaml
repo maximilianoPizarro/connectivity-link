@@ -29,6 +29,30 @@ spec:
       #     - kind: Secret
       #       name: neuralbank-tls-secret
 ---
+# LiteMaaS Gateway (istio-system); HTTPRoute remains in rhcl-operator (namespace litemaas)
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: litemaas-gateway
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  gatewayClassName: istio
+  listeners:
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: http
+      port: 8080
+      protocol: HTTP
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: https
+      port: 443
+      protocol: HTTPS      
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -67,26 +91,3 @@ subjects:
   name: openshift-gitops-argocd-application-controller
   namespace: openshift-gitops
 ---
-# LiteMaaS Gateway (istio-system); HTTPRoute remains in rhcl-operator (namespace litemaas)
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: litemaas-gateway
-  namespace: istio-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
-spec:
-  gatewayClassName: istio
-  listeners:
-    - allowedRoutes:
-        namespaces:
-          from: All
-      name: http
-      port: 8080
-      protocol: HTTP
-    - allowedRoutes:
-        namespaces:
-          from: All
-      name: https
-      port: 443
-      protocol: HTTPS

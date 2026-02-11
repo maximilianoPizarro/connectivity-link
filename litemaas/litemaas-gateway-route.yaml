@@ -4,16 +4,14 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: litemaas-route
-  namespace: litemaas
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   hostnames:
     - litemaas.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com
+
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: litemaas-gateway
+    - name: litemaas-gateway
       namespace: istio-system
   rules:
     # /api -> LiteMaaS backend
