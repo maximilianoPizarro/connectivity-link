@@ -8,7 +8,6 @@ resources:
   # Kuadrant CR is deployed to istio-system via rhcl-operator/kuadrant-system app (kuadrant-istio)
   - neuralbank-route.yaml
   - ratelimit-policy-customers.yaml
-  - litemaas-gateway-route.yaml
 
 namespace: neuralbank-stack
 
