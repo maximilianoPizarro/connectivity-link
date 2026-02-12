@@ -1,0 +1,23 @@
+# RateLimitPolicy on the Gateway (same namespace as gateway so Kuadrant injects it).
+# 2 requests per minute, global; 3rd request returns 429.
+#
+# Requires Limitador running and kuadrant-ratelimit-service in istio-system having
+# endpoints. WasmPlugin uses failureMode: allow for ratelimit-service, so if Limitador
+# is unreachable all requests are allowed (no 429). Check: oc get endpoints kuadrant-ratelimit-service -n istio-system
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: litemaas-gateway-ratelimit
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: litemaas-gateway
+  limits:
+    chat-global:
+      rates:
+        - limit: 2
+          window: 1m

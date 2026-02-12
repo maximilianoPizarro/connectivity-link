@@ -1,0 +1,24 @@
+# RateLimitPolicy for LiteMaaS HTTPRoute: 2 requests per minute (global for this route).
+# No counter = one shared limit; 3rd request within 1m should return 429.
+#
+# IMPORTANT: The limit is enforced only when traffic goes through the Gateway API
+# (litemaas-gateway in istio-system). If you use an OpenShift Route that points
+# directly to the frontend/backend service, traffic bypasses the gateway and this
+# policy never runs. Ensure the host (e.g. litemaas.apps.<domain>) is served by
+# the Istio gateway, not by a direct Route to the app services.
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: litemaas-ratelimit
+  namespace: litemaas
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: litemaas-route
+    namespace: litemaas
+  limits:
+    chat-global:
+      rates:
+        - limit: 2
+          window: 1m

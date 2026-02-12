@@ -1,0 +1,23 @@
+# OpenShift Route so traffic to LiteMaaS host goes through the Gateway API (Istio).
+# This enables Kuadrant RateLimitPolicy / TokenRateLimitPolicy on litemaas-gateway.
+# Host must match the host previously used by the frontend Route in litemaas namespace;
+# remove that Route (frontend-route.yaml) so this is the only Route for this host.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: litemaas-via-gateway
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+    haproxy.router.openshift.io/timeout: 300s
+spec:
+  host: litemaas.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com
+  to:
+    kind: Service
+    name: litemaas-gateway-istio
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

@@ -4,6 +4,9 @@ resources:
   - namespace.yaml
   - gateway.yaml
   - smcp-controlplane.yaml
+  - kuadrant-ratelimit-service.yaml
   - gateway-route.yaml
+  - litemaas-gateway-route.yaml
+  - ratelimit-policy-litemaas-gateway.yaml
 
 namespace: istio-system

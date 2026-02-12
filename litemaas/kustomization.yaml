@@ -26,9 +26,10 @@ resources:
   - backend-service.yaml
   - frontend-deployment.yaml
   - frontend-service.yaml
-  - frontend-route.yaml
+  # frontend-route.yaml removed: traffic goes via Gateway (servicemeshoperator3/litemaas-gateway-route.yaml) so RateLimitPolicy applies
   - litellm-route.yaml
   - litemaas-gateway-route.yaml
+  - ratelimit-policy.yaml
   - rolebinding.yaml
 
 images:
