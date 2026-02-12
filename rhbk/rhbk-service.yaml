@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rhbk-service
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  type: ClusterIP
+  selector:
+    app: keycloak
+    app.kubernetes.io/instance: rhbk
+    app.kubernetes.io/managed-by: keycloak-operator
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: management
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+    # Needed for in-mesh OIDC discovery when issuerURL omits :8080
+    - name: http-80
+      port: 80
+      protocol: TCP
+      targetPort: 8080
