@@ -6,9 +6,10 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   provider:
-    issuerURL: "http://rhbk-service.rhbk-operator.svc.cluster.local:8080/realms/neuralbank"
+    issuerURL: "http://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com:8080/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF"
+    
     authorizationEndpoint: "https://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
     tokenEndpoint: "https://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank/protocol/openid-connect/token"
     redirectURI: "https://neuralbank.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/auth/callback"
@@ -19,14 +20,6 @@ spec:
     name: neuralbank-api-route
 
   auth:
-    identity:
-      - name: keycloak-identity
-        kind: jwt
-        jwt:
-          issuerUrl: "http://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank"
-          remoteJWKS:
-            url: "http://rhbk-service.rhbk-operator.svc.cluster.local:8080/realms/neuralbank/protocol/openid-connect/certs"
-
     tokenSource:
       authorizationHeader:
         prefix: Bearer
