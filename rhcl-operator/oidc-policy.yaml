@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   provider:
-    issuerURL: "http://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank"
+    issuerURL: "https://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF"
     
