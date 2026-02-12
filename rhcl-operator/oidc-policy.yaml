@@ -7,7 +7,7 @@ metadata:
 # Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 spec:
   provider:
-    issuerURL: "https://rhbk-service.rhbk-operator.svc.cluster.local:8080/realms/neuralbank"
+    issuerURL: "http://rhbk-service.rhbk-operator.svc.cluster.local:8080/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF"
     authorizationEndpoint: "https://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/realms/neuralbank/protocol/openid-connect/auth"
