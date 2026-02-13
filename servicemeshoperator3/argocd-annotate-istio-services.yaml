@@ -1,5 +1,5 @@
 # PostSync hook: annotate Istio-created Services so Argo CD ignores them (no longer "Pendiente").
-# Run once per sync; uses SA with permission to patch only these Services in istio-system.
+# To apply the annotation manually once: oc annotate svc -n istio-system litemaas-gateway-istio neuralbank-gateway-istio argocd.argoproj.io/compare-options=IgnoreExtraneous --overwrite
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -54,11 +54,19 @@ spec:
       restartPolicy: Never
       containers:
         - name: annotate
-          image: bitnami/kubectl:latest
+          image: registry.access.redhat.com/ubi8/ubi:8.9
           command:
             - /bin/sh
             - -c
             - |
-              kubectl annotate svc litemaas-gateway-istio neuralbank-gateway-istio -n istio-system \
-                argocd.argoproj.io/compare-options=IgnoreExtraneous --overwrite
+              set -e
+              CA=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              NS=istio-system
+              API="https://kubernetes.default.svc/api/v1/namespaces/${NS}/services"
+              PATCH='{"metadata":{"annotations":{"argocd.argoproj.io/compare-options":"IgnoreExtraneous"}}}'
+              for SVC in litemaas-gateway-istio neuralbank-gateway-istio; do
+                curl -sS -k -X PATCH -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/strategic-merge-patch+json" \
+                  --cacert "$CA" -d "$PATCH" "${API}/${SVC}" || true
+              done
               echo Done
