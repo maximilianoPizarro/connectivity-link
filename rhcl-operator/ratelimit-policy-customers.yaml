@@ -21,21 +21,16 @@ spec:
     namespace: neuralbank-stack
   limits:
     customers-api-per-user:
-      # Conditions: Apply this limit only when:
-      # 1. The request path matches /api/customers
-      # 2. The authenticated user is "Javier Rodríguez Torres"
       conditions:
-        - selector: request.path
-          operator: matches
-          value: "/api/customers"
-        - selector: auth.identity.username
-          operator: equals
-          value: "Javier Rodríguez Torres"
-      # Rate limit: 10 requests per minute
+        - operator: matches
+          selector: request.path
+          value: /api/customers
+        - operator: equals
+          selector: auth.identity.username
+          value: Javier Rodríguez Torres
+      counters:
+        - expression: auth.identity.username
       rates:
         - limit: 10
           window: 1m
-      # Counter: Track rate limit per username (allows different limits per user)
-      counters:
-        - expression: auth.identity.username
 
