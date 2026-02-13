@@ -5,6 +5,7 @@ metadata:
   name: postgresql-db-service
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   clusterIP: None
   selector:
@@ -55,6 +56,7 @@ metadata:
   name: postgres-db
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   selector:
     app: postgresql-db

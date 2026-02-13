@@ -78,24 +78,27 @@ Applications are categorized by type:
 
 ### Health check: Service (postgres-db / rhbk)
 
-Si la app **rhbk** se queda en "waiting for healthy state of /Service/postgres-db", Argo CD está esperando que el Service se marque Healthy. Por defecto, los Services tipo LoadBalancer solo son Healthy cuando tienen `loadBalancer.ingress`; nuestro Service es ClusterIP/headless.
+If the **rhbk** app is stuck on "waiting for healthy state of /Service/postgres-db", Argo CD is waiting for the Service to be marked Healthy. By default, Services of type LoadBalancer are only Healthy when they have `loadBalancer.ingress`; our Service is ClusterIP/headless.
 
-**Solución inmediata (parche manual del ConfigMap):** aplicar la customización de salud en el cluster:
+**Immediate fix (manual ConfigMap patch):** apply the health customization in the cluster:
+
+1. **Patch the ConfigMap** (Bash / Git Bash):
 
 ```bash
-# Bash / Git Bash:
 oc -n openshift-gitops patch cm argocd-cm --type merge -p '{"data":{"resource.customizations.health._Service":"hs = {}\nhs.status = \"Healthy\"\nhs.message = \"Service exists\"\nreturn hs"}}'
 ```
 
-En PowerShell, usar un archivo para evitar problemas con comillas (crear `service-health-patch.json` con el contenido `{"data":{"resource.customizations.health._Service":"hs = {}\nhs.status = \"Healthy\"\nhs.message = \"Service exists\"\nreturn hs"}}` y luego `oc -n openshift-gitops patch cm argocd-cm --type merge -p (Get-Content service-health-patch.json -Raw)`).
+   On PowerShell, use a file to avoid quoting issues: create `service-health-patch.json` with content `{"data":{"resource.customizations.health._Service":"hs = {}\nhs.status = \"Healthy\"\nhs.message = \"Service exists\"\nreturn hs"}}`, then run `oc -n openshift-gitops patch cm argocd-cm --type merge -p (Get-Content service-health-patch.json -Raw)`.
 
-Luego reiniciar el application controller para que recargue la configuración:
+2. **Restart the application controller** so it reloads the config (OpenShift GitOps uses a StatefulSet named `openshift-gitops-application-controller`):
 
 ```bash
-oc -n openshift-gitops rollout restart deployment openshift-gitops-application-controller
+oc -n openshift-gitops rollout restart statefulset openshift-gitops-application-controller
 ```
 
-**Solución GitOps:** el patch `patches/argocd-instance-patch.yaml` ya incluye `resourceHealthChecks` y `extraConfig` para Service. Si tras sincronizar la app **openshift-gitops** el `argocd-cm` no muestra la clave, el ArgoCD CR puede no estar siendo parcheado por esta app (comprobar que el CR incluye `spec.resourceHealthChecks` o `spec.extraConfig`).
+3. **Re-sync the rhbk app** in the Argo CD UI or CLI.
+
+**GitOps approach:** The patch `patches/argocd-instance-patch.yaml` already includes `resourceHealthChecks` and `extraConfig` for Service. If after syncing the **openshift-gitops** app the `argocd-cm` still does not show the key, the ArgoCD CR may not be patched by this app (verify the CR has `spec.resourceHealthChecks` or `spec.extraConfig`).
 
 ### Common Issues
 
