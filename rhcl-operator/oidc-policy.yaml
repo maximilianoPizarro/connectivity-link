@@ -22,7 +22,7 @@ spec:
   auth:
     tokenSource:
       authorizationHeader:
-        prefix: Bearer
         name: Authorization
+        prefix: Bearer
       cookie:
         name: jwt
