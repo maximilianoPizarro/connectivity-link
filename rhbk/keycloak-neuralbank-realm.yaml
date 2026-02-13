@@ -24,10 +24,10 @@ spec:
       publicClient: false
       standardFlowEnabled: true
       directAccessGrantsEnabled: true
-      rootUrl: "https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com"
+      rootUrl: "https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
       redirectUris:
-        - "https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com/*"
-        - "https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com/auth/callback"
+        - "https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/*"
+        - "https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/auth/callback"
       webOrigins: ["*"]
       attributes:
         pkce.code.challenge.method: S256
@@ -42,8 +42,8 @@ spec:
       standardFlowEnabled: true
       directAccessGrantsEnabled: true
       redirectUris:
-        - "https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com/*"
-        - "https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com/auth/callback"
+        - "https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/*"
+        - "https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/auth/callback"
       webOrigins: ["*"]
 
     # 2. Grupos y Roles

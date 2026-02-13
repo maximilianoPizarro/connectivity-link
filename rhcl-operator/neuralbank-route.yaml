@@ -10,7 +10,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com"
+    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
 
   rules:
     - matches:
@@ -36,7 +36,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com"
+    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
 
   rules:
 #    - matches:
@@ -67,7 +67,7 @@ spec:
 #      namespace: istio-system
 #  
 #  hostnames:
-#    - "neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com"
+#    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
 #
 #  rules:
 #    - matches:

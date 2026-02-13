@@ -8,7 +8,7 @@ metadata:
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/rhcl-operator
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.ocp.6t54s.sandbox1045.opentlc.com/applications/rhcl-operator
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/applications/rhcl-operator
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - rhcl

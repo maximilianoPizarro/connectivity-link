@@ -192,7 +192,7 @@ update_applicationset_domain() {
 # Uses same demo domain as update-cluster-domain.sh so install and manual script stay in sync
 update_litemaas_domain() {
     local LITEMAAS_DIR="${SCRIPT_DIR}/litemaas"
-    local OLD_DOMAIN="apps.ocp.6t54s.sandbox1045.opentlc.com"
+    local OLD_DOMAIN="apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
     if [ ! -d "${LITEMAAS_DIR}" ]; then
         return 0
     fi

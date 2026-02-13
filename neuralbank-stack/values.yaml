@@ -31,13 +31,13 @@ frontend:
 # --- Keycloak Configuration (frontend Helm) ---
 # Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 keycloak:
-  issuerUrl: 'https://rhbk.apps.ocp.6t54s.sandbox1045.opentlc.com/realms/neuralbank'
+  issuerUrl: 'https://rhbk.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/realms/neuralbank'
   clientId: 'neuralbank-frontend'
   clientSecret: 'FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF'
-  authorizationEndpoint: 'https://rhbk.apps.ocp.6t54s.sandbox1045.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
-  redirectUri: 'https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com/auth/callback'
-  tokenEndpoint: 'https://rhbk.apps.ocp.6t54s.sandbox1045.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
-  postLogoutRedirectUri: 'https://neuralbank.apps.ocp.6t54s.sandbox1045.opentlc.com'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/realms/neuralbank/protocol/openid-connect/auth'
+  redirectUri: 'https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/auth/callback'
+  tokenEndpoint: 'https://rhbk.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com/realms/neuralbank/protocol/openid-connect/token'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com'
 
 # --- API Configuration ---
 api:
