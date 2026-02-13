@@ -75,7 +75,17 @@ spec:
           name: my-custom-plugin
         name: my-custom-plugin
 
-  # Inyectar health de Service en argocd-cm (tiene precedencia sobre CR). Evita "waiting for healthy state of /Service/postgres-db" en rhbk.
+  # Health de Service: Healthy al existir (evita "waiting for healthy state of /Service/postgres-db" en rhbk).
+  # Formato que el operador OpenShift GitOps escribe en argocd-cm (group vacío = core).
+  resourceHealthChecks:
+    - group: ""
+      kind: Service
+      check: |
+        hs = {}
+        hs.status = "Healthy"
+        hs.message = "Service exists"
+        return hs
+  # Inyectar también en argocd-cm vía extraConfig (por si el operador no aplica resourceHealthChecks).
   extraConfig:
     resource.customizations.health._Service: |
       hs = {}

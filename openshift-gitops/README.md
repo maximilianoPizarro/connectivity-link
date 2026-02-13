@@ -76,6 +76,27 @@ Applications are categorized by type:
 
 ## Troubleshooting
 
+### Health check: Service (postgres-db / rhbk)
+
+Si la app **rhbk** se queda en "waiting for healthy state of /Service/postgres-db", Argo CD está esperando que el Service se marque Healthy. Por defecto, los Services tipo LoadBalancer solo son Healthy cuando tienen `loadBalancer.ingress`; nuestro Service es ClusterIP/headless.
+
+**Solución inmediata (parche manual del ConfigMap):** aplicar la customización de salud en el cluster:
+
+```bash
+# Bash / Git Bash:
+oc -n openshift-gitops patch cm argocd-cm --type merge -p '{"data":{"resource.customizations.health._Service":"hs = {}\nhs.status = \"Healthy\"\nhs.message = \"Service exists\"\nreturn hs"}}'
+```
+
+En PowerShell, usar un archivo para evitar problemas con comillas (crear `service-health-patch.json` con el contenido `{"data":{"resource.customizations.health._Service":"hs = {}\nhs.status = \"Healthy\"\nhs.message = \"Service exists\"\nreturn hs"}}` y luego `oc -n openshift-gitops patch cm argocd-cm --type merge -p (Get-Content service-health-patch.json -Raw)`).
+
+Luego reiniciar el application controller para que recargue la configuración:
+
+```bash
+oc -n openshift-gitops rollout restart deployment openshift-gitops-application-controller
+```
+
+**Solución GitOps:** el patch `patches/argocd-instance-patch.yaml` ya incluye `resourceHealthChecks` y `extraConfig` para Service. Si tras sincronizar la app **openshift-gitops** el `argocd-cm` no muestra la clave, el ArgoCD CR puede no estar siendo parcheado por esta app (comprobar que el CR incluye `spec.resourceHealthChecks` o `spec.extraConfig`).
+
 ### Common Issues
 
 1. **Applications not syncing**
