@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: litemaas
+  namespace: default
+  description: LiteMaaS - LiteLLM-based Model-as-a-Service (frontend, backend, LiteLLM)
+  annotations:
+    backstage.io/view-url: https://litemaas.apps.cluster-9jhms.dynamic.redhatworkshops.io
+    argocd/app-name: litemaas
+    argocd/app-namespace: openshift-gitops
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-9jhms.dynamic.redhatworkshops.io/applications/litemaas
+    github.com/project-slug: maximilianoPizarro/connectivity-link
+  tags:
+    - litemaas
+    - litellm
+    - llm
+    - demo-app
+spec:
+  type: service
+  lifecycle: production
+  owner: default-team
+  system: litemaas-system

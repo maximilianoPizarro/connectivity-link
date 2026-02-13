@@ -118,6 +118,17 @@ data:
               frequency: { minutes: 30 }
               timeout: { minutes: 5 }
               initialDelay: { seconds: 20 }
+          connectivity-link-litemaas:
+            host: github.com
+            owner: maximilianoPizarro
+            repo: connectivity-link
+            branch: main
+            catalogPath: /litemaas/catalog-info.yaml
+            token: ${GITHUB_INTEGRATION}
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 5 }
+              initialDelay: { seconds: 22 }
           connectivity-link-rhbk:
             host: github.com
             owner: maximilianoPizarro
@@ -223,6 +234,8 @@ data:
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/developer-hub/catalog-info.yaml
         - type: url
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/neuralbank-stack/catalog-info.yaml
+        - type: url
+          target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/litemaas/catalog-info.yaml
         - type: url
           target: https://github.com/maximilianoPizarro/connectivity-link/blob/main/rhbk/catalog-info.yaml
         - type: url

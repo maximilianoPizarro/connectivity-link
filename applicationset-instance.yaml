@@ -36,7 +36,6 @@ spec:
             path: rhcl-operator
             sync_wave: "6"
             app_type: plain
-            ignore_diffs: true
           - name: observability
             namespace: observability
             path: observability
@@ -76,7 +75,6 @@ spec:
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
-      {{- if .ignore_diffs }}
       ignoreDifferences:
         # OIDCPolicy: Kuadrant reorders tokenSource (authorizationHeader name/prefix, cookie)
         - group: extensions.kuadrant.io
@@ -86,7 +84,6 @@ spec:
         - group: kuadrant.io
           kind: RateLimitPolicy
           jsonPointers: ["/spec/limits", "/spec/targetRef"]
-      {{- end }}
       syncPolicy:
         automated:
           selfHeal: true
