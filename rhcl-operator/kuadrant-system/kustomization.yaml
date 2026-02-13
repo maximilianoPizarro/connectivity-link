@@ -4,7 +4,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - limitador.yaml
-  - authorino.yaml
+  # OCP ARM
+  #- limitador.yaml
+  #- authorino.yaml
   - kuadrant.yaml
 namespace: istio-system
