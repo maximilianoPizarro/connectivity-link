@@ -5,6 +5,16 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
+  # Observability for Kuadrant components (logging, tracing)
+  observability:
+    enable: true
+  # mTLS between Istio gateway and Kuadrant (Authorino, Limitador)
+  # Uncomment and set enable: true when using Istio and need mTLS
   mtls:
     enable: true
     authorino: true
+    limitador: true
+  # Developer portal (APIProduct, APIKeyRequest CRDs)
+  # components:
+  #   developerPortal:
+  #     enabled: false
