@@ -25,7 +25,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: fast
-  startingCSV: rhdh-operator.v1.8.0
+  startingCSV: rhdh-operator.v1.8.3
   installPlanApproval: Automatic
   name: rhdh
   source: redhat-operators
