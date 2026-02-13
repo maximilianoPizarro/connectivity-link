@@ -97,11 +97,15 @@ spec:
           namespace: istio-system
           name: neuralbank-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations"]
-        # Gateway: ignore status so Programmed/AddressNotAssigned does not mark app Degraded (traffic works via Route)
+        # Gateway: ignore status and annotations (Istio/Kubectl add status, last-applied-configuration, etc.)
         - group: gateway.networking.k8s.io
           kind: Gateway
           namespace: istio-system
-          jsonPointers: ["/status"]
+          jsonPointers: ["/status", "/metadata/annotations"]
+        # KeycloakRealmImport: operator clears initialPassword after apply (avoid permanent diff)
+        - group: k8s.keycloak.org
+          kind: KeycloakRealmImport
+          jqPathExpressions: [".spec.realm.users[].initialPassword"]
       syncPolicy:
         automated:
           selfHeal: true
@@ -154,7 +158,7 @@ spec:
         - group: gateway.networking.k8s.io
           kind: Gateway
           namespace: istio-system
-          jsonPointers: ["/status"]
+          jsonPointers: ["/status", "/metadata/annotations"]
       syncPolicy:
         automated:
           selfHeal: true

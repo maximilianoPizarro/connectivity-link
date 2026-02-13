@@ -94,6 +94,11 @@ spec:
       return hs
   # Configuraciones globales adicionales
   resourceCustomizations: |
+    # KeycloakRealmImport: ignore initialPassword diff (operator clears/redacts it after apply)
+    "k8s.keycloak.org/KeycloakRealmImport":
+      ignoreDifferences: |
+        jqPathExpressions:
+          - .spec.realm.users[].initialPassword
     # Ejemplo: Solucionar problemas de salud en PVCs o CRDs raros
     "*.k8s.io/PersistentVolumeClaim":
       health.lua: |
