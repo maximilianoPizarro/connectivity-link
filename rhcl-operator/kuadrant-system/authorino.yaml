@@ -1,0 +1,16 @@
+# Authorino CR in istio-system. AuthPolicy requires an Authorino instance;
+# if Kuadrant does not create it, apply this so the Authorino operator deploys it.
+apiVersion: operator.authorino.kuadrant.io/v1beta1
+kind: Authorino
+metadata:
+  name: authorino
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  listener:
+    tls:
+      enabled: false
+  oidcServer:
+    tls:
+      enabled: false

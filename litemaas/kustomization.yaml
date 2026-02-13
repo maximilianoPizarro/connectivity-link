@@ -29,7 +29,7 @@ resources:
   # frontend-route.yaml removed: traffic goes via Gateway (servicemeshoperator3/litemaas-gateway-route.yaml) so RateLimitPolicy applies
   - litellm-route.yaml
   - litemaas-gateway-route.yaml
-  - ratelimit-policy.yaml
+  # ratelimit-policy.yaml removed: use gateway-level policy (servicemeshoperator3/ratelimit-policy-litemaas-gateway.yaml) so it is Enforced instead of Overridden
   - rolebinding.yaml
 
 images:
