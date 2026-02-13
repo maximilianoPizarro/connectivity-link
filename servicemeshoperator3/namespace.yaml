@@ -1,8 +1,0 @@
-# Ensure istio-system exists so ArgoCD can deploy Gateway/SMCP resources here
-# (avoids "namespace istio-system not found" when namespaces app syncs later)
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: istio-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"

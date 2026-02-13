@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+# Namespace istio-system is created by the "namespaces" app (connectivity-infra-namespaces) to avoid duplicate resource / tracking-id conflict
 resources:
-  - namespace.yaml
   - gateway.yaml
   - smcp-controlplane.yaml
   - kuadrant-ratelimit-service.yaml
