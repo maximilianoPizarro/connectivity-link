@@ -82,6 +82,12 @@ Mutual TLS is enabled by default:
 
 ## Troubleshooting
 
+### App stuck Progressing (litemaas-gateway-istio / neuralbank-gateway-istio)
+
+Istio creates Services `*-gateway-istio` in `istio-system` for each Gateway. They are type LoadBalancer with empty `status.loadBalancer` until an external LB is provisioned, so Argo CD marks them as **Progressing** and the app can stay Progressing.
+
+**Fix:** Configure Argo CD to treat Services as Healthy when they exist (see [OpenShift GitOps README](../openshift-gitops/README.md#health-check-service-postgres-db--rhbk)): patch `argocd-cm` with `resource.customizations.health._Service` and restart the application controller. That removes the Progressing state for these Services.
+
 ### Common Issues
 
 1. **Control plane not starting**

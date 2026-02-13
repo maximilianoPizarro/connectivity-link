@@ -86,17 +86,17 @@ spec:
         - group: kuadrant.io
           kind: RateLimitPolicy
           jsonPointers: ["/spec/limits", "/spec/targetRef"]
-        # Services created by Istio for Gateways (not in Git); avoid OutOfSync
+        # Services created by Istio for Gateways (not in Git); ignore all so no diff. Health=Progressing unless argocd-cm Service health is customized.
         - group: ""
           kind: Service
           namespace: istio-system
           name: litemaas-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: ""
           kind: Service
           namespace: istio-system
           name: neuralbank-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         # Gateway: ignore status and annotations (Istio/Kubectl add status, last-applied-configuration, etc.)
         - group: gateway.networking.k8s.io
           kind: Gateway
@@ -145,16 +145,17 @@ spec:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
       ignoreDifferences:
+        # Istio-created Services (LoadBalancer with empty status → Argo CD shows Progressing unless argocd-cm has Service health override)
         - group: ""
           kind: Service
           namespace: istio-system
           name: litemaas-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: ""
           kind: Service
           namespace: istio-system
           name: neuralbank-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: gateway.networking.k8s.io
           kind: Gateway
           namespace: istio-system

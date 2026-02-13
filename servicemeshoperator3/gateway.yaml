@@ -8,6 +8,7 @@ metadata:
   namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   gatewayClassName: istio
   listeners:
@@ -37,6 +38,7 @@ metadata:
   namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   gatewayClassName: istio
   listeners:
