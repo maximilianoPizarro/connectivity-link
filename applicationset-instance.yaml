@@ -84,6 +84,17 @@ spec:
         - group: kuadrant.io
           kind: RateLimitPolicy
           jsonPointers: ["/spec/limits", "/spec/targetRef"]
+        # Services created by Istio for Gateways (not in Git); avoid OutOfSync
+        - group: ""
+          kind: Service
+          namespace: istio-system
+          name: litemaas-gateway-istio
+          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+        - group: ""
+          kind: Service
+          namespace: istio-system
+          name: neuralbank-gateway-istio
+          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
       syncPolicy:
         automated:
           selfHeal: true

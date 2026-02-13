@@ -89,7 +89,7 @@ spec:
           hs.message = "Waiting for volume"
         end
         return hs
-    # OpenShift Route: Healthy cuando existe (evita bloquear app servicemeshoperator3 por Route sin status.ingress)
+    # OpenShift Route: Healthy when it exists (avoids blocking servicemeshoperator3 app when Route has no status.ingress)
     "route.openshift.io/Route":
       health.lua: |
         hs = {}
@@ -100,4 +100,11 @@ spec:
           hs.status = "Healthy"
           hs.message = "Route created"
         end
+        return hs
+    # Service: Healthy when it exists (avoids "waiting for healthy state of /Service/postgres-db" in rhbk app while the pod is starting)
+    "core/Service":
+      health.lua: |
+        hs = {}
+        hs.status = "Healthy"
+        hs.message = "Service exists"
         return hs
