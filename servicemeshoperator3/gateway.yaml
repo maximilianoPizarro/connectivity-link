@@ -10,11 +10,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "4"
 spec:
   gatewayClassName: istio
-  addresses:
-    - type: Hostname
-      value: neuralbank-gateway-istio.istio-system.svc.cluster.local
-    - type: Hostname
-      value: neuralbank.apps.cluster-9jhms.dynamic.redhatworkshops.io
   listeners:
     - name: http
       protocol: HTTP
@@ -44,11 +39,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "4"
 spec:
   gatewayClassName: istio
-  addresses:
-    - type: Hostname
-      value: litemaas-gateway-istio.istio-system.svc.cluster.local
-    - type: Hostname
-      value: litemaas.apps.cluster-9jhms.dynamic.redhatworkshops.io
   listeners:
     - allowedRoutes:
         namespaces:
