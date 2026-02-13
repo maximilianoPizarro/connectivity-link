@@ -10,7 +10,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
+    - "neuralbank.apps.cluster-9jhms.dynamic.redhatworkshops.io"
 
   rules:
     - matches:
@@ -36,7 +36,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
+    - "neuralbank.apps.cluster-9jhms.dynamic.redhatworkshops.io"
 
   rules:
 #    - matches:
@@ -67,7 +67,7 @@ spec:
 #      namespace: istio-system
 #  
 #  hostnames:
-#    - "neuralbank.apps.cluster-k7fmx.k7fmx.sandbox3519.opentlc.com"
+#    - "neuralbank.apps.cluster-9jhms.dynamic.redhatworkshops.io"
 #
 #  rules:
 #    - matches:
