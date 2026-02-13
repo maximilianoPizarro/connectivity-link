@@ -5,12 +5,12 @@ metadata:
   namespace: rhbk
   description: Red Hat Build of Keycloak - Identity and Access Management service providing OIDC authentication
   annotations:
-    backstage.io/view-url: https://rhbk.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com
+    backstage.io/view-url: https://rhbk.apps.ocp.6t54s.sandbox1045.opentlc.com
     argocd/app-name: rhbk
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/rhbk
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/applications/rhbk
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.ocp.6t54s.sandbox1045.opentlc.com/applications/rhbk
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - keycloak

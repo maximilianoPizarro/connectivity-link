@@ -9,7 +9,7 @@ metadata:
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/servicemeshoperator3
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/applications/servicemeshoperator3
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.ocp.6t54s.sandbox1045.opentlc.com/applications/servicemeshoperator3
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - istio

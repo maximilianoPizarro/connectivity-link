@@ -6,5 +6,5 @@ metadata:
   name: litemaas-oauth-client
 secret: litemaassecret
 redirectURIs:
-  - 'https://litemaas.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com/api/auth/callback'
+  - 'https://litemaas.apps.ocp.6t54s.sandbox1045.opentlc.com/api/auth/callback'
 grantMethod: auto

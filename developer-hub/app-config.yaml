@@ -290,12 +290,12 @@ data:
     # Tekton/CI Pipeline Configuration
     # Configure Tekton integration for pipeline visualization
     tekton:
-      dashboardUrl: 'https://tekton-dashboard.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com'
+      dashboardUrl: 'https://tekton-dashboard.apps.ocp.6t54s.sandbox1045.opentlc.com'
       namespace: openshift-pipelines
     # CI/CD Integration
     ci:
       - name: tekton
-        baseUrl: 'https://tekton-dashboard.apps.cluster-kbtgl.kbtgl.sandbox4020.opentlc.com'
+        baseUrl: 'https://tekton-dashboard.apps.ocp.6t54s.sandbox1045.opentlc.com'
         # Optional: Configure authentication if needed
         # auth:
         #   token: ${TEKTON_TOKEN}
