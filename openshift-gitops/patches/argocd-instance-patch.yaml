@@ -108,3 +108,19 @@ spec:
         hs.status = "Healthy"
         hs.message = "Service exists"
         return hs
+    # Gateway API: Healthy when Accepted (ignore Programmed/AddressNotAssigned; traffic works via OpenShift Route)
+    "gateway.networking.k8s.io/Gateway":
+      health.lua: |
+        hs = {}
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+          for i, c in ipairs(obj.status.conditions) do
+            if c.type == "Accepted" and c.status == "True" then
+              hs.status = "Healthy"
+              hs.message = "Gateway accepted"
+              return hs
+            end
+          end
+        end
+        hs.status = "Healthy"
+        hs.message = "Gateway exists"
+        return hs

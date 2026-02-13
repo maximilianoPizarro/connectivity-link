@@ -14,6 +14,12 @@ spec:
             path: openshift-gitops
             sync_wave: "0"
             app_type: plain
+          # OAuth HTPasswd IDP (Secret in openshift-config + OAuth cluster)
+          - name: oauth-ocp
+            namespace: openshift-config
+            path: oauth-ocp
+            sync_wave: "1"
+            app_type: plain
           - name: developer-hub
             namespace: developer-hub
             path: developer-hub
@@ -95,6 +101,11 @@ spec:
           namespace: istio-system
           name: neuralbank-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+        # Gateway: ignore status so Programmed/AddressNotAssigned does not mark app Degraded (traffic works via Route)
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: istio-system
+          jsonPointers: ["/status"]
       syncPolicy:
         automated:
           selfHeal: true
