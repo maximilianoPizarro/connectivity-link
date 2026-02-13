@@ -6,16 +6,16 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  # Application Controller: más resistencia ante crashes (recursos + réplicas).
+  # Application Controller: más recursos para evitar OOMKilled con muchas apps/ApplicationSets.
   # Opcional: spec.ha.enabled: true para Redis HA si usas varias réplicas en producción.
   controller:
     resources:
       limits:
         cpu: "2"
-        memory: 2Gi
+        memory: 4Gi
       requests:
-        cpu: 250m
-        memory: 512Mi
+        cpu: 500m
+        memory: 1Gi
     # Réplicas para que un fallo no deje GitOps sin controller
     sharding:
       enabled: true
