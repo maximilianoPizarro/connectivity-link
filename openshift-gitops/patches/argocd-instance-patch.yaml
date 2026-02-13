@@ -102,7 +102,7 @@ spec:
         end
         return hs
     # Service: Healthy when it exists (avoids "waiting for healthy state of /Service/postgres-db" in rhbk app while the pod is starting)
-    "core/Service":
+    "/Service":
       health.lua: |
         hs = {}
         hs.status = "Healthy"
