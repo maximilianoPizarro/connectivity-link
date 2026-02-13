@@ -1,0 +1,13 @@
+# Limitador CR in istio-system. Kuadrant controller normally creates this when the
+# Kuadrant CR is applied; if it does not (e.g. "limitador resource not in topology"),
+# apply this so the Limitador operator can create the deployment. Kuadrant will
+# then reconcile limits from RateLimitPolicies into this CR.
+apiVersion: limitador.kuadrant.io/v1alpha1
+kind: Limitador
+metadata:
+  name: limitador
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  limits: []
