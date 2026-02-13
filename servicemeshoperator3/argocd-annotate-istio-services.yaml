@@ -1,0 +1,64 @@
+# PostSync hook: annotate Istio-created Services so Argo CD ignores them (no longer "Pendiente").
+# Run once per sync; uses SA with permission to patch only these Services in istio-system.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-annotate-istio-services
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+rules:
+  - apiGroups: [""]
+    resources: ["services"]
+    resourceNames: ["litemaas-gateway-istio", "neuralbank-gateway-istio"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-annotate-istio-services
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-annotate-istio-services
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-annotate-istio-services
+subjects:
+  - kind: ServiceAccount
+    name: argocd-annotate-istio-services
+    namespace: istio-system
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: argocd-annotate-istio-services
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      serviceAccountName: argocd-annotate-istio-services
+      restartPolicy: Never
+      containers:
+        - name: annotate
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl annotate svc litemaas-gateway-istio neuralbank-gateway-istio -n istio-system \
+                argocd.argoproj.io/compare-options=IgnoreExtraneous --overwrite
+              echo Done

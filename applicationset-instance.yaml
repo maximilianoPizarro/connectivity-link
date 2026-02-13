@@ -25,11 +25,7 @@ spec:
             path: developer-hub
             sync_wave: "3"
             app_type: plain
-          - name: servicemeshoperator3
-            namespace: openshift-operators
-            path: servicemeshoperator3
-            sync_wave: "3"
-            app_type: plain
+          # servicemeshoperator3 in separate ApplicationSet (prune: false) so Istio-created Services are not pruned
           # Kuadrant CR in istio-system so RHCL operator creates Limitador (required for RateLimitPolicy)
           - name: kuadrant-istio
             namespace: istio-system
@@ -110,6 +106,59 @@ spec:
         automated:
           selfHeal: true
           prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - SkipDryRunOnMissingResource=true
+          - RespectIgnoreDifferences=true
+---
+# servicemeshoperator3: prune disabled so Istio-created Services (litemaas-gateway-istio, neuralbank-gateway-istio) are not deleted
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: connectivity-infra-servicemeshoperator3
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: servicemeshoperator3
+            namespace: openshift-operators
+            path: servicemeshoperator3
+            sync_wave: "3"
+  template:
+    metadata:
+      name: '{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.sync_wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/maximilianoPizarro/connectivity-link.git'
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.namespace}}'
+      ignoreDifferences:
+        - group: ""
+          kind: Service
+          namespace: istio-system
+          name: litemaas-gateway-istio
+          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+        - group: ""
+          kind: Service
+          namespace: istio-system
+          name: neuralbank-gateway-istio
+          jsonPointers: ["/spec", "/status", "/metadata/annotations"]
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: istio-system
+          jsonPointers: ["/status"]
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
         syncOptions:
           - CreateNamespace=true
           - SkipDryRunOnMissingResource=true
