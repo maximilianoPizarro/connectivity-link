@@ -23,8 +23,3 @@ subscriptions:
     namespace: openshift-operators
     channel: stable
     source: redhat-operators
-  # Cert Manager: automate TLS certificates (ClusterIssuer, Certificate).
-  - name: cert-manager-operator
-    namespace: openshift-operators
-    channel: stable
-    source: redhat-operators
