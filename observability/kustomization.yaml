@@ -5,3 +5,4 @@ resources:
   - monitoring-stack.yaml
   - servicemonitor-kuadrant.yaml
   - servicemonitor-litemaas-gateway.yaml
+  - servicemonitor-neuralbank-gateway.yaml

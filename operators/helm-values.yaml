@@ -13,3 +13,18 @@ subscriptions:
     namespace: openshift-cluster-observability-operator
     channel: stable
     source: redhat-operators
+  # Grafana Operator: deploy Grafana instances and dashboards (e.g. for observability stack).
+  - name: grafana-operator
+    namespace: openshift-operators
+    channel: v5
+    source: community-operators
+  # Kiali: observability console for Service Mesh (Istio). Use with servicemeshoperator3.
+  - name: kiali-operator
+    namespace: openshift-operators
+    channel: stable
+    source: redhat-operators
+  # Cert Manager: automate TLS certificates (ClusterIssuer, Certificate).
+  - name: cert-manager-operator
+    namespace: openshift-operators
+    channel: stable
+    source: redhat-operators

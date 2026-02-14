@@ -1,0 +1,23 @@
+# ServiceMonitor (RHOBS/COO): Neuralbank gateway metrics via Envoy port 15090.
+# Enables request metrics for traffic through neuralbank-gateway (istio-system).
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: neuralbank-gateway-metrics
+  namespace: observability
+  labels:
+    app.kubernetes.io/component: gateway
+    connectivity-link.redhat.com/monitor: "true"
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: neuralbank-gateway
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  endpoints:
+    - port: "15090"
+      path: /stats/prometheus
+      interval: 30s
