@@ -8,7 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   hostnames:
-    - litemaas.apps.cluster-9jhms.dynamic.redhatworkshops.io
+    - litemaas.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
 
   parentRefs:
     - name: litemaas-gateway

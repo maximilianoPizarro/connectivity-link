@@ -11,7 +11,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "6"
     haproxy.router.openshift.io/timeout: 300s
 spec:
-  host: litemaas.apps.cluster-9jhms.dynamic.redhatworkshops.io
+  host: litemaas.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
   to:
     kind: Service
     name: litemaas-gateway-istio

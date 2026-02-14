@@ -4,12 +4,12 @@ metadata:
   name: devspaces
   description: Red Hat OpenShift Dev Spaces - Cloud-based development environment with workspaces
   annotations:
-    backstage.io/view-url: https://devspaces.apps.cluster-9jhms.dynamic.redhatworkshops.io
+    backstage.io/view-url: https://devspaces.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
     argocd/app-name: devspaces
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/devspaces
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-9jhms.dynamic.redhatworkshops.io/applications/devspaces
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com/applications/devspaces
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - devspaces

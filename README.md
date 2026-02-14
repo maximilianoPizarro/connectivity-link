@@ -93,7 +93,7 @@ The architecture follows a **consolidated ApplicationSet approach** where all in
 
 ## 🔧 Configuration: Pre-configure DNS with ApplicationSets
 
-**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-9jhms.dynamic.redhatworkshops.io`) that must be updated to match your OpenShift cluster's base domain before deployment.
+**⚠️ Important**: This repository contains demo cluster domain references (`apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com`) that must be updated to match your OpenShift cluster's base domain before deployment.
 
 Instead of manually updating cluster domain references, you can pre-configure the DNS hostnames directly in the ApplicationSet definitions. This approach uses **Kustomize patches** and **Helm parameters** to dynamically inject your cluster domain values at deployment time.
 
@@ -118,7 +118,7 @@ The script will:
 
 ### Manual Domain Update
 
-If you prefer to update manually, search and replace `apps.cluster-9jhms.dynamic.redhatworkshops.io` with your cluster's base domain in the following locations:
+If you prefer to update manually, search and replace `apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com` with your cluster's base domain in the following locations:
 
 - `neuralbank-stack/values.yaml` - Keycloak and application URLs
 - `rhcl-operator/` - OIDC policies and route configurations
