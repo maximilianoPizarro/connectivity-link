@@ -18,9 +18,3 @@ subscriptions:
     namespace: openshift-operators
     channel: v5
     source: community-operators
-  # Kiali: observability console for Service Mesh (Istio). Use with servicemeshoperator3.
-  # Package name in redhat-operators is "kiali" (not kiali-operator).
-  - name: kiali
-    namespace: openshift-operators
-    channel: stable
-    source: redhat-operators
