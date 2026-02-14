@@ -18,3 +18,8 @@ subscriptions:
     namespace: openshift-operators
     channel: v5
     source: community-operators
+  # Kiali for OpenShift Service Mesh (observability console). Package name in redhat-operators is kiali-ossm.
+  - name: kiali-ossm
+    namespace: openshift-operators
+    channel: stable
+    source: redhat-operators
