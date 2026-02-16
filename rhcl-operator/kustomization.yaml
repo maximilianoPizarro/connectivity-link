@@ -2,12 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   #- keycloak-authpolicy.yaml
-  #- neuralbank-oidc-callback.yaml
   - rolebinding.yaml
   - oidc-policy.yaml
   - gateway-neuralbank.yaml
   - neuralbank-route.yaml
   - ratelimit-policy-customers.yaml
 
-# Gateway + Route + HTTPRoutes in neuralbank-stack. OIDCPolicy, RateLimitPolicy in kuadrant-system (target HTTPRoutes). rolebinding (gateways+httproutes) in neuralbank-stack. No global namespace.
+# Gateway in istio-system; Route + HTTPRoutes + OIDCPolicy + RateLimitPolicy in neuralbank-stack (policies same ns as target). rolebinding in neuralbank-stack.
 patches: []

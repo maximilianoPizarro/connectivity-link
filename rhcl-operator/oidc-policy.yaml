@@ -1,8 +1,9 @@
+# OIDCPolicy must be in the same namespace as the target HTTPRoute (Kuadrant constraint).
 apiVersion: extensions.kuadrant.io/v1alpha1
 kind: OIDCPolicy
 metadata:
   name: neuralbank-oidc
-  namespace: kuadrant-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -19,7 +20,6 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-api-route
-    namespace: neuralbank-stack
 
   auth:
     tokenSource:
