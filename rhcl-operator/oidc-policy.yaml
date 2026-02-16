@@ -6,13 +6,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   provider:
-    issuerURL: "https://rhbk.apps.cluster-k82pl.dynamic.redhatworkshops.io/realms/neuralbank"
+    issuerURL: "https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank"
     clientID: neuralbank-frontend
     clientSecret: "FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF"
     
-    authorizationEndpoint: "https://rhbk.apps.cluster-k82pl.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/auth"
-    tokenEndpoint: "https://rhbk.apps.cluster-k82pl.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/token"
-    redirectURI: "https://neuralbank.apps.cluster-k82pl.dynamic.redhatworkshops.io/auth/callback"
+    authorizationEndpoint: "https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/auth"
+    tokenEndpoint: "https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/token"
+    redirectURI: "https://neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io/auth/callback"
    
   targetRef:
     group: gateway.networking.k8s.io

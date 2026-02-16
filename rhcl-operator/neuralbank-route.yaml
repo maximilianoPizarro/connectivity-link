@@ -11,7 +11,7 @@ spec:
       namespace: istio-system
   
   hostnames:
-    - "neuralbank.apps.cluster-k82pl.dynamic.redhatworkshops.io"
+    - "neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io"
 
   rules:
     # More specific first: /api and /q -> backend (if / comes first, /api matches / and returns 500)
@@ -46,7 +46,7 @@ spec:
 #      namespace: istio-system
 #  
 #  hostnames:
-#    - "neuralbank.apps.cluster-k82pl.dynamic.redhatworkshops.io"
+#    - "neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io"
 #
 #  rules:
 #    - matches:

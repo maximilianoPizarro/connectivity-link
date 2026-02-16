@@ -4,7 +4,7 @@ metadata:
   name: argocd
   description: OpenShift GitOps (ArgoCD) - GitOps controller for managing Kubernetes applications and infrastructure
   annotations:
-    backstage.io/view-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-k82pl.dynamic.redhatworkshops.io
+    backstage.io/view-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-6rg8j.dynamic.redhatworkshops.io
     argocd/app-name: openshift-gitops
     argocd/app-namespace: openshift-gitops
     github.com/project-slug: maximilianoPizarro/connectivity-link

@@ -5,10 +5,10 @@ metadata:
   namespace: default
   description: LiteMaaS - LiteLLM-based Model-as-a-Service (frontend, backend, LiteLLM)
   annotations:
-    backstage.io/view-url: https://litemaas.apps.cluster-k82pl.dynamic.redhatworkshops.io
+    backstage.io/view-url: https://litemaas.apps.cluster-6rg8j.dynamic.redhatworkshops.io
     argocd/app-name: litemaas
     argocd/app-namespace: openshift-gitops
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-k82pl.dynamic.redhatworkshops.io/applications/litemaas
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-6rg8j.dynamic.redhatworkshops.io/applications/litemaas
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - litemaas

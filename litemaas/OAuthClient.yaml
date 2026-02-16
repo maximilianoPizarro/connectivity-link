@@ -6,5 +6,5 @@ metadata:
   name: litemaas-oauth-client
 secret: litemaassecret
 redirectURIs:
-  - 'https://litemaas.apps.cluster-k82pl.dynamic.redhatworkshops.io/api/auth/callback'
+  - 'https://litemaas.apps.cluster-6rg8j.dynamic.redhatworkshops.io/api/auth/callback'
 grantMethod: auto
