@@ -9,7 +9,5 @@ resources:
   - neuralbank-route.yaml
   - ratelimit-policy-customers.yaml
 
-namespace: neuralbank-stack
-
-# LiteMaaS resources set their own namespace in YAML: Gateway + RBAC gateway -> istio-system; HTTPRoute + RBAC httproute -> litemaas (no patches needed)
+# Gateway + Route + HTTPRoutes in neuralbank-stack. OIDCPolicy, RateLimitPolicy in kuadrant-system (target HTTPRoutes). rolebinding (gateways+httproutes) in neuralbank-stack. No global namespace.
 patches: []

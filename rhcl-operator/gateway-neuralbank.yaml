@@ -1,9 +1,9 @@
-# Gateway for Neuralbank (namespace set by kustomization to neuralbank-stack).
-# Istio creates Service neuralbank-gateway-istio in this namespace.
+# Gateway for Neuralbank in app namespace neuralbank-stack. Istio creates Service neuralbank-gateway-istio here.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: neuralbank-gateway
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/ignore-healthcheck: "true"
@@ -28,11 +28,12 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: neuralbank-external-route
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "6"
     haproxy.router.openshift.io/timeout: 300s
 spec:
-  host: neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io
+  host: neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io
   to:
     kind: Service
     name: neuralbank-gateway-istio
@@ -42,30 +43,3 @@ spec:
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
----
-# RBAC so Argo CD can manage Gateways and HTTPRoutes in neuralbank-stack.
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: argocd-gateway-manager
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-rules:
-  - apiGroups: [gateway.networking.k8s.io]
-    resources: [gateways, httproutes]
-    verbs: [create, get, update, patch, delete, list, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: argocd-gateway-manager-binding
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: argocd-gateway-manager
-subjects:
-  - kind: ServiceAccount
-    name: openshift-gitops-argocd-application-controller
-    namespace: openshift-gitops

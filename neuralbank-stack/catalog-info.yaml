@@ -5,12 +5,12 @@ metadata:
   namespace: default
   description: NeuralBank demo application stack - Full-stack application with frontend, backend, database, and proxy
   annotations:
-    backstage.io/view-url: https://neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io
+    backstage.io/view-url: https://neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io
     argocd/app-name: neuralbank-stack
     argocd/app-namespace: openshift-gitops
     # ArgoCD URL - Update with your cluster domain
     # Format: https://openshift-gitops-server-openshift-gitops.apps.<cluster-domain>/applications/neuralbank-stack
-    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-6rg8j.dynamic.redhatworkshops.io/applications/neuralbank-stack
+    argocd/app-url: https://openshift-gitops-server-openshift-gitops.apps.cluster-wjvhz.dynamic.redhatworkshops.io/applications/neuralbank-stack
     github.com/project-slug: maximilianoPizarro/connectivity-link
   tags:
     - neuralbank

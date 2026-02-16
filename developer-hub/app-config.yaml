@@ -303,12 +303,12 @@ data:
     # Tekton/CI Pipeline Configuration
     # Configure Tekton integration for pipeline visualization
     tekton:
-      dashboardUrl: 'https://tekton-dashboard.apps.cluster-6rg8j.dynamic.redhatworkshops.io'
+      dashboardUrl: 'https://tekton-dashboard.apps.cluster-wjvhz.dynamic.redhatworkshops.io'
       namespace: openshift-pipelines
     # CI/CD Integration
     ci:
       - name: tekton
-        baseUrl: 'https://tekton-dashboard.apps.cluster-6rg8j.dynamic.redhatworkshops.io'
+        baseUrl: 'https://tekton-dashboard.apps.cluster-wjvhz.dynamic.redhatworkshops.io'
         # Optional: Configure authentication if needed
         # auth:
         #   token: ${TEKTON_TOKEN}

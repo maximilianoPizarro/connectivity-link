@@ -32,9 +32,9 @@ spec:
             path: rhcl-operator/kuadrant-system
             sync_wave: "5"
             app_type: plain
-          # After servicemeshoperator3 so Gateway API provider (Istio) is installed before Kuadrant/Authorino
+          # After servicemeshoperator3 so Gateway API provider (Istio) is installed before Kuadrant/Authorino. Connectivity Link resources deploy to kuadrant-system.
           - name: rhcl-operator
-            namespace: openshift-operators
+            namespace: kuadrant-system
             path: rhcl-operator
             sync_wave: "6"
             app_type: plain
@@ -54,8 +54,8 @@ spec:
             path: rhbk
             sync_wave: "2"
             app_type: kustomize
-            keycloak_host: rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io
-            app_host: neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io
+            keycloak_host: rhbk.apps.cluster-wjvhz.dynamic.redhatworkshops.io
+            app_host: neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io
           # DevSpaces (will be handled by separate ApplicationSet)
           # LiteMaaS (cluster domain in litemaas/cluster-config.env; run update-cluster-domain.sh to set)
           - name: litemaas
@@ -94,7 +94,7 @@ spec:
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: ""
           kind: Service
-          namespace: neuralbank-stack
+          namespace: kuadrant-system
           name: neuralbank-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         # Gateway: ignore status and annotations (Istio adds status, etc.)
@@ -104,7 +104,7 @@ spec:
           jsonPointers: ["/status", "/metadata/annotations"]
         - group: gateway.networking.k8s.io
           kind: Gateway
-          namespace: neuralbank-stack
+          namespace: kuadrant-system
           jsonPointers: ["/status", "/metadata/annotations"]
         # KeycloakRealmImport: operator clears initialPassword after apply (avoid permanent diff)
         - group: k8s.keycloak.org
@@ -256,8 +256,8 @@ spec:
             namespace: neuralbank-stack
             path: neuralbank-stack
             sync_wave: "5"
-            keycloak_host: rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io
-            app_host: neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io
+            keycloak_host: rhbk.apps.cluster-wjvhz.dynamic.redhatworkshops.io
+            app_host: neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io
   template:
     metadata:
       name: '{{.name}}'

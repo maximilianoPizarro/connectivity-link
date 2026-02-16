@@ -31,13 +31,13 @@ frontend:
 # --- Keycloak Configuration (frontend Helm) ---
 # Domain replaced by install.sh/Ansible; clientSecret by playbook from Keycloak client "neuralbank-frontend"
 keycloak:
-  issuerUrl: 'https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank'
+  issuerUrl: 'https://rhbk.apps.cluster-wjvhz.dynamic.redhatworkshops.io/realms/neuralbank'
   clientId: 'neuralbank-frontend'
   clientSecret: 'FYtNXAyn6eRmWxHIig7oLhK3zxQ1nLaF'
-  authorizationEndpoint: 'https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/auth'
-  redirectUri: 'https://neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io/auth/callback'
-  tokenEndpoint: 'https://rhbk.apps.cluster-6rg8j.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/token'
-  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io'
+  authorizationEndpoint: 'https://rhbk.apps.cluster-wjvhz.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/auth'
+  redirectUri: 'https://neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io/auth/callback'
+  tokenEndpoint: 'https://rhbk.apps.cluster-wjvhz.dynamic.redhatworkshops.io/realms/neuralbank/protocol/openid-connect/token'
+  postLogoutRedirectUri: 'https://neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io'
 
 # --- API Configuration ---
 api:

@@ -192,7 +192,7 @@ spec:
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
-          - 'https://backstage-developer-hub-developer-hub.apps.cluster-6rg8j.dynamic.redhatworkshops.io/api/auth/oidc/handler/frame'
+          - 'https://backstage-developer-hub-developer-hub.apps.cluster-wjvhz.dynamic.redhatworkshops.io/api/auth/oidc/handler/frame'
         frontchannelLogout: true
         serviceAccountsEnabled: true
         clientId: backstage
@@ -226,7 +226,7 @@ spec:
           realm_client: 'false'
         protocol: openid-connect
         webOrigins:
-          - 'https://backstage-developer-hub-developer-hub.apps.cluster-6rg8j.dynamic.redhatworkshops.io/'
+          - 'https://backstage-developer-hub-developer-hub.apps.cluster-wjvhz.dynamic.redhatworkshops.io/'
         consentRequired: false
         protocolMappers:
           - config:
