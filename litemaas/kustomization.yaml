@@ -18,8 +18,9 @@ resources:
   - gateway.yaml
   - route-via-gateway.yaml
   - litemaas-gateway-route.yaml
-  - ratelimit-policy-gateway.yaml
-  - token-ratelimit-policy.yaml
+  - ratelimit-policy-api-only.yaml
+  # - ratelimit-policy-gateway.yaml   # desactivado: no limitar la web (/) solo API
+  # - token-ratelimit-policy.yaml
   - backend-secret.yaml
   - postgres-secret.yaml
   - litellm-secret.yaml

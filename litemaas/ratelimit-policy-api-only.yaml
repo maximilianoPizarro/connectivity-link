@@ -1,0 +1,19 @@
+# Rate limit solo para rutas de API (/api, /v1, /q). La web (/, frontend) no se limita.
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: litemaas-api-ratelimit
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: litemaas-route
+  limits:
+    api-and-llm:
+      when:
+        - predicate: 'request.path.startsWith("/api") || request.path.startsWith("/v1") || request.path.startsWith("/q")'
+      rates:
+        - limit: 120
+          window: 1m

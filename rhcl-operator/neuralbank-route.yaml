@@ -1,5 +1,4 @@
-# Rule order matters: PathPrefix "/" matches everything. /api and /q must come before /.
-# HTTPRoute and Gateway in neuralbank-stack (app namespace).
+# HTTPRoutes attach to Gateway in istio-system. Routes in neuralbank-stack so OIDCPolicy/RLP find them.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -10,12 +9,10 @@ metadata:
 spec:
   parentRefs:
     - name: neuralbank-gateway
-      namespace: neuralbank-stack
+      namespace: istio-system
   hostnames:
-    - "neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io"
-
+    - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
   rules:
-    # More specific first: /api and /q -> backend (if / comes first, /api matches / and returns 500)
     - matches:
         - path:
             type: PathPrefix
@@ -26,7 +23,28 @@ spec:
       backendRefs:
         - name: neuralbank-backend-svc
           port: 8080
-    # Catch-all last: / -> frontend
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: neuralbank-root-route
+  namespace: neuralbank-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  parentRefs:
+    - name: neuralbank-gateway
+      namespace: istio-system
+  hostnames:
+    - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /swagger-ui
+      backendRefs:
+        - name: neuralbank-backend-svc
+          port: 8080
     - matches:
         - path:
             type: PathPrefix
@@ -34,40 +52,3 @@ spec:
       backendRefs:
         - name: neuralbank-frontend-svc
           port: 8080
----
-#apiVersion: gateway.networking.k8s.io/v1
-#kind: HTTPRoute
-#metadata:
-#  name: neuralbank-front-back-route
-#  annotations:
-#    argocd.argoproj.io/sync-wave: "5"   
-#spec:
-#  parentRefs:
-#    - name: neuralbank-gateway
-#      namespace: istio-system
-#  
-#  hostnames:
-#    - "neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io"
-#
-#  rules:
-#    - matches:
-#        - path:
-#            type: PathPrefix
-#            value: /api
-#        - path:
-#            type: PathPrefix
-#            value: /swagger-ui
-#        - path:
-#            type: PathPrefix
-#            value: /q
-#      backendRefs:
-#        - name: neuralbank-backend-svc
-#          port: 8080
-#    - matches:
-#        - path:
-#            type: PathPrefix
-#            value: /        
-#      backendRefs:
-#        - name: neuralbank-frontend-svc
-#          port: 8080
-#---

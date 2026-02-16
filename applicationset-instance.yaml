@@ -94,7 +94,7 @@ spec:
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: ""
           kind: Service
-          namespace: kuadrant-system
+          namespace: neuralbank-stack
           name: neuralbank-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         # Gateway: ignore status and annotations (Istio adds status, etc.)
@@ -105,10 +105,6 @@ spec:
         - group: gateway.networking.k8s.io
           kind: Gateway
           namespace: kuadrant-system
-          jsonPointers: ["/status", "/metadata/annotations"]
-        - group: gateway.networking.k8s.io
-          kind: Gateway
-          namespace: neuralbank-stack
           jsonPointers: ["/status", "/metadata/annotations"]
         # KeycloakRealmImport: operator clears initialPassword after apply (avoid permanent diff)
         - group: k8s.keycloak.org
