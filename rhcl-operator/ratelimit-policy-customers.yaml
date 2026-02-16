@@ -6,11 +6,12 @@
 #
 # To change the limit window (e.g., per second instead of per minute):
 #   Change window: 1m to window: 1s
+# Policy must be in neuralbank-stack (same namespace as target HTTPRoute; Kuadrant constraint).
 apiVersion: kuadrant.io/v1
 kind: RateLimitPolicy
 metadata:
   name: neuralbank-customers-ratelimit
-  namespace: kuadrant-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "6"
 spec:
@@ -18,7 +19,6 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-api-route
-    namespace: neuralbank-stack
   limits:
     customers-api-per-user:
       conditions:

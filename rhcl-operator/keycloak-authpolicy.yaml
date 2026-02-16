@@ -9,11 +9,12 @@ type: Opaque
 data:
   client-secret: UUR3eTZDMU10NHllcTlEN3l6WHhUSjMwcDlTdmFJbVo=
 ---
+# AuthPolicy must be in the same namespace as the target HTTPRoute (Kuadrant constraint).
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
   name: neuralbank-oidc
-  namespace: kuadrant-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -40,13 +41,12 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-api-route
-    namespace: neuralbank-stack
 ---
 apiVersion: kuadrant.io/v1
 kind: AuthPolicy
 metadata:
   name: neuralbank-oidc-callback
-  namespace: kuadrant-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
@@ -101,5 +101,4 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: neuralbank-oidc-callback
-    namespace: neuralbank-stack
 ---
