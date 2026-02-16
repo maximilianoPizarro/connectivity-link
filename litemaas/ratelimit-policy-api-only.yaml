@@ -1,4 +1,4 @@
-# Rate limit solo para rutas de API (/api, /v1, /q). La web (/, frontend) no se limita.
+# Rate limit only for API paths (/api, /v1, /q). Web (/, frontend) is not limited.
 apiVersion: kuadrant.io/v1
 kind: RateLimitPolicy
 metadata:

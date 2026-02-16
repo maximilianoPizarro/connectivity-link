@@ -23,7 +23,7 @@ spec:
         namespaces:
           from: All
 ---
-# OpenShift Route so external traffic reaches the Gateway (same namespace as Gateway).
+# OpenShift Route: only external Route for neuralbank (traffic -> neuralbank-gateway-istio). No other neuralbank Route in repo.
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
