@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Default demo cluster domain
-OLD_DOMAIN="apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com"
+OLD_DOMAIN="apps.cluster-k82pl.dynamic.redhatworkshops.io"
 
 echo -e "${YELLOW}========================================${NC}"
 echo -e "${YELLOW}Cluster Domain Update Script${NC}"

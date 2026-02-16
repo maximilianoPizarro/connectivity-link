@@ -54,8 +54,8 @@ spec:
             path: rhbk
             sync_wave: "2"
             app_type: kustomize
-            keycloak_host: rhbk.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
-            app_host: neuralbank.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
+            keycloak_host: rhbk.apps.cluster-k82pl.dynamic.redhatworkshops.io
+            app_host: neuralbank.apps.cluster-k82pl.dynamic.redhatworkshops.io
           # DevSpaces (will be handled by separate ApplicationSet)
           # LiteMaaS (cluster domain in litemaas/cluster-config.env; run update-cluster-domain.sh to set)
           - name: litemaas
@@ -263,8 +263,8 @@ spec:
             namespace: neuralbank-stack
             path: neuralbank-stack
             sync_wave: "5"
-            keycloak_host: rhbk.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
-            app_host: neuralbank.apps.cluster-bfzsx.bfzsx.sandbox209.opentlc.com
+            keycloak_host: rhbk.apps.cluster-k82pl.dynamic.redhatworkshops.io
+            app_host: neuralbank.apps.cluster-k82pl.dynamic.redhatworkshops.io
   template:
     metadata:
       name: '{{.name}}'
