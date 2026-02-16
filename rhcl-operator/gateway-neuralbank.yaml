@@ -1,9 +1,9 @@
-# Gateway for Neuralbank in istio-system (HTTPRoutes parentRef namespace: istio-system).
+# Gateway for Neuralbank in app namespace neuralbank-stack.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: neuralbank-gateway
-  namespace: istio-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/ignore-healthcheck: "true"
@@ -28,7 +28,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: neuralbank-external-route
-  namespace: istio-system
+  namespace: neuralbank-stack
   annotations:
     argocd.argoproj.io/sync-wave: "6"
     haproxy.router.openshift.io/timeout: 300s

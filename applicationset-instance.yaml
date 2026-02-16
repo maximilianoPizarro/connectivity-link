@@ -106,6 +106,10 @@ spec:
           kind: Gateway
           namespace: kuadrant-system
           jsonPointers: ["/status", "/metadata/annotations"]
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: neuralbank-stack
+          jsonPointers: ["/status", "/metadata/annotations"]
         # KeycloakRealmImport: operator clears initialPassword after apply (avoid permanent diff)
         - group: k8s.keycloak.org
           kind: KeycloakRealmImport

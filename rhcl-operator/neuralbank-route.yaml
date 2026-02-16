@@ -1,4 +1,4 @@
-# HTTPRoutes attach to Gateway in istio-system. Routes in neuralbank-stack so OIDCPolicy/RLP find them.
+# HTTPRoutes and Gateway in neuralbank-stack (app namespace).
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -9,7 +9,7 @@ metadata:
 spec:
   parentRefs:
     - name: neuralbank-gateway
-      namespace: istio-system
+      namespace: neuralbank-stack
   hostnames:
     - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
   rules:
@@ -34,7 +34,7 @@ metadata:
 spec:
   parentRefs:
     - name: neuralbank-gateway
-      namespace: istio-system
+      namespace: neuralbank-stack
   hostnames:
     - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
   rules:
