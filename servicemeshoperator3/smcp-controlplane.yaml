@@ -46,7 +46,7 @@ rules:
   - update
   - patch
 - apiGroups:
-    - route.openshift.io
+  - route.openshift.io
   resources:
   - routes
   - routes/custom-host
@@ -57,7 +57,7 @@ rules:
   - list
   - patch
   - update
-  - watch  
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

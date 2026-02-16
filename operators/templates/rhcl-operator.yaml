@@ -1,9 +1,19 @@
+# kuadrant-system namespace is created by namespaces/namespaces.yaml (sync-wave 1).
+---
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: rhcl-operator
+  namespace: kuadrant-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec: {}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: rhcl-operator
-  namespace: openshift-operators
+  namespace: kuadrant-system
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:

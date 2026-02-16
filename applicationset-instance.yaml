@@ -153,6 +153,15 @@ spec:
           kind: Gateway
           namespace: istio-system
           jsonPointers: ["/status", "/metadata/annotations"]
+        # ClusterRole/ClusterRoleBinding: ignore last-applied-configuration (avoids apply warning when resource was touched by operator)
+        - group: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: argocd-sail-operator-manager
+          jqPathExpressions: ["$.metadata.annotations[\"kubectl.kubernetes.io/last-applied-configuration\"]"]
+        - group: rbac.authorization.k8s.io
+          kind: ClusterRoleBinding
+          name: argocd-sail-operator-binding
+          jqPathExpressions: ["$.metadata.annotations[\"kubectl.kubernetes.io/last-applied-configuration\"]"]
       syncPolicy:
         automated:
           selfHeal: true
