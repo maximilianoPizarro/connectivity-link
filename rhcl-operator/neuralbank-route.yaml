@@ -11,7 +11,7 @@ spec:
     - name: neuralbank-gateway
       namespace: neuralbank-stack
   hostnames:
-    - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    - "neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io"
   rules:
     - matches:
         - path:
@@ -36,7 +36,7 @@ spec:
     - name: neuralbank-gateway
       namespace: neuralbank-stack
   hostnames:
-    - "neuralbank.apps.cluster-gpzvq.gpzvq.sandbox670.opentlc.com"
+    - "neuralbank.apps.cluster-wjvhz.dynamic.redhatworkshops.io"
   rules:
     - matches:
         - path:
