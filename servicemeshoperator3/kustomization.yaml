@@ -5,9 +5,6 @@ resources:
   - gateway.yaml
   - smcp-controlplane.yaml
   - kuadrant-ratelimit-service.yaml
-  - gateway-route.yaml
-  - litemaas-gateway-route.yaml
-  - ratelimit-policy-litemaas-gateway.yaml
   - argocd-annotate-istio-services.yaml
 
 namespace: istio-system

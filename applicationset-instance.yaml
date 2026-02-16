@@ -86,21 +86,25 @@ spec:
         - group: kuadrant.io
           kind: RateLimitPolicy
           jsonPointers: ["/spec/limits", "/spec/targetRef"]
-        # Services created by Istio for Gateways (not in Git); ignore all so no diff. Health=Progressing unless argocd-cm Service health is customized.
+        # Services created by Istio for Gateways (not in Git); ignore so no diff.
         - group: ""
           kind: Service
-          namespace: istio-system
+          namespace: litemaas
           name: litemaas-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: ""
           kind: Service
-          namespace: istio-system
+          namespace: neuralbank-stack
           name: neuralbank-gateway-istio
           jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
-        # Gateway: ignore status and annotations (Istio/Kubectl add status, last-applied-configuration, etc.)
+        # Gateway: ignore status and annotations (Istio adds status, etc.)
         - group: gateway.networking.k8s.io
           kind: Gateway
-          namespace: istio-system
+          namespace: litemaas
+          jsonPointers: ["/status", "/metadata/annotations"]
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: neuralbank-stack
           jsonPointers: ["/status", "/metadata/annotations"]
         # KeycloakRealmImport: operator clears initialPassword after apply (avoid permanent diff)
         - group: k8s.keycloak.org
@@ -115,7 +119,7 @@ spec:
           - SkipDryRunOnMissingResource=true
           - RespectIgnoreDifferences=true
 ---
-# servicemeshoperator3: prune disabled so Istio-created Services (litemaas-gateway-istio, neuralbank-gateway-istio) are not deleted
+# servicemeshoperator3: prune disabled so Istio-created resources in istio-system are not deleted
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -145,17 +149,6 @@ spec:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.namespace}}'
       ignoreDifferences:
-        # Istio-created Services (LoadBalancer with empty status → Argo CD shows Progressing unless argocd-cm has Service health override)
-        - group: ""
-          kind: Service
-          namespace: istio-system
-          name: litemaas-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
-        - group: ""
-          kind: Service
-          namespace: istio-system
-          name: neuralbank-gateway-istio
-          jsonPointers: ["/spec", "/status", "/metadata/annotations", "/metadata/labels", "/metadata/ownerReferences", "/metadata/creationTimestamp", "/metadata/resourceVersion", "/metadata/uid"]
         - group: gateway.networking.k8s.io
           kind: Gateway
           namespace: istio-system

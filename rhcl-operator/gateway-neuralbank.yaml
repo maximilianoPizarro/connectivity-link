@@ -1,0 +1,71 @@
+# Gateway for Neuralbank (namespace set by kustomization to neuralbank-stack).
+# Istio creates Service neuralbank-gateway-istio in this namespace.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: neuralbank-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/ignore-healthcheck: "true"
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 8080
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+---
+# OpenShift Route so external traffic reaches the Gateway (same namespace as Gateway).
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: neuralbank-external-route
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+    haproxy.router.openshift.io/timeout: 300s
+spec:
+  host: neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io
+  to:
+    kind: Service
+    name: neuralbank-gateway-istio
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+# RBAC so Argo CD can manage Gateways and HTTPRoutes in neuralbank-stack.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-gateway-manager
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+rules:
+  - apiGroups: [gateway.networking.k8s.io]
+    resources: [gateways, httproutes]
+    verbs: [create, get, update, patch, delete, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-gateway-manager-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-gateway-manager
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops

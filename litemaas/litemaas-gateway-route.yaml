@@ -1,4 +1,4 @@
-# HTTPRoute in litemaas (backendRefs to litemaas services). Gateway litemaas-gateway is in servicemeshoperator3 (istio-system).
+# HTTPRoute in litemaas (backendRefs to litemaas services). Gateway litemaas-gateway is in litemaas.
 # All traffic through single host litemaas.apps.<domain>: / -> frontend, /api -> backend, /v1 and /q -> LiteLLM.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -9,10 +9,9 @@ metadata:
 spec:
   hostnames:
     - litemaas.apps.cluster-6rg8j.dynamic.redhatworkshops.io
-
   parentRefs:
     - name: litemaas-gateway
-      namespace: istio-system
+      namespace: litemaas
   rules:
     # /api -> LiteMaaS backend
     - matches:

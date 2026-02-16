@@ -1,5 +1,5 @@
 # ServiceMonitor (RHOBS/COO): LiteMaaS gateway metrics via Envoy port 15090.
-# Enables request metrics for traffic through litemaas-gateway (istio-system).
+# Gateway is in litemaas namespace.
 # Based on: https://github.com/maximilianoPizarro/NFL-Wallet/blob/main/helm/nfl-wallet/templates/service-monitor-gateway-rhobs.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -17,7 +17,7 @@ spec:
       gateway.networking.k8s.io/gateway-name: litemaas-gateway
   namespaceSelector:
     matchNames:
-      - istio-system
+      - litemaas
   endpoints:
     - port: "15090"
       path: /stats/prometheus

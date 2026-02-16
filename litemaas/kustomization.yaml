@@ -14,6 +14,12 @@ configMapGenerator:
 
 resources:
   - namespace.yaml
+  - gateway-rbac.yaml
+  - gateway.yaml
+  - route-via-gateway.yaml
+  - litemaas-gateway-route.yaml
+  - ratelimit-policy-gateway.yaml
+  - token-ratelimit-policy.yaml
   - backend-secret.yaml
   - postgres-secret.yaml
   - litellm-secret.yaml
@@ -26,10 +32,7 @@ resources:
   - backend-service.yaml
   - frontend-deployment.yaml
   - frontend-service.yaml
-  # frontend-route.yaml removed: traffic goes via Gateway (servicemeshoperator3/litemaas-gateway-route.yaml) so RateLimitPolicy applies
   - litellm-route.yaml
-  - litemaas-gateway-route.yaml
-  # ratelimit-policy.yaml removed: use gateway-level policy (servicemeshoperator3/ratelimit-policy-litemaas-gateway.yaml) so it is Enforced instead of Overridden
   - rolebinding.yaml
 
 images:

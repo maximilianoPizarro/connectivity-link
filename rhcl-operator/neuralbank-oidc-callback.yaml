@@ -7,7 +7,7 @@ metadata:
 spec:
   parentRefs:
     - name: neuralbank-gateway
-      namespace: istio-system
+      namespace: neuralbank-stack
   hostnames:
     - "neuralbank.apps.cluster-6rg8j.dynamic.redhatworkshops.io"
   rules:
