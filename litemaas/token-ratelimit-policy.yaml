@@ -9,7 +9,7 @@ spec:
   limits:
     free:
       rates:
-        - limit: 2
+        - limit: 60
           window: 1m
     gold:
       counters:

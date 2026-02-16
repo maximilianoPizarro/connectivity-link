@@ -1,5 +1,5 @@
-# RateLimitPolicy for LiteMaaS HTTPRoute: 2 requests per minute (global for this route).
-# No counter = one shared limit; 3rd request within 1m should return 429.
+# RateLimitPolicy for LiteMaaS HTTPRoute (global for this route).
+# Limit set for normal web use; adjust as needed. Not in kustomization by default.
 #
 # IMPORTANT: The limit is enforced only when traffic goes through the Gateway API
 # (litemaas-gateway in istio-system). If you use an OpenShift Route that points
@@ -20,5 +20,5 @@ spec:
   limits:
     chat-global:
       rates:
-        - limit: 2
+        - limit: 120
           window: 1m

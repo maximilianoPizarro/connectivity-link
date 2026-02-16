@@ -1,5 +1,5 @@
 # RateLimitPolicy on the Gateway (same namespace as gateway so Kuadrant injects it).
-# Requires Limitador and kuadrant-ratelimit-service reachable (e.g. in kuadrant-system or istio-system).
+# Limit set for normal web use (page load = many requests). Adjust as needed.
 apiVersion: kuadrant.io/v1
 kind: RateLimitPolicy
 metadata:
@@ -14,5 +14,5 @@ spec:
   limits:
     chat-global:
       rates:
-        - limit: 2
+        - limit: 120
           window: 1m
