@@ -26,9 +26,9 @@ spec:
             sync_wave: "3"
             app_type: plain
           # servicemeshoperator3 in separate ApplicationSet (prune: false) so Istio-created Services are not pruned
-          # Kuadrant CR in istio-system so RHCL operator creates Limitador (required for RateLimitPolicy)
-          - name: kuadrant-istio
-            namespace: istio-system
+          # Kuadrant CR in kuadrant-system (recommended namespace for the CR)
+          - name: kuadrant-system
+            namespace: kuadrant-system
             path: rhcl-operator/kuadrant-system
             sync_wave: "5"
             app_type: plain

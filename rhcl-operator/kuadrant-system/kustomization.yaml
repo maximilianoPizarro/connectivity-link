@@ -1,6 +1,6 @@
-# Deploys the Kuadrant CR to istio-system so the RHCL operator
-# creates Limitador there (required for RateLimitPolicy). Policies and
-# routes remain in neuralbank-stack (rhcl-operator app).
+# Deploys the Kuadrant CR to kuadrant-system (recommended namespace for the CR).
+# RHCL operator creates Limitador/Authorino per topology; if they land in kuadrant-system,
+# ensure kuadrant-ratelimit-service is in the same namespace or Istio WasmPlugin points to it.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -8,4 +8,4 @@ resources:
   #- limitador.yaml
   #- authorino.yaml
   - kuadrant.yaml
-namespace: istio-system
+namespace: kuadrant-system
